@@ -1,0 +1,58 @@
+.wrapper {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+}
+
+.invoice {
+	padding: 30px;
+}
+
+.invoice {
+	h2,
+	h5 {
+		margin-top: 0px;
+		line-height: 0.8em;
+	}
+}
+.invoice-title {
+	color: rgb(0, 0, 0);
+}
+
+.invoice .small {
+	font-weight: 300;
+	font-size: 1rem;
+}
+
+.invoice hr {
+	margin-top: 10px;
+	border-color: #ddd;
+}
+
+.invoice .table tr.line {
+	border-bottom: 1px solid #ccc;
+}
+
+.invoice .table td {
+	border: none;
+}
+
+.invoice .identity {
+	margin-top: 10px;
+	font-size: 1.1em;
+	font-weight: 300;
+}
+
+.invoice .identity strong {
+	font-weight: 600;
+}
+
+.grid {
+	position: relative;
+	width: 100%;
+	background: #fff;
+	color: rgba(0, 0, 0, 0.658);
+	border-radius: 2px;
+	margin-bottom: 25px;
+	box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+}

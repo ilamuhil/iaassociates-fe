@@ -1,0 +1,35 @@
+@import './bs-import';
+$wrapperheight :500px;
+.editorWrapper{
+    background-color: white;
+    width:95%;
+    min-height: $wrapperheight;
+    padding-block: 20px;
+    border-radius: 5px;
+}
+.editorStyles{
+    background-color: hsl(15, 2%, 90%);
+    box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+    overflow:auto!important;
+    padding-inline:20px;
+    border-radius: 10px;
+    height: 0.9*$wrapperheight !important;
+}
+.scroll::-webkit-scrollbar {
+    width: 5px;
+}
+.scroll::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+   box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+} 
+.toolbarStyles{
+    border-radius: 5px !important;
+    border-radius: 10px !important;
+}

@@ -1,0 +1,100 @@
+.checkout-heading {
+  color: #394f7f;
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+}
+@media (max-width: 575.98px) {
+  .checkout-heading {
+    font-size: 2.4rem;
+  }
+}
+
+.billing-info {
+  padding-block: 4rem;
+  margin-bottom: 3rem;
+}
+
+.content-wrapper {
+  background-color: whitesmoke;
+  border-radius: 15px;
+}
+.content-wrapper h6 {
+  margin-top: 2px;
+  margin-bottom: 0;
+}
+.content-wrapper h2 {
+  color: #394f7f;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.content-wrapper ul {
+  padding: 0 0 1.6rem 0;
+  margin: 0;
+  border-bottom: 0.04rem solid #ced4da;
+}
+.content-wrapper label {
+  color: #394f7f;
+  font-weight: 500;
+}
+.content-wrapper input::-moz-placeholder {
+  color: #6c757d;
+  font-weight: 200;
+}
+.content-wrapper input:-ms-input-placeholder {
+  color: #6c757d;
+  font-weight: 200;
+}
+.content-wrapper input::placeholder {
+  color: #6c757d;
+  font-weight: 200;
+}
+
+.price {
+  color: #394f7f;
+  font-size: 20px;
+  font-weight: 500;
+}
+.price span {
+  margin-right: 4px;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 600;
+}
+
+li {
+  list-style-type: none;
+}
+
+.service-img-thumbnail {
+  border-radius: 5px;
+  width: 75px;
+  padding: 10px;
+  background-color: rgba(211, 211, 211, 0.705);
+}
+
+.service-desc {
+  margin-top: 4px;
+  line-height: 0.8rem;
+  color: #6c757d;
+  font-size: 0.7rem;
+  max-height: 2.5rem;
+  overflow: hidden;
+}
+
+.payment-button {
+  background-color: #e6ebf1;
+  transition-duration: 0.5s;
+  border-radius: 3px;
+}
+.payment-button:hover {
+  background-color: black;
+  color: white;
+}
+
+.other-charges {
+  font-size: 0.9rem;
+}
+
+.charge-value {
+  font-weight: 500;
+  color: #394f7f;
+}/*# sourceMappingURL=checkout.css.map */

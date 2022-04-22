@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                    String               @id @default(uuid())
+  username              String               @unique @db.VarChar(255)
+  email                 String               @unique @db.VarChar(255)
+  password              String               @db.VarChar(255)
+  refreshToken          String?              @unique @db.VarChar(255)
+  avatar                String?
+  role                  String               @default("user")
+  createdAt             DateTime             @default(now())
+  emailVerificationLink String?              @unique @db.VarChar(255)
+  active                Boolean              @default(false)
+  address               Address?
+  orders                Orders[]
+  marketingPreference   MarketingPreference?
+
+  @@map("users")
+}
+
+model MarketingPreference {
+  id             Int     @id @default(autoincrement())
+  userId         String  @unique
+  user           Users   @relation(fields: [userId], references: [id])
+  ServiceOffers  Boolean @default(true)
+  complianceInfo Boolean @default(true)
+
+  @@map("marketing")
+}
+
+model Address {
+  id          Int     @id @default(autoincrement())
+  userId      String  @unique
+  user        Users   @relation(fields: [userId], references: [id])
+  adl1        String  @db.LongText
+  adl2        String  @db.LongText
+  zipcode     Int
+  state       String  @db.MediumText
+  city        String  @db.MediumText
+  phoneNo     String  @db.MediumText
+  fName       String  @db.MediumText
+  invoiceType String  @db.MediumText
+  lName       String? @db.MediumText
+}
+
+model Services {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.LongText
+  highlights  String   @db.LongText
+  SAC         String?  @db.VarChar(255)
+  orders      Orders[]
+
+  @@map("services")
+}
+
+//order Status : created ,pending ,onhold ,completed ,failed , refunded
+model Orders {
+  id               Int      @id @default(autoincrement())
+  value            Float
+  createdAt        DateTime @default(now())
+  serviceId        Int
+  discount         Int
+  orderDescription String   @db.LongText
+  userId           String
+  user             Users    @relation(fields: [userId], references: [id])
+  service          Services @relation(fields: [serviceId], references: [id])
+  review           Reviews?
+  orderStatus      String   @db.MediumText
+  paymentStatus    Boolean  @default(false)
+  razorpayId       String   @db.MediumText
+  invoiceNumber    String   @db.MediumText
+  invoiceDate      String   @db.MediumText
+
+  @@index([userId], map: "orders_customerId_fkey")
+  @@index([serviceId], map: "orders_serviceId_fkey")
+  @@map("orders")
+}
+
+//reviewstatus = pending / approved
+model Reviews {
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(255)
+  starRating   Int
+  content      String?  @db.LongText
+  orders       Orders   @relation(fields: [orderId], references: [id])
+  orderId      Int      @unique
+  updatedAt    DateTime @updatedAt
+  reviewstatus String   @db.MediumText
+
+
+  @@map("reviews")
+}

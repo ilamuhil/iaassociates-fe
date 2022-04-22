@@ -1,0 +1,24 @@
+@import url("https://fonts.googleapis.com/css?family=Chicle");
+.wrapper {
+  margin: 0;
+  height: 100vh;
+  font-family: "Chicle", cursive;
+  background-size: cover;
+  background-position: 50% 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.container1 {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1em 2em;
+  border-radius: 10px;
+  font-size: 1.5em;
+  text-align: center;
+}
+
+.unauthorizedheading {
+  color: #e60000;
+}/*# sourceMappingURL=unauthorized.css.map */

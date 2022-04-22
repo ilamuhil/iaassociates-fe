@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "start",
+			"problemMatcher": [],
+			"label": "start react app env",
+			"detail": "concurrently \"cd server && nodemon server\" \"cd client && npm start\" \"cd server && npx prisma studio\""
+		}
+	]
+}

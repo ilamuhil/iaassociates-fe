@@ -1,0 +1,83 @@
+@import '_bs-import';
+.checkout-heading {
+	color: $primary;
+	padding-top: 8rem;
+	padding-bottom: 4rem;
+	@include media-breakpoint-down('sm') {
+		font-size: 2.4rem;
+	}
+}
+.billing-info {
+	padding-block: 4rem;
+	margin-bottom: 3rem;
+}
+.content-wrapper {
+	background-color: whitesmoke;
+	border-radius: 15px;
+	h6 {
+		margin-top: 2px;
+		margin-bottom: 0;
+	}
+	h2 {
+		color: $primary;
+		box-sizing: border-box;
+		margin-bottom: 20px;
+	}
+	ul {
+		padding: 0 0 1.6rem 0;
+		margin: 0;
+		border-bottom: 0.04rem solid $gray-400;
+	}
+	label {
+		color: $primary;
+		font-weight: 500;
+	}
+	input::placeholder {
+		color: $gray-600;
+		font-weight: 200;
+	}
+}
+.price {
+	color: $primary;
+	font-size: 20px;
+	font-weight: 500;
+	span {
+		margin-right: 4px;
+		font-family: 'Noto Sans', sans-serif;
+		font-weight: 600;
+	}
+}
+
+li {
+	list-style-type: none;
+}
+.service-img-thumbnail {
+	border-radius: 5px;
+	width: 75px;
+	padding: 10px;
+	background-color: rgba(211, 211, 211, 0.705);
+}
+.service-desc {
+	margin-top: 4px;
+	line-height: 0.8rem;
+	color: $gray-600;
+	font-size: 0.7rem;
+	max-height: 2.5rem;
+	overflow: hidden;
+}
+.payment-button {
+	background-color: #e6ebf1;
+	transition-duration: 0.5s;
+	border-radius: 3px;
+	&:hover {
+		background-color: black;
+		color: white;
+	}
+}
+.other-charges {
+	font-size: 0.9rem;
+}
+.charge-value {
+	font-weight: 500;
+	color: $primary;
+}
