@@ -7,10 +7,6 @@ import {
 	CardContent,
 	Divider,
 	Typography,
-	TextField,
-	FormGroup,
-	FormControlLabel,
-	Checkbox,
 	Dialog,
 	DialogTitle,
 	DialogContent,
@@ -25,13 +21,22 @@ import AvatarImgm1 from './../img/avatar/avatarm1.png';
 import AvatarImgm2 from './../img/avatar/avatarm2.png';
 import AvatarImgm3 from './../img/avatar/avatarm3.png';
 import AvatarImgm4 from './../img/avatar/avatarm4.png';
-import { useState, useEffect, useCallback, useContext } from 'react';
+import {
+	useState,
+	useEffect,
+	useCallback,
+	useContext,
+	lazy,
+	Suspense,
+} from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
 import AuthContext from '../context/AuthProvider';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
-
+const UpdateBilling = lazy(() => import('./UpdateBilling'));
+const UpdatePassword = lazy(() => import('./UpdatePassword'));
+const MarketingSetting = lazy(() => import('./MarketingSetting'));
 const Profile = props => {
 	const { id: urlpath } = useParams();
 	const ctx = useContext(AuthContext);
@@ -43,15 +48,6 @@ const Profile = props => {
 	const [avatar, setAvatar] = useState('');
 	const [role, setRole] = useState('');
 	const [editMode, setEditMode] = useState(false);
-	const [companyInvoice, setCompanyInvoice] = useState(true);
-	const [fname, setFname] = useState('');
-	const [lname, setLname] = useState('');
-	const [phoneNo, setPhoneNo] = useState('');
-	const [adl1, setAdl1] = useState('');
-	const [adl2, setAdl2] = useState('');
-	const [city, setCity] = useState('');
-	const [state, setState] = useState('');
-	const [zipcode, setZipcode] = useState(0);
 	const [open, setOpen] = useState(false);
 	const axiosPvt = ctx.useAxiosPrivate();
 	const handleClickOpen = () => {
@@ -158,68 +154,6 @@ const Profile = props => {
 			});
 	}, [newAvatar, selectAvatar, axiosPvt]);
 
-	const updateBilling = useCallback(() => {
-		const invoiceType = companyInvoice ? 'company' : 'personal';
-		let payload = {
-			adl1,
-			adl2,
-			zipcode,
-			city,
-			state,
-			fname,
-			lname,
-			email,
-			phoneNo,
-			invoiceType,
-		};
-		console.log(typeof zipcode);
-
-		const url = urlpath
-			? `/addresses/billingDetails/id/${urlpath}`
-			: '/addresses/billingDetails';
-		const toastid = toast.loading('Processing request');
-		axiosPvt
-			.post(url, payload)
-			.then(res => {
-				toast.update(toastid, {
-					render: res.data.message,
-					type: 'success',
-					isLoading: false,
-					autoClose: 1000,
-				});
-			})
-			.catch(err => {
-				if (err.response) {
-					toast.update(toastid, {
-						render: err.response.data,
-						type: 'error',
-						isLoading: false,
-						autoClose: 2000,
-					});
-				} else {
-					console.error(err.request);
-					toast.update(toastid, {
-						render: 'Server Unavailable.Try again later',
-						type: 'error',
-						isLoading: false,
-						autoClose: 2000,
-					});
-				}
-			});
-	}, [
-		adl1,
-		email,
-		adl2,
-		zipcode,
-		state,
-		city,
-		phoneNo,
-		fname,
-		lname,
-		companyInvoice,
-		axiosPvt,
-		urlpath,
-	]);
 	return (
 		<>
 			<div className='row'>
@@ -264,11 +198,6 @@ const Profile = props => {
 											variant='body2'>
 											{email}
 										</Typography>
-										{role !== 'user' && role !== 'admin' && (
-											<Typography color='textSecondary' variant='body2'>
-												{`${city} ${state}`}
-											</Typography>
-										)}
 									</Box>
 								</CardContent>
 								<Divider />
@@ -515,182 +444,23 @@ const Profile = props => {
 											<div className='tab-pane active'>
 												<form className='form' noValidate>
 													<div className='row'>
-														<div className='col'>
-															<div className='row mb-2'>
-																<div className='col'>
-																	<div className='form-group'>
-																		<TextField
-																			value={fname}
-																			onChange={e => {
-																				setFname(e.target.value);
-																			}}
-																			fullWidth
-																			id='first name'
-																			label={
-																				!companyInvoice
-																					? 'First Name'
-																					: 'Company/Firm Name'
-																			}
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-																<div className='col'>
-																	<div className='form-group'>
-																		<TextField
-																			value={lname}
-																			onChange={e => {
-																				setLname(e.target.value);
-																			}}
-																			fullWidth
-																			id='last name'
-																			label={
-																				!companyInvoice ? 'Last Name' : 'GSTIN'
-																			}
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-															</div>
-															<div className='row mb-2'>
-																<div className='col'>
-																	<div className='form-group'>
-																		<TextField
-																			value={email}
-																			onChange={e => {
-																				setEmail(e.target.value);
-																			}}
-																			fullWidth
-																			id='email'
-																			label='email'
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-																<div className='col'>
-																	<div className='form-group'>
-																		<TextField
-																			value={phoneNo}
-																			onChange={e => {
-																				setPhoneNo(e.target.value);
-																			}}
-																			fullWidth
-																			id='Phone Number'
-																			label='Phone Number'
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-															</div>
-															<div className='row'>
-																<div className='col-lg-6 mb-3'>
-																	<div className='form-group'>
-																		<TextField
-																			value={adl1}
-																			onChange={e => {
-																				setAdl1(e.target.value);
-																			}}
-																			fullWidth
-																			id='address line 1'
-																			label='address line 1'
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-																<div className='col-lg-6 mb-3'>
-																	<div className='form-group'>
-																		<TextField
-																			value={adl2}
-																			onChange={e => {
-																				setAdl2(e.target.value);
-																			}}
-																			fullWidth
-																			id='address line 2'
-																			label='address line 2'
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-															</div>
-															<div className='row'>
-																<div className='col-lg-6 mb-3'>
-																	<div className='form-group'>
-																		<TextField
-																			value={city}
-																			onChange={e => {
-																				setCity(e.target.value);
-																			}}
-																			fullWidth
-																			id='city'
-																			label='city'
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-																<div className='col-lg-6 mb-3'>
-																	<div className='form-group'>
-																		<TextField
-																			value={state}
-																			onChange={e => {
-																				setState(e.target.value);
-																			}}
-																			fullWidth
-																			id='state'
-																			label='state'
-																			variant='standard'
-																		/>
-																	</div>
-																</div>
-															</div>
-															<div className='row'>
-																<div className='col-lg-6 mb-3'>
-																	<FormControlLabel
-																		control={
-																			<Checkbox
-																				checked={companyInvoice}
-																				size='small'
-																				onChange={e => {
-																					setCompanyInvoice(e.target.checked);
-																				}}
-																			/>
-																		}
-																		label='Company Invoice'
-																	/>
-																</div>
-																<div className='col-lg-6 mb-3'>
-																	<div className='form-group'>
-																		<TextField
-																			fullWidth
-																			id='zipcode'
-																			type='number'
-																			label='zipcode'
-																			variant='standard'
-																			value={zipcode}
-																			onChange={e => {
-																				setZipcode(parseInt(e.target.value));
-																			}}
-																		/>
-																	</div>
-																</div>
-															</div>
-															<div className='row mb-4'>
-																<div className='col-lg-6 mb-3'>
-																	<Button
-																		color='warning'
-																		variant='contained'
-																		size='small'
-																		onClick={updateBilling}>
-																		Update Billing Info
-																	</Button>
-																</div>
-																<div className='col-lg-6'></div>
-															</div>
-														</div>
+														<Suspense>
+															<UpdateBilling
+																email={email}
+																setEmail={setEmail}
+															/>
+														</Suspense>
 													</div>
 													<div className='row'>
-														{!urlpath && <UpdatePassword />}
+														{!urlpath && (
+															<Suspense>
+																<UpdatePassword />
+															</Suspense>
+														)}
 														{role !== 'admin' && !urlpath && (
-															<MarketingSetting />
+															<Suspense>
+																<MarketingSetting />
+															</Suspense>
 														)}
 													</div>
 												</form>
@@ -707,218 +477,4 @@ const Profile = props => {
 	);
 };
 
-function MarketingSetting() {
-	const ctx = useContext(AuthContext);
-	const axiosPvt = ctx.useAxiosPrivate();
-	const [serviceOffers, setServiceOffers] = useState(true);
-	const [complianceInfo, setComplianceInfo] = useState(true);
-	const { id: urlpath } = useParams();
-	useEffect(() => {
-		const controller = new AbortController();
-		axiosPvt
-			.get('/user', {
-				params: {
-					marketingPreference: true,
-				},
-				signal: controller.signal,
-			})
-			.then(
-				({
-					data: {
-						marketingPreference: { ServiceOffers: so, complianceInfo: ci },
-					},
-				}) => {
-					setServiceOffers(so);
-					setComplianceInfo(ci);
-				}
-			)
-			.catch(e => {
-				if (e?.response) {
-					toast.error(e.respose.data);
-				} else {
-					toast.error('Could not retrieve marketing data. Server unavailable');
-				}
-			});
-		return () => {
-			controller.abort();
-		};
-	}, [axiosPvt]);
-	const updateMarketingSetting = useCallback(() => {
-		toast.promise(
-			axiosPvt.post(`/user/marketing/${urlpath ? urlpath : ''}`, {
-				serviceOffers,
-				complianceInfo,
-			}),
-			{
-				pending: 'Updating your settings preference',
-				success: 'Successfully updated preference ✓',
-				error: 'Could not update your preference. Try again later',
-			}
-		);
-	}, [axiosPvt, complianceInfo, serviceOffers, urlpath]);
-	return (
-		<div className='col-12 col-sm-5 mb-3'>
-			<div className='row mb-4'>
-				<div className='col'>
-					<div className='custom-controls-stacked pr-2'>
-						<FormGroup>
-							<div className='mb-2'>
-								<b>Email Notification Settings</b>
-							</div>
-							<FormControlLabel
-								control={
-									<Checkbox
-										size='small'
-										checked={complianceInfo}
-										onChange={() => {
-											setComplianceInfo(p => !p);
-										}}
-									/>
-								}
-								label='Compliance Info and Deadlines'
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox
-										size='small'
-										checked={serviceOffers}
-										onChange={() => {
-											setServiceOffers(p => !p);
-										}}
-									/>
-								}
-								label='Occassional Service Discounts and Offers'
-							/>
-							<FormControlLabel
-								control={<Checkbox size='small' checked={true} />}
-								label='My Service Updates'
-							/>
-						</FormGroup>
-					</div>
-				</div>
-			</div>
-			<div className='row'>
-				<div className='col'>
-					<Button
-						variant='contained'
-						size='small'
-						color='warning'
-						onClick={updateMarketingSetting}>
-						Update Email Settings
-					</Button>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-function UpdatePassword() {
-	const [pwd, setPwd] = useState('');
-	const [confNewPwd, setConfNewPwd] = useState('');
-	const [newPwd, setNewPwd] = useState('');
-	const ctx = useContext(AuthContext);
-	const axiosPvt = ctx.useAxiosPrivate();
-	const updatePasswordHandler = useCallback(() => {
-		if (confNewPwd !== newPwd) {
-			toast.warn('Your new passwords do not match');
-			return;
-		}
-		const toastid = toast.loading('Processing request');
-		axiosPvt
-			.put('/updates/updatePwd', { password: pwd, newPassword: newPwd })
-			.then(res => {
-				console.log(res.data.message);
-				toast.update(toastid, {
-					render: res.data.message,
-					type: 'success',
-					isLoading: false,
-					autoClose: 2000,
-				});
-			})
-			.catch(err => {
-				if (err.response) {
-					toast.update(toastid, {
-						render: err.response.data,
-						type: 'error',
-						isLoading: false,
-						autoClose: 2000,
-					});
-				} else {
-					console.error(err.request);
-					toast.update(toastid, {
-						render: 'Server Unavailable.Try again later',
-						type: 'error',
-						isLoading: false,
-						autoClose: 2000,
-					});
-				}
-			});
-	}, [confNewPwd, newPwd, pwd, axiosPvt]);
-	return (
-		<div className='col-12 col-sm-6 mb-3'>
-			<div className='mb-2'>
-				<b>Change Password</b>
-			</div>
-			<div className='row mb-2'>
-				<div className='col'>
-					<div className='form-group'>
-						<TextField
-							onChange={e => {
-								setPwd(e.target.value);
-							}}
-							fullWidth
-							id='Current Password'
-							label='Current Password'
-							variant='standard'
-							type='password'
-						/>
-					</div>
-				</div>
-			</div>
-			<div className='row mb-2'>
-				<div className='col'>
-					<div className='form-group'>
-						<TextField
-							onChange={e => {
-								setNewPwd(e.target.value);
-							}}
-							fullWidth
-							id='New Password'
-							label='New Password'
-							variant='standard'
-							type='password'
-						/>
-					</div>
-				</div>
-			</div>
-			<div className='row mb-4'>
-				<div className='col'>
-					<div className='form-group'>
-						<TextField
-							onChange={e => {
-								setConfNewPwd(e.target.value);
-							}}
-							fullWidth
-							id='Confirm Password'
-							label='Confirm Password'
-							variant='standard'
-							type='password'
-						/>
-					</div>
-				</div>
-			</div>
-			<div className='row'>
-				<div className='col'>
-					<Button
-						variant='contained'
-						size='small'
-						color='warning'
-						onClick={updatePasswordHandler}>
-						Update Password
-					</Button>
-				</div>
-			</div>
-		</div>
-	);
-}
 export default Profile;

@@ -1,5 +1,4 @@
 import pkg from '@prisma/client';
-import { request } from 'express';
 import { sendEmailVerification } from './sendMail.js';
 import { findUser } from './user.js';
 const { PrismaClient } = pkg;
@@ -12,23 +11,19 @@ const getAddress = async (req, res, next) => {
 		? [req.params.idType, req.params.id]
 		: ['id', req.user.id];
 	try {
-		const addressRecord = await prisma.user.findUnique({
+		const addressRecord = await prisma.users.findUnique({
 			where: {
 				[idType]: id,
 			},
 			select: {
 				address: true,
-				orders: {
-					select: {
-						id: true,
-					},
-				},
 			},
 		});
-		const { address } = addressRecord;
+		let { address } = addressRecord;
 		address = { ...address, [idType]: id };
 		res.status(200).send(address);
 	} catch (e) {
+		console.log(e);
 		let err = new Error('Could not get Address');
 		err.status = 500;
 		next(err);
@@ -48,16 +43,8 @@ const updateAddress = async (req, res, next) => {
 		zipcode,
 		phoneNo,
 	} = req.body;
-	console.log(
-		'🚀 ~ file: address.js ~ line 51 ~ updateAddress ~ req.body',
-		req.body
-	);
 	if (req.params.idType) {
 		if (req.user.role !== 'admin') {
-			console.log(
-				'🚀 ~ file: address.js ~ line 54 ~ updateAddress ~ req.user.role',
-				req.user.role
-			);
 			let err = new Error('Unauthorized request');
 			err.status = 403;
 			next(err);
@@ -91,7 +78,7 @@ const updateAddress = async (req, res, next) => {
 			},
 		},
 	};
-	console.log('🚀 ~ file: address.js ~ line 88 ~ updateAddress ~ data ', data);
+
 	let user;
 	let userEmail;
 	let resMsg = '';

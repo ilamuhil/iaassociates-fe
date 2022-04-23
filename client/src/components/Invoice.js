@@ -106,7 +106,7 @@ function Invoice() {
 								<div className='row'>
 									<div className='col-xs-12'>
 										<h2 style={{ color: '#1976d2' }}>
-											ILAMURUGU & ASSOCIATES
+											ILAMURUGU &amp; ASSOCIATES
 											<br />
 										</h2>
 										<span className='small'>Invoice #1082</span>

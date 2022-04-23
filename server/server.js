@@ -27,8 +27,8 @@ app.use(
 app.use(cookieParser());
 const port = process.env.PORT || 8000;
 app.use(cors({ origin: process.env.WEBSITE_URL, credentials: true }));
-app.use('/dbdata', cors, dbdata);
-app.use('/addresses', cors, addresses);
+app.use('/dbdata', dbdata);
+app.use('/addresses',authenticateUser, addresses);
 app.use('/updates', updates);
 app.use('/user', authenticateUser, users);
 app.use('/authenticate', userAuth);
