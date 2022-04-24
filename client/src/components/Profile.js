@@ -85,6 +85,33 @@ const Profile = props => {
 				setAvatar(AvatarImgm1);
 		}
 	}, [active]);
+	const updateAvatar = useCallback(() => {
+		const payload = { avatar: newAvatar };
+		const toastId = toast.loading('Updating Avatar...');
+		selectAvatar();
+		const URL = urlpath ? `user/avatar/${urlpath}` : "user/avatar/";
+		axiosPvt
+			.put(URL, payload)
+			.then(res => {
+				toast.update(toastId, {
+					render: 'Avatar Updated Successfully',
+					isLoading: false,
+					type: 'success',
+					autoClose: 1000,
+				});
+				window.location.reload();
+			})
+			.catch(err => {
+				console.error(err);
+				toast.update(toastId, {
+					render: 'An error occurred',
+					isLoading: false,
+					type: 'error',
+					autoClose: 1000,
+				});
+				setOpen(false);
+			});
+	}, [newAvatar, selectAvatar, axiosPvt]);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -127,32 +154,7 @@ const Profile = props => {
 		};
 	}, [axiosPvt, selectAvatar, urlpath]);
 
-	const updateAvatar = useCallback(() => {
-		const payload = { avatar: newAvatar };
-		const toastId = toast.loading('Updating Avatar...');
-		selectAvatar();
-		axiosPvt
-			.put('user/avatar', payload)
-			.then(res => {
-				toast.update(toastId, {
-					render: 'Avatar Updated Successfully',
-					isLoading: false,
-					type: 'success',
-					autoClose: 1000,
-				});
-				window.location.reload();
-			})
-			.catch(err => {
-				console.error(err);
-				toast.update(toastId, {
-					render: 'An error occurred',
-					isLoading: false,
-					type: 'error',
-					autoClose: 1000,
-				});
-				setOpen(false);
-			});
-	}, [newAvatar, selectAvatar, axiosPvt]);
+	
 
 	return (
 		<>

@@ -1,9 +1,13 @@
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 import { sendEmailVerification } from './sendMail.js';
-import { hashPassword } from '../functions/util.js';
-import axios from 'axios';
+import {
+	hashPassword,
+	verifyToken,
+	generatePassword,
+} from '../functions/util.js';
 import { emaxios } from './sendMail.js';
+import isEmail from 'validator/lib/isEmail.js';
 const prisma = new PrismaClient();
 const addUserToDb = async user => {
 	let newuser = await prisma.users.create({
@@ -134,23 +138,42 @@ const addToSib = async (username, email) => {
 	}
 };
 //parameter is an object which can contain any of the following properties => 'email' , 'username' , 'id'
-const deleteUser = async userAttribute => {
-	let key = Object.keys(userAttribute)[0];
-	let deleteduser = await prisma.users.delete({
-		where: {
-			[key]: userAttribute[key],
-		},
-	});
-	console.log('🚀 ~ file: user.js ~ line 138 ~ deleteduser', deleteduser);
-	return deleteduser;
+const deleteUser = async (req, res) => {
+	let {
+		params: { idType, id },
+	} = req;
+	if (req.user.role !== 'admin') {
+		res.status(403).send('This request is forbidden');
+	} else {
+		try {
+			await prisma.users.delete({
+				where: {
+					[idType]: id,
+				},
+			});
+			res.status(200).send('Successfully deleted user');
+		} catch (e) {
+			console.error(e);
+			res.status(500), send('error occurred while trying to delete user');
+		}
+	}
 };
 
 const registerNewUser = async (
-	{ body: { userRegister: newUser } },
+	{ body: { userRegister: newUser }, cookies },
 	res,
 	next
 ) => {
 	//add entered credentials to database  if user exists error will be thrown by prisma which is handled by the error Route
+	if (cookies) {
+		if (verifyToken(cookies.accessToken).role === 'admin')
+			newUser = { ...newUser, password: generatePassword() };
+		else {
+			res.status(403).send('Unauthorized Request');
+		}
+	}
+	if (!isEmail(newUser.email))
+		res.status(400).send('This is not a valid email');
 	try {
 		await addUserToDb(newUser);
 		console.log('user added to db');
@@ -297,11 +320,13 @@ const updateMarketing = async (req, res) => {
 	}
 };
 const updateAvatar = async (req, res, next) => {
+	if (req.params.id && req.user.role !== 'admin')
+		res.status(403).send('Unauthorized request');
 	let { avatar } = req.body;
 	try {
-		let update = await prisma.users.update({
+		await prisma.users.update({
 			where: {
-				id: req.user.id,
+				id: req.params.id ? req.params.id : req.user.id,
 			},
 			data: {
 				avatar,

@@ -8,7 +8,7 @@ dotenv.config();
 
 export const resetPasswordRequestHandler = async (req, res, next) => {
 	try {
-		let { email } = req.body;
+		let { email, username } = req.body;
 		//validate email
 		if (!isEmail(email)) {
 			let err = new Error('Invalid Email Address');
@@ -29,11 +29,8 @@ export const resetPasswordRequestHandler = async (req, res, next) => {
 			process.env.RESET_PASSWORD_SECRET,
 			10 * 60
 		);
-		sendResetPasswordEmail(email, token);
-		res.json({
-			message: 'Password reset email has been sent successfully',
-			status: 'success',
-		});
+		sendResetPasswordEmail(username, email, token);
+		res.status(200).send('Password reset email has been sent successfully');
 	} catch (e) {
 		console.log(e);
 		next(e);

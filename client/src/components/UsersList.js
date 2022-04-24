@@ -1,10 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import AuthContext from '../context/AuthProvider';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from '../api/axios';
 import AddIcon from '@mui/icons-material/Add';
 import {
-	Avatar,
 	Grid,
 	Button,
 	Dialog,
@@ -18,6 +16,10 @@ import {
 	TableRow,
 	TableCell,
 	TableBody,
+	FormGroup,
+	Checkbox,
+	FormControlLabel,
+	FormLabel,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LockResetIcon from '@mui/icons-material/LockReset';
@@ -25,25 +27,52 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from './../api/axios';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+const sort = arr => {
+	let adminsorted = arr
+		.filter(e => e.role === 'admin')
+		.sort((a, b) => {
+			if (a.username >= b.username) return 1;
+			return -1;
+		});
+	let customersorted = arr
+		.filter(e => e.role === 'customer')
+		.sort((a, b) => {
+			if (a.username >= b.username) return 1;
+			return -1;
+		});
+	let usersorted = arr
+		.filter(e => e.role === 'user')
+		.sort((a, b) => {
+			if (a.username >= b.username) return 1;
+			return -1;
+		});
+	return [...customersorted, ...usersorted, ...adminsorted];
+};
 const UsersList = () => {
 	const [rows, setRows] = useState([]);
+	const [openDownloadDialog, setOpenDownloadDialog] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [resetPwdUsername, setResetPwdUsername] = useState('');
 	const [resetPwdEmail, setResetPwdEmail] = useState('');
 	const ctx = useContext(AuthContext);
 	const axiosPvt = ctx.useAxiosPrivate();
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	const [deleteUser, setDeleteUser] = useState(false);
-	const resetPassword = async email => {
+	const resetPassword = async () => {
 		const id = toast.loading('Processing request');
 		try {
 			let response = await axios.post('updates/resetPasswordRequest', {
-				email,
+				email: resetPwdEmail,
+				username: resetPwdUsername,
 			});
 			toast.update(id, {
 				render: response.data,
-				type: 'sucess',
+				type: 'success',
 				isLoading: false,
+				autoClose: 1500,
 			});
 			handleClose();
 		} catch (e) {
@@ -72,67 +101,50 @@ const UsersList = () => {
 			headerName: 'User Id',
 			width: 75,
 		},
+
 		{
 			id: 2,
-			field: 'avatar',
-			headerName: 'Avatar',
-			width: 100,
-		},
-		{
-			id: 3,
 			field: 'username',
 			headerName: 'Username',
 			width: 175,
 		},
 		{
-			id: 4,
+			id: 3,
 			field: 'email',
 			headerName: 'Email',
 			width: 220,
 		},
 		{
-			id: 5,
+			id: 4,
 			field: 'role',
 			headerName: 'Role',
 		},
 		{
-			id: 6,
+			id: 5,
 			field: 'Password Reset',
 			headerName: 'Password Reset',
 			width: 150,
 		},
 		{
-			id: 7,
+			id: 6,
 			field: 'actions',
 			headerName: 'Actions',
 			width: 220,
 		},
 	];
+	const closeDownloadDialog = () => {
+		setOpenDownloadDialog(false);
+	};
 	const deleteuser = () => {
-		const id = toast.loading('Deleting user from database...');
-		axiosPvt
-			.delete('/users', { email: resetPwdEmail })
-			.then(res => {
-				toast.update(id, {
-					render: res.data,
-					type: 'sucess',
-					isLoading: false,
-				});
+		toast
+			.promise(axiosPvt.delete(`/user/username/${resetPwdUsername}`), {
+				pending: 'deleting user from database',
+				success: 'Successfully deleted user from database',
+				error: 'Could not delete user from database',
 			})
-			.catch(e => {
-				if (e.response) {
-					toast.update(id, {
-						render: e.response.data,
-						type: 'error',
-						isLoading: false,
-					});
-				} else {
-					toast.update(id, {
-						render: 'Server Unavailable. Try again later',
-						type: 'error',
-						isLoading: false,
-					});
-				}
+			.then(() => {
+				handleClose();
+				window.location.reload();
 			});
 	};
 
@@ -147,13 +159,12 @@ const UsersList = () => {
 						username: true,
 						email: true,
 						role: true,
-						avatar: true,
 					},
 				});
 				let { data } = users;
 				let arr = [];
 				data.forEach((user, index) => {
-					let { username, email, role, avatar, id } = user;
+					let { username, email, role, id } = user;
 
 					arr = [
 						...arr,
@@ -162,21 +173,10 @@ const UsersList = () => {
 							username,
 							email,
 							role,
-							avatar: (
-								<Avatar
-									src={avatar}
-									sx={{
-										boxShadow: 2,
-										border: '2px solid white',
-										width: 30,
-										height: 30,
-									}}
-								/>
-							),
 						},
 					];
 				});
-				setRows(arr);
+				setRows(sort(arr));
 			} catch (e) {
 				console.log(e);
 			}
@@ -204,13 +204,18 @@ const UsersList = () => {
 									style={{
 										borderRadius: '4px',
 										marginBlock: '5px',
-										backgroundImage:
-											'linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%)',
+										border: '1px solid #cee0f3',
 									}}>
 									<TableHead>
-										<TableRow>
+										<TableRow
+											sx={{
+												borderRadius: 4,
+												backgroundColor: '#1976d2',
+											}}>
 											{columns.map(col => (
-												<TableCell key={`${col.id}`}>
+												<TableCell
+													key={`${col.id}`}
+													sx={{ textTransform: 'uppercase', color: 'white' }}>
 													{col.headerName}
 												</TableCell>
 											))}
@@ -218,9 +223,18 @@ const UsersList = () => {
 									</TableHead>
 									<TableBody>
 										{rows.map(row => (
-											<TableRow key={row.id}>
+											<TableRow
+												key={row.id}
+												sx={{
+													'&:nth-of-type(even)': {
+														backgroundColor: '#cee0f3',
+													},
+													// hide last border
+													'&:last-child td, &:last-child th': {
+														border: 0,
+													},
+												}}>
 												<TableCell>{row.id}</TableCell>
-												<TableCell>{row.avatar}</TableCell>
 												<TableCell>{row.username}</TableCell>
 												<TableCell>{row.email}</TableCell>
 												<TableCell>{row.role}</TableCell>
@@ -235,6 +249,7 @@ const UsersList = () => {
 														onClick={() => {
 															setDeleteUser(false);
 															setResetPwdEmail(row.email);
+															setResetPwdUsername(row.username);
 															setOpen(true);
 														}}>
 														<LockResetIcon sx={{ color: 'red' }} />
@@ -256,6 +271,7 @@ const UsersList = () => {
 													<IconButton
 														onClick={() => {
 															setDeleteUser(true);
+															setResetPwdUsername(row.username);
 															setResetPwdEmail(row.email);
 															setOpen(true);
 														}}
@@ -268,6 +284,20 @@ const UsersList = () => {
 														}}>
 														<DeleteIcon fontSize='10px'></DeleteIcon>
 													</IconButton>
+													<IconButton
+														onClick={() => {
+															setResetPwdUsername(row.username);
+															setOpenDownloadDialog(true);
+														}}
+														size='small'
+														sx={{
+															backgroundColor: 'white',
+															color: '#e1ad01',
+															mx: 1,
+															boxShadow: 2,
+														}}>
+														<FileDownloadIcon fontSize='10px' />
+													</IconButton>
 												</TableCell>
 											</TableRow>
 										))}
@@ -275,6 +305,11 @@ const UsersList = () => {
 								</Table>
 							</div>
 						</Grid>
+						<DownloadData
+							open={openDownloadDialog}
+							handleClose={closeDownloadDialog}
+							username={resetPwdUsername}
+						/>
 						<Dialog
 							fullScreen={fullScreen}
 							open={open}
@@ -341,3 +376,103 @@ const UsersList = () => {
 	);
 };
 export default UsersList;
+
+function DownloadData({ open, handleClose, username }) {
+	const ctx = useContext(AuthContext);
+	const axiosPvt = ctx.useAxiosPrivate();
+	const theme = useTheme();
+	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+	const [url, setUrl] = useState('');
+	const [checkBoxData, setCheckboxData] = useState({
+		id: true,
+		username: true,
+		email: true,
+		address: true,
+		marketingPreference: true,
+		createdAt: true,
+		role: true,
+		orders: true,
+		reviews: true,
+	});
+	const getData = () => {
+		let paramsData = {};
+		Object.keys(checkBoxData).forEach(key => {
+			if (checkBoxData[key] === true)
+				paramsData = { ...paramsData, [key]: checkBoxData[key] };
+		});
+		console.log(paramsData);
+		axiosPvt
+			.get(`/user/username/${username}`, {
+				params: paramsData,
+			})
+			.then(({ data }) => {
+				setUrl(
+					URL.createObjectURL(
+						new Blob([JSON.stringify(data)], { type: 'application/json' })
+					)
+				);
+			})
+			.then(() => {
+				toast.success('Fetched data successfully');
+			})
+			.catch(e => {
+				toast.error('Could not fetch required data');
+			});
+	};
+	return (
+		<Dialog
+			fullScreen={fullScreen}
+			open={open}
+			onClose={handleClose}
+			aria-labelledby='responsive-dialog-title'>
+			<DialogTitle id='responsive-dialog-title' sx={{ color: 'orange' }}>
+				<b>Download User &amp; Related Data</b>
+			</DialogTitle>
+			<DialogContent>
+				<FormLabel component='legend'>
+					Select the data you wish to download for this User
+				</FormLabel>
+				<FormGroup>
+					{Object.keys(checkBoxData).map(objKey => (
+						<FormControlLabel
+							key={objKey}
+							control={
+								<Checkbox
+									checked={checkBoxData[objKey]}
+									onChange={e => {
+										setCheckboxData(p => ({
+											...p,
+											[objKey]: e.target.checked,
+										}));
+									}}
+								/>
+							}
+							label={objKey}
+						/>
+					))}
+				</FormGroup>
+			</DialogContent>
+			<DialogActions>
+				<Button color='error' autoFocus onClick={handleClose}>
+					Close
+				</Button>
+				{!url && (
+					<Button color='primary' onClick={getData} autoFocus>
+						Fetch Selected data
+					</Button>
+				)}
+
+				{url && (
+					<Button
+						component='a'
+						href={url}
+						download={`${username}.json`}
+						variant='contained'
+						startIcon={<FileDownloadIcon />}>
+						Download Json file
+					</Button>
+				)}
+			</DialogActions>
+		</Dialog>
+	);
+}

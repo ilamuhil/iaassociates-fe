@@ -226,7 +226,7 @@ const updatePassword = async (req, res, next) => {
 				email,
 			},
 			data: {
-				password: hashPassword(updatedPassword),
+				password: updatedPassword,
 			},
 		});
 		let { username } = updatedRecord;

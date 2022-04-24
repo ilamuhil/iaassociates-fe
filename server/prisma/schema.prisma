@@ -21,6 +21,7 @@ model Users {
   address               Address?
   orders                Orders[]
   marketingPreference   MarketingPreference?
+  reviews               Reviews[]
 
   @@map("users")
 }
@@ -28,7 +29,7 @@ model Users {
 model MarketingPreference {
   id             Int     @id @default(autoincrement())
   userId         String  @unique
-  user           Users   @relation(fields: [userId], references: [id])
+  user           Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
   ServiceOffers  Boolean @default(true)
   complianceInfo Boolean @default(true)
 
@@ -38,7 +39,7 @@ model MarketingPreference {
 model Address {
   id          Int     @id @default(autoincrement())
   userId      String  @unique
-  user        Users   @relation(fields: [userId], references: [id])
+  user        Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
   adl1        String  @db.LongText
   adl2        String  @db.LongText
   zipcode     Int
@@ -51,33 +52,34 @@ model Address {
 }
 
 model Services {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
-  description String   @db.LongText
-  highlights  String   @db.LongText
-  SAC         String?  @db.VarChar(255)
+  description String    @db.LongText
+  highlights  String    @db.LongText
+  SAC         String?   @db.VarChar(255)
   orders      Orders[]
+  reviews     Reviews[]
 
   @@map("services")
 }
 
 //order Status : created ,pending ,onhold ,completed ,failed , refunded
 model Orders {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   value            Float
-  createdAt        DateTime @default(now())
+  createdAt        DateTime  @default(now())
   serviceId        Int
   discount         Int
-  orderDescription String   @db.LongText
+  orderDescription String    @db.LongText
   userId           String
-  user             Users    @relation(fields: [userId], references: [id])
-  service          Services @relation(fields: [serviceId], references: [id])
+  user             Users?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service          Services? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   review           Reviews?
-  orderStatus      String   @db.MediumText
-  paymentStatus    Boolean  @default(false)
-  razorpayId       String   @db.MediumText
-  invoiceNumber    String   @db.MediumText
-  invoiceDate      String   @db.MediumText
+  orderStatus      String    @db.MediumText
+  paymentStatus    Boolean   @default(false)
+  razorpayId       String    @db.MediumText
+  invoiceNumber    String    @db.MediumText
+  invoiceDate      String    @db.MediumText
 
   @@index([userId], map: "orders_customerId_fkey")
   @@index([serviceId], map: "orders_serviceId_fkey")
@@ -90,11 +92,14 @@ model Reviews {
   title        String   @db.VarChar(255)
   starRating   Int
   content      String?  @db.LongText
-  orders       Orders   @relation(fields: [orderId], references: [id])
+  userId       String
+  serviceId    Int      @default(0)
+  user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service      Services @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  orders       Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId      Int      @unique
   updatedAt    DateTime @updatedAt
   reviewstatus String   @db.MediumText
-
 
   @@map("reviews")
 }

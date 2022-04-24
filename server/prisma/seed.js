@@ -154,6 +154,8 @@ ordersdata.forEach((e, index) => {
 	let review = Math.floor(Math.random() * 4);
 	reviews.push({
 		orderId: index + 1,
+		serviceId: e.serviceId,
+		userId:e.userId,
 		title: reviewTitle[review],
 		content: reviewcontent[review],
 		starRating: rating[review],

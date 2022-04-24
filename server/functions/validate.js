@@ -4,3 +4,6 @@ const phoneNumber =
 	/^([\(\+])?([\s\+]*)(91)?([\s\)]*)(0)?(\d{5})([\s\-]*)(\d{5})(\s*)/;
 const password = / (.)/;
 
+const validate = () => {
+	
+}

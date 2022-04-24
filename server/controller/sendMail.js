@@ -40,8 +40,8 @@ const sendResetPasswordEmail = async (username, toEmail, verificationId) => {
 	try {
 		emaxios.post('/smtp/email', {
 			params: {
-				confirmationLink: verificationUrl,
-				name: username,
+				resetPasswordLink: verificationUrl,
+				username,
 			},
 			to: [{ name: username, email: toEmail }],
 			templateId: 7,

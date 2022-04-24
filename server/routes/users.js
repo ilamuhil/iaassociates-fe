@@ -1,5 +1,4 @@
 import express from 'express';
-const route = express.Router();
 import {
 	findFilteredUser,
 	updateAvatar,
@@ -7,8 +6,10 @@ import {
 	updateMarketing,
 } from '../controller/user.js';
 import { authenticateUser } from './../controller/authenticate.js';
+const route = express.Router();
 route.get('/:filterkey?/:filterValue?', findFilteredUser);
-route.put('/avatar', updateAvatar);
-route.delete('/', deleteUser);
+route.put('/avatar/:id?', updateAvatar);
+route.delete('/:idType?/:id?', authenticateUser, deleteUser);
 route.post('/marketing/:id?', authenticateUser, updateMarketing);
+
 export default route;
