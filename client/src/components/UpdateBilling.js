@@ -93,6 +93,14 @@ const UpdateBilling = ({ email, setEmail }) => {
 	]);
 	const validateBilling = useCallback(async () => {
 		const toastId = toast.loading('validating address...');
+		if (!fname || !lname || !phoneNo || !zipcode) {
+			toast.update(toastId, {
+				render: 'Please fill in the empty fields',
+				type: 'warning',
+				isLoading: false,
+				autoClose: 2000,
+			});
+		}
 		try {
 			let res = await axios.get(
 				'https://api.postalpincode.in/pincode/' + zipcode
@@ -125,7 +133,7 @@ const UpdateBilling = ({ email, setEmail }) => {
 			});
 			return;
 		}
-	}, [updateBilling, zipcode]);
+	}, [updateBilling, zipcode, fname, lname, phoneNo]);
 	return (
 		<div className='col'>
 			<div className='row mb-2'>

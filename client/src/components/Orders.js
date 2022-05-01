@@ -1,43 +1,40 @@
-import React, {
-	useEffect,
-	useContext,
-	useState,
-	useCallback,
-	Suspense,
-	Fragment,
-} from 'react';
-import { v4 as uuid } from 'uuid';
-
-import Invoice from './Invoice';
+import React, { useEffect, useContext, useState, useCallback } from 'react';
+import { format } from 'date-fns';
+// import Invoice from './Invoice';
 import { experimentalStyled as styled } from '@mui/material/styles';
 import AuthContext from '../context/AuthProvider';
 import SvgIcon from '@mui/material/SvgIcon';
 import { toast } from 'react-toastify';
 import {
 	Grid,
+	Button,
 	IconButton,
 	Paper,
 	Box,
 	InputLabel,
 	Typography,
+	ListSubheader,
 	Tabs,
 	Tab,
-	TableContainer,
-	Table,
-	TableBody,
-	TableRow,
-	TableHead,
-	TableCell,
-	Chip,
 	FormControl,
 	Select,
 	MenuItem,
+	Dialog,
+	DialogContent,
+	DialogActions,
+	DialogContentText,
+	DialogTitle,
 } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import { ReactComponent as PackageDeliveredIcon } from './../img/package-delivered.svg';
 import { ReactComponent as PackageDeliveredStatusTimeIcon } from './../img/package-delivered-status-time.svg';
 import { ReactComponent as ParcelBoxPackageIcon } from './../img/parcel-box-package.svg';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import OrdersTable from './OrderTable';
+import OrderActionsWrapper from './OrderActionsWrapper';
 
-const CreateNewOrderForm = React.lazy(() => import('./CreateNewOrderForm'));
+const CreateNewOrderForm = React.lazy(() => import('./NewOrder'));
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
@@ -67,109 +64,97 @@ function TabPanel(props) {
 		</div>
 	);
 }
-const OrdersTable = ({ orders }) => {
-	const [totalVal, setTotalValue] = useState(0);
-	useEffect(() => {
-		setTotalValue(
-			orders
-				.reduce((total, order) => total + parseFloat(order.value), 0)
-				.toFixed(2)
-		);
-	}, [orders]);
-	const statuscolor = useCallback(status => {
-		status = status.toLowerCase();
-		if (status === 'completed') {
-			return '#7fff00';
-		} else if (status === 'pending' || status === 'onHold') {
-			return '#fcc425';
-		} else if (status === 'failed' || status === 'refunded') {
-			return '#d23030';
-		} else if (status === 'created') {
-			return '#aecad6';
-		} else return '#039be5';
-	}, []);
-	return (
-		<>
-			<TableContainer>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Order Id</TableCell>
-							<TableCell>User</TableCell>
-							<TableCell>Service</TableCell>
-							<TableCell>Order Value</TableCell>
-							<TableCell>Order Status</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{orders.map(order => (
-							<Fragment key={uuid()}>
-								<TableRow>
-									<TableCell>{order.id}</TableCell>
-									<TableCell>{order.user.username}</TableCell>
-									<TableCell>{order.service.title}</TableCell>
-									<TableCell>{order.value} ₹</TableCell>
-									<TableCell>
-										<Chip
-											label={order.status}
-											style={{
-												backgroundColor: `${statuscolor(order.status)}`,
-											}}
-										/>
-									</TableCell>
-								</TableRow>
-							</Fragment>
-						))}
-						<TableRow>
-							<TableCell></TableCell>
-							<TableCell></TableCell>
-							<TableCell>
-								<b style={{ color: '#1976d2' }}>Total Value</b>
-							</TableCell>
-							<TableCell>
-								<b style={{ color: '#1976d2' }}>{totalVal} ₹</b>
-							</TableCell>
-						</TableRow>
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</>
-	);
-};
+
 const Orders = () => {
+	const theme = useTheme();
+	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	const [orders, setOrders] = useState([]);
+	const [orderId, setOrderId] = useState(0);
 	let authctx = useContext(AuthContext);
 	const [value, setValue] = useState(0);
 	const [selectedUser, setSelectedUser] = useState('');
-	const [filterOrderStatus, setfilterOrderStatus] = useState('');
+	const [filter, setFilter] = useState('');
+	const [userList, setUserList] = useState();
+	const [open, setOpen] = useState(false);
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
-	const filterOrders = criteria => {
-		switch (criteria) {
-			case 'refunded':
-				return orders.filter(order => order.status === 'refunded');
-			case 'onHold':
-				return orders.filter(order => order.status === 'onHold');
-			case 'pending':
-				return orders.filter(order => order.status === 'pending');
-			case 'completed':
-				return orders.filter(order => order.status === 'completed');
-			case 'failed':
-				return orders.filter(order => order.status === 'failed');
-			default:
-				return orders;
-		}
-	};
+	const [downloadLink, setDownloadLink] = useState('');
 	let axiosPvt = authctx.useAxiosPrivate();
+	const downloadData = useCallback(
+		async value => {
+			const toastId = toast.loading('fetching data');
+			try {
+				let res = await axiosPvt.get(`/orders/downloads/${value}`);
+				setDownloadLink(
+					URL.createObjectURL(
+						new Blob([JSON.stringify(res.data)], { type: 'application/json' })
+					)
+				);
+				toast.update(toastId, {
+					render: 'Data fetched successfully',
+					type: 'success',
+					isLoading: false,
+					autoClose: 1500,
+				});
+			} catch (e) {
+				console.log(e);
+
+				toast.update(toastId, {
+					render: e.response
+						? e.response.data
+						: 'Server unavailable,try again later',
+					type: e.response ? 'warning' : 'error',
+					isLoading: false,
+					autoClose: 1500,
+				});
+			}
+		},
+		[axiosPvt]
+	);
+	const sendPaymentReminder = useCallback(() => {
+		toast.promise(
+			axiosPvt.post(`/users/sendReminder/${selectedUser}/`),
+			{
+				pending: 'Processing request',
+				error: 'An error occurred',
+				success: 'Payment reminder sent',
+			},
+			[selectedUser]
+		);
+	});
+
+	const filterOrders = useCallback(
+		val => {
+			let criteria;
+			if (filter === 'true' || filter === 'false') {
+				criteria = { paymentStatus: val };
+			} else {
+				criteria = { orderStatus: val };
+			}
+			let url = selectedUser
+				? `/orders/getorders/username/${selectedUser}`
+				: '/orders/getorders';
+			axiosPvt
+				.get(url, {
+					params: criteria,
+				})
+				.then(({ data }) => {
+					setOrders(data);
+				})
+				.catch(e => {});
+		},
+		[axiosPvt, selectedUser, filter]
+	);
 	useEffect(() => {
 		let controller = new AbortController();
 		//TODO reqdata from serverside: status, username, value,service title ,id
 		axiosPvt
-			.get('/orders', { signal: controller.signal })
+			.get('/orders/getorders', { signal: controller.signal })
 			.then(response => {
 				let { data } = response;
-				setOrders([...data]);
+				setUserList([...new Set(data.map(order => order.username).sort())]);
+				setOrders(order => [...order, ...data]);
 			})
 			.catch(e => {
 				console.error(e);
@@ -211,7 +196,7 @@ const Orders = () => {
 							PENDING ORDERS
 						</Typography>
 						<Typography variant='button' color='#ff9f00'>
-							{orders.filter(order => order.status === 'pending').length}
+							{orders.filter(order => order.orderStatus === 'pending').length}
 						</Typography>
 					</Item>
 				</Grid>
@@ -267,7 +252,7 @@ const Orders = () => {
 							COMPLETE ORDERS
 						</Typography>
 						<Typography variant='button' color='#7fff00'>
-							{orders.filter(order => order.status === 'completed').length}
+							{orders.filter(order => order.orderStatus === 'completed').length}
 						</Typography>
 					</Item>
 				</Grid>
@@ -288,89 +273,180 @@ const Orders = () => {
 								centered>
 								<Tab label='All Orders' {...a11yProps(0)} />
 
-								<Tab label='Create/Edit Order' {...a11yProps(1)} />
+								<Tab label='Order Actions' {...a11yProps(1)} />
 							</Tabs>
 						</Box>
 						<TabPanel value={value} index={0}>
 							{orders.length !== 0 && (
 								<>
 									<Grid container spacing={2}>
-										<Grid item lg={4}>
+										<Grid item lg={3} md={4}>
 											<FormControl fullWidth>
-												<InputLabel id='order-status'>
-													Filter by order status
-												</InputLabel>
+												<InputLabel id='status'>Filter by status</InputLabel>
 												<Select
-													value={filterOrderStatus}
-													labelId='order-status'
+													value={filter}
+													labelId='status'
 													onChange={e => {
-														setfilterOrderStatus(e.target.value);
+														if (e.target.value === 'none') {
+															setFilter('');
+															return;
+														}
+														setFilter(e.target.value);
+														filterOrders(e.target.value);
 													}}
-													label='Filter by order status'>
+													label='Filter by status'>
+													<MenuItem value=''>None</MenuItem>
+													<ListSubheader>Order Status</ListSubheader>
+													<MenuItem value='onhold'>On Hold</MenuItem>
+													<MenuItem value='pending'>Pending</MenuItem>
 													<MenuItem value='refunded'>Refunded</MenuItem>
 													<MenuItem value='completed'>Completed</MenuItem>
 													<MenuItem value='failed'>Failed</MenuItem>
-													<MenuItem value='onHold'>On Hold</MenuItem>
-													<MenuItem value='onHold'>Pending</MenuItem>
+													<ListSubheader>Payment Status</ListSubheader>
+													<MenuItem value='true'>Paid Orders</MenuItem>
+													<MenuItem value='false'>Unpaid Orders</MenuItem>
 												</Select>
 											</FormControl>
 										</Grid>
-										<Grid item lg={4}>
+										<Grid item lg={3}>
 											<FormControl fullWidth>
 												<InputLabel id='user-list'>Filter by user</InputLabel>
 												<Select
 													value={selectedUser}
 													label='Filter by user'
 													labelId='user-list'
+													defaultValue=''
 													onChange={e => {
 														setSelectedUser(e.target.value);
+														console.log(e.target.value);
 													}}>
 													<MenuItem value='none'>None</MenuItem>
 													{orders &&
-														orders
-															.sort((a, b) => {
-																if (a.user.username > b.user.username) {
+														userList.map(element => (
+															<MenuItem key={`${element}`} value={`${element}`}>
+																{element}
+															</MenuItem>
+														))}
+												</Select>
+											</FormControl>
+										</Grid>
+										<Grid item lg={3}>
+											<FormControl fullWidth>
+												<InputLabel id='Sort'>Sort</InputLabel>
+												<Select
+													value={selectedUser}
+													label='Sort'
+													labelId='Sort'
+													onChange={e => {
+														setOrders(orders => {
+															if (e.target.value === 'price') {
+																return orders.sort((a, b) => {
+																	if (a.value >= b.value) return -1;
 																	return 1;
-																} else {
-																	return -1;
-																}
-															})
-															.map(element => (
-																<MenuItem
-																	key={element.user.username}
-																	value={element.user.username}>
-																	{element.user.username}
-																</MenuItem>
-															))}
+																});
+															} else {
+																return orders.sort((a, b) => {
+																	if (a.createdAt >= b.createdAt) return -1;
+																	return 1;
+																});
+															}
+														});
+														filterOrders();
+													}}>
+													<MenuItem value='price'>Order Value</MenuItem>
+													<MenuItem value='createdAt'>Order Date</MenuItem>
 												</Select>
 											</FormControl>
 										</Grid>
 									</Grid>
-									{selectedUser && selectedUser !== 'none' && (
-										<OrdersTable
-											orders={orders.filter(
-												order => order.user.username === selectedUser
+									<Grid container spacing={2} sx={{ my: 4 }}>
+										<Grid item lg={3}>
+											<FormControl fullWidth>
+												<InputLabel id='Download monthly orders'>
+													Download monthly orders report
+												</InputLabel>
+												<Select
+													value={selectedUser}
+													label='Download monthly orders'
+													labelId='Download monthly orders'
+													onChange={e => {
+														downloadData(e.target.value);
+													}}>
+													{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(value => (
+														<MenuItem key={value} value={value}>
+															{format(new Date(2022, value, 1), 'MMMM')}
+														</MenuItem>
+													))}
+												</Select>
+											</FormControl>
+										</Grid>
+										{downloadLink && (
+											<Grid item lg={3}>
+												<Button
+													variant='contained'
+													href={downloadLink}
+													component='a'
+													onClick={() => {
+														setDownloadLink('');
+													}}
+													endIcon={<FileDownloadIcon />}
+													download='MonthlyReport'>
+													Download data
+												</Button>
+											</Grid>
+										)}
+									</Grid>
+									<Dialog
+										fullScreen={fullScreen}
+										open={open}
+										onClose={() => {
+											setOpen(false);
+										}}
+										aria-labelledby='responsive-dialog-title'>
+										<DialogTitle
+											id='responsive-dialog-title'
+											sx={{ color: 'orange' }}>
+											<b>Payment Reminder</b>
+										</DialogTitle>
+										<DialogContent>
+											{selectedUser && (
+												<DialogContentText>
+													Are you sure you want to send a payment reminder to
+													<b style={{ color: 'black' }}>
+														{selectedUser && selectedUser}?
+													</b>{' '}
+													<br />
+												</DialogContentText>
 											)}
-										/>
-									)}
-									{filterOrderStatus &&
-										(!selectedUser || selectedUser === 'none') && (
-											<OrdersTable
-												orders={filterOrders(`${filterOrderStatus}`)}
-											/>
-										)}
-									{!filterOrderStatus &&
-										(!selectedUser || selectedUser === 'none') && (
-											<OrdersTable orders={orders} />
-										)}
+										</DialogContent>
+										<DialogActions>
+											<Button
+												color='error'
+												autoFocus
+												onClick={() => {
+													setOpen(false);
+												}}>
+												Exit
+											</Button>
+											<Button
+												color='success'
+												onClick={sendPaymentReminder}
+												autoFocus>
+												Send Reminder
+											</Button>
+										</DialogActions>
+									</Dialog>
+									<OrdersTable
+										orders={orders}
+										setOpen={setOpen}
+										setOrderId={setOrderId}
+										setSelectedUser={setSelectedUser}
+									/>
 								</>
 							)}
 						</TabPanel>
-
 						<TabPanel value={value} index={1}>
-							<Suspense fallback={<div>Loading...</div>}>
-								<CreateNewOrderForm />
-							</Suspense>
+							<OrderActionsWrapper />
 						</TabPanel>
 					</Item>
 				</Grid>

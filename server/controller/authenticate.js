@@ -245,7 +245,7 @@ const updatePassword = async (req, res, next) => {
  * @param  {} res
  * @param  {} next
  * {@link verifyLink()}
- * 
+ *
  */
 const logInHandler = async (req, res, next) => {
 	let user = req.body.userLogin;

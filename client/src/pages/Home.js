@@ -8,6 +8,7 @@ import {
 	TextField,
 	DialogActions,
 } from '@mui/material';
+
 import { Link } from 'react-router-dom';
 import { Layout } from './../components/Layout';
 import axios from '../api/axios';
@@ -39,7 +40,6 @@ const Home = () => {
 									onClick={() => {
 										setOpen(true);
 									}}
-									href='#about'
 									className='btn-get-started scrollto'>
 									Get Started
 								</Button>

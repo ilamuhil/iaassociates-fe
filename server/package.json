@@ -2,18 +2,18 @@
 	"name": "ilamurugu-and-associates-server",
 	"version": "1.0.0",
 	"description": "",
+	"type": "module",
+	"author": "ilamuhil",
 	"main": "server.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/ilamuhil/iaassociates.git"
 	},
 	"scripts": {
-		"test": "nodemon server.js",
-		"start": "node server.js",
+		"test": "jest",
+		"start": "nodemon server.js",
 		"studio": "npx prisma studio"
 	},
-	"type": "module",
-	"author": "ilamuhil",
 	"license": "MIT",
 	"dependencies": {
 		"@prisma/client": "^3.10.0",
@@ -30,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^6.1.2",
+		"jest": "^28.0.0",
 		"prisma": "^3.10.0"
 	},
 	"prisma": {

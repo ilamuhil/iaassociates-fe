@@ -80,9 +80,13 @@ const findUser = async (
 			throw err;
 		} else {
 			let select = {};
-			args.forEach(e => {
-				select = { ...select, [e]: true };
-			});
+			if (args.length === 0) {
+				select = { role: true, username: true, email: true, id: true };
+			} else {
+				args.forEach(e => {
+					select = { ...select, [e]: true };
+				});
+			}
 			try {
 				data = await prisma.users.findMany({
 					select,
@@ -339,6 +343,21 @@ const updateAvatar = async (req, res, next) => {
 		next(err);
 	}
 };
+const sendPaymentReminder = async (
+	{ params: { user, id }, user: { role } },
+	res,
+	next
+) => {
+	let data = await prisma.orders.findUnique({
+		where: { id },
+		select: {
+			value,
+			razorpayId,
+			email,
+		},
+	});
+};
+
 export {
 	registerNewUser,
 	findFilteredUser,
@@ -347,4 +366,5 @@ export {
 	addUserToDb,
 	updateAvatar,
 	updateMarketing,
+	sendPaymentReminder,
 };

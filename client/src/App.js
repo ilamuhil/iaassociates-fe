@@ -14,6 +14,7 @@ import {
 	PasswordResetEmail,
 	EmailVerify,
 } from './components/EmailVerify';
+import PaymentStatus from "./components/PaymentStatus";
 import ProtectedRoute from './api/ProtectedRoute';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { Suspense } from 'react';
@@ -23,6 +24,9 @@ import Invoice from './components/Invoice';
 import AddService from './components/AddService';
 import Service from './pages/Service';
 import Terms from './pages/Terms';
+import EditOrder from './components/EditOrder';
+import NewOrder from './components/NewOrder';
+import RefundOrder from './components/RefundOrder';
 // const DbLayout = lazy(() => import('./components/DbLayout'));
 const UsersList = lazy(() => import('./components/UsersList'));
 const Orders = lazy(() => import('./components/Orders'));
@@ -44,8 +48,9 @@ function App() {
 					<Route path='/contact' element={<Contact />} />
 					<Route path='*' element={<PageNotFound />} />
 					<Route path='/privacy-policy' element={<Privacypolicy />} />
-
+					
 					<Route path='/dashboard' element={<DbLayout />}>
+						<Route path="payment/:verification/:orderId" element={ <PaymentStatus/>}/>
 						<Route
 							path='profile'
 							element={
@@ -58,6 +63,7 @@ function App() {
 								</>
 							}
 						/>
+					
 						<Route
 							element={
 								<>
@@ -137,8 +143,11 @@ function App() {
 										<Orders />
 									</Suspense>
 								</ProtectedRoute>
-							}
-						/>
+							}>
+							<Route path='new-order' element={<NewOrder />} />
+							<Route path='edit-order' element={<EditOrder />} />
+							<Route path='refund-order' element={<RefundOrder />} />
+						</Route>
 					</Route>
 
 					<Route

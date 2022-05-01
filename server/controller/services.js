@@ -7,23 +7,14 @@ const prisma = new PrismaClient();
 //if queryparam 'edit' = true  then all the details are sent including description
 const getService = async (req, res, next) => {
 	let { filterkey, filtervalue } = req.params;
-	let { edit } = req.query;
-	console.log(edit, filterkey);
 	filtervalue = filterkey === 'id' ? Number(filtervalue) : filtervalue;
 	if (filterkey && filtervalue) {
 		let payload = {
 			id: true,
 			title: true,
 			highlights: true,
+			description: req.query.description ? true : false,
 		};
-		if (edit && req.user.role === 'admin') {
-			payload = { ...payload, description: true };
-		} else if (edit && req.user.role !== 'admin') {
-			let err = new Error('Unauthorized Request');
-			err.status = 403;
-			next(err);
-			return;
-		}
 		try {
 			let data = await prisma.services.findUnique({
 				where: {
@@ -44,6 +35,7 @@ const getService = async (req, res, next) => {
 				select: {
 					highlights: true,
 					title: true,
+					id: true,
 				},
 			});
 			res.status(200).send(data);
@@ -56,12 +48,12 @@ const getService = async (req, res, next) => {
 };
 
 //updating service requires admin permissions
-const updateService = async(req, res, next) => {
+const updateService = async (req, res, next) => {
 	if (req.user.role !== 'admin') {
 		res.status(403).send('Unauthorized request');
 	}
 	let { id } = req.params;
-	let { title, sachighlights, description } = req.body;
+	let { title, highlights, description } = req.body;
 	try {
 		await prisma.services.update({
 			where: {
@@ -82,22 +74,23 @@ const updateService = async(req, res, next) => {
 	}
 };
 //delete service by id
-const deleteService = async(req, res, next) => {
+const deleteService = async (req, res, next) => {
 	let { id } = req.params;
 	try {
 		await prisma.services.delete({
 			where: {
-				id: Number(id)
-			}
+				id: Number(id),
+			},
 		});
-		res.status(200).send("Service deleted successfully");
+		res.status(200).send('Service deleted successfully');
 	} catch (e) {
-		let err = new Error("Error occurred while deleting service.Try again later");
-		err.status=500 ;
-		next(err) ;
+		let err = new Error(
+			'Error occurred while deleting service.Try again later'
+		);
+		err.status = 500;
+		next(err);
 	}
-	
-}
+};
 
 const addNewService = async (req, res, next) => {
 	let { title, highlights, description, SAC } = req.body;
@@ -124,4 +117,9 @@ const addNewService = async (req, res, next) => {
 		}
 	}
 };
-export { getService, addNewService, updateService,deleteService };
+
+const skipAuth = (req, res, next) => {
+	req.skipAuthentication = true;
+	next();
+};
+export { getService, addNewService, updateService, deleteService, skipAuth };

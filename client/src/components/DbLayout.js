@@ -179,7 +179,7 @@ export default function DbLayout({ children }) {
 						<MenuIcon />
 					</IconButton>
 					<Typography variant='h6' noWrap component='h1'>
-						ILAMURUGU & ASSOCIATES
+						ILAMURUGU &amp; ASSOCIATES
 					</Typography>
 					<Avatar
 						sx={{ width: 35, height: 35, ml: 'auto', mr: 2 }}
@@ -344,13 +344,7 @@ export default function DbLayout({ children }) {
 						}}
 						divider={true}
 						component={Link}
-						to={
-							ctx.userRole === 33
-								? 'orders'
-								: ctx.userRole === 105
-								? 'myorders'
-								: 'no-orders'
-						}
+						to={ctx.userRole === 33 ? 'orders' : 'my-orders'}
 						sx={{
 							minHeight: 48,
 							justifyContent: open ? 'initial' : 'center',
@@ -404,7 +398,6 @@ export default function DbLayout({ children }) {
 			</Drawer>
 			<Box component='main' sx={{ flexGrow: 1, p: 3 }}>
 				<DrawerHeader />
-
 				<IconButton
 					sx={{
 						borderRadius: '50%',

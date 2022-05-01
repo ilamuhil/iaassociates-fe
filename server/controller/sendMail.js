@@ -14,46 +14,49 @@ export const emaxios = axios.create({
 		'content-type': 'application/json',
 	},
 });
-
-const verifyEmail = async (username, toEmail, verificationId) => {
+const sendTemplatedEmail = async (
+	params,
+	to,
+	id,
+	errorMsg = 'Could not send email'
+) => {
 	try {
 		emaxios.post('/smtp/email', {
-			params: {
-				confirmationLink: `${process.env.WEBSITE_URL}/verifyemail/${verificationId}`,
-				name: username,
-			},
-			to: [{ name: username, email: toEmail }],
-			templateId: 5,
+			params,
+			to,
+			templateId: id,
 		});
 	} catch (e) {
 		if (e.response) {
 			console.error(e.response.data);
-			let err = new Error('Could not send verification email.');
+			let err = new Error(errorMsg);
 			err.status = 500;
 			throw err;
 		}
 	}
 };
 
+const verifyEmail = async (username, toEmail, verificationId) => {
+	sendTemplatedEmail(
+		{
+			confirmationLink: `${process.env.WEBSITE_URL}/verifyemail/${verificationId}`,
+			name: username,
+		},
+		[{ name: username, email: toEmail }],
+		5,
+		'Could not send verification email'
+	);
+};
+
 const sendResetPasswordEmail = async (username, toEmail, verificationId) => {
-	const verificationUrl = `${process.env.WEBSITE_URL}/update-password/${verificationId}`;
-	try {
-		emaxios.post('/smtp/email', {
-			params: {
-				resetPasswordLink: verificationUrl,
-				username,
-			},
-			to: [{ name: username, email: toEmail }],
-			templateId: 7,
-		});
-	} catch (e) {
-		if (e.response) {
-			console.error(e.response.data);
-			let err = new Error('Could not send verification email.');
-			err.status = 500;
-			throw err;
-		}
-	}
+	sendTemplatedEmail(
+		{
+			resetPasswordLink: `${process.env.WEBSITE_URL}/update-password/${verificationId}`,
+			username,
+		},
+		[{ name: username, email: toEmail }],
+		7
+	);
 };
 
 const sendEmailVerification = async ({ username, email }) => {
@@ -94,24 +97,16 @@ const newOrderEmail = async (
 	username,
 	toEmail
 ) => {
-	try {
-		await emaxios.post('/smtp/email', {
-			params: {
-				orderValue,
-				serviceTitle,
-				orderNumber: orderId,
-			},
-			to: [{ name: username, email: toEmail }],
-			templateId: 1,
-		});
-	} catch (e) {
-		if (e.response) {
-			console.error(e.response.data);
-			let err = new Error('Could not send Order creation email.');
-			err.status = 500;
-			throw err;
-		}
-	}
+	sendTemplatedEmail(
+		{
+			orderValue,
+			serviceTitle,
+			orderNumber: orderId,
+		},
+		[{ name: username, email: toEmail }],
+		1,
+		'Could not send Order Creation email'
+	);
 };
 const orderConfirmedEmail = async (
 	serviceTitle,
@@ -124,28 +119,20 @@ const orderConfirmedEmail = async (
 	username,
 	toEmail
 ) => {
-	try {
-		await emaxios.post('/smtp/email', {
-			params: {
-				orderValue,
-				serviceTitle,
-				orderNumber: orderId,
-				serviceDescription,
-				tax,
-				orderDiscount,
-				orderTotal,
-			},
-			to: [{ name: username, email: toEmail }],
-			templateId: 3,
-		});
-	} catch (e) {
-		if (e.response) {
-			console.error(e.response.data);
-			let err = new Error('Could not send Order creation email.');
-			err.status = 500;
-			throw err;
-		}
-	}
+	sendTemplatedEmail(
+		{
+			orderValue,
+			serviceTitle,
+			orderNumber: orderId,
+			serviceDescription,
+			tax,
+			orderDiscount,
+			orderTotal,
+		},
+		[{ name: username, email: toEmail }],
+		1,
+		'Could not send Order Confirmation email'
+	);
 };
 const orderRefundedEmail = async (
 	serviceTitle,
@@ -159,56 +146,42 @@ const orderRefundedEmail = async (
 	username,
 	toEmail
 ) => {
-	try {
-		await emaxios.post('/smtp/email', {
-			params: {
-				orderValue,
-				serviceTitle,
-				orderNumber: orderId,
-				serviceDescription,
-				tax,
-				orderDiscount,
-				orderTotal,
-				refundAmt,
-			},
-			to: [{ name: username, email: toEmail }],
-			templateId: 3,
-		});
-	} catch (e) {
-		if (e.response) {
-			console.error(e.response.data);
-			let err = new Error('Could not send Order creation email.');
-			err.status = 500;
-			throw err;
-		}
-	}
+	sendTemplatedEmail(
+		{
+			orderValue,
+			serviceTitle,
+			orderNumber: orderId,
+			serviceDescription,
+			tax,
+			orderDiscount,
+			orderTotal,
+			refundAmt,
+		},
+		[{ name: username, email: toEmail }],
+		3,
+		'Could not send Order Refunded email'
+	);
 };
 const contactEmail = async (name, email, phNo, service, message) => {
-	try {
-		await emaxios.post('/smtp/email', {
-			params: {
-				name,
-				email,
-				service,
-				message,
-				phNo,
-			},
-			to: [{ name: 'ilamurugu and associates', email: 'ilamuhil@gmail.com' }],
-			templateId: 10,
-		});
-		await emaxios.post('/', {
-			params: {
-				name,
-			},
-			to: [{ name, email }],
-			templateId: 9,
-		});
-	} catch (e) {
-		console.error(e);
-		let err = new Error('Could not send Contact email. Try again later');
-		err.status = 500;
-		throw err;
-	}
+	sendTemplatedEmail(
+		{
+			name,
+			email,
+			service,
+			message,
+			phNo,
+		},
+		[{ name: 'ilamurugu and associates', email: 'ilamuhil@gmail.com' }],
+		10
+	);
+	sendTemplatedEmail(
+		{
+			name,
+		},
+		[{ name, email }],
+		9,
+		'Could not send Contact email. Try again later'
+	);
 };
 const orderUpdateEmail = async (
 	orderMessage = null,

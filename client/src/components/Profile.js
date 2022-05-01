@@ -111,7 +111,7 @@ const Profile = props => {
 				});
 				setOpen(false);
 			});
-	}, [newAvatar, selectAvatar, axiosPvt]);
+	}, [newAvatar, selectAvatar, axiosPvt,urlpath]);
 
 	useEffect(() => {
 		const controller = new AbortController();

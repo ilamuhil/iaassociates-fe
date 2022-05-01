@@ -4,12 +4,14 @@ import {
 	updateAvatar,
 	deleteUser,
 	updateMarketing,
+	sendPaymentReminder,
 } from '../controller/user.js';
 import { authenticateUser } from './../controller/authenticate.js';
 const route = express.Router();
 route.get('/:filterkey?/:filterValue?', findFilteredUser);
 route.put('/avatar/:id?', updateAvatar);
-route.delete('/:idType?/:id?', authenticateUser, deleteUser);
-route.post('/marketing/:id?', authenticateUser, updateMarketing);
-
+route.use(authenticateUser);
+route.delete('/:idType?/:id?', deleteUser);
+route.post('/marketing/:id?', updateMarketing);
+route.post('/sendReminder/:user/:id', sendPaymentReminder);
 export default route;

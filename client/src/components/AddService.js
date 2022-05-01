@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import draftToHtml from 'draftjs-to-html';
 import { ReactComponent as DisketteSaveSvgrepoComIcon } from './../img/diskette-save-svgrepo-com.svg';
 import AuthContext from '../context/AuthProvider';
-import axios from 'axios';
+import axios from "./../api/axios";
 function AddService({ edit }) {
 	const [editorState, setEditorState] = useState(EditorState.createEmpty());
 	const ctx = useContext(AuthContext);
@@ -32,16 +32,15 @@ function AddService({ edit }) {
 	useEffect(() => {
 		const controller = new AbortController();
 		if (edit) {
-			axiosPvt
-				.get(`/services/id/${id}`, {
-					params: { edit },
+			axios
+				.get(`/services/get-services/id/${id}`, {
+					params: { description:true },
 					signal: controller.signal,
 				})
 				.then(res => {
 					let { title, description, highlights, SAC: sac } = res.data;
 					setTitle(title);
 					highlights = JSON.parse(highlights);
-					console.log(highlights);
 					setHighlights1(highlights[0]);
 					setHighlights2(highlights[1]);
 					setHighlights3(highlights[2]);
@@ -69,7 +68,7 @@ function AddService({ edit }) {
 				controller.abort();
 			}
 		};
-	}, [axiosPvt, edit, id]);
+	}, [ edit, id]);
 	const updateService = () => {
 		let toastid = toast.loading('Adding service to database');
 		// if (file[0].type === 'image/jpeg' || file[0].type === 'image/png') {

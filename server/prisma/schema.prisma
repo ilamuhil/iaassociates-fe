@@ -65,21 +65,25 @@ model Services {
 
 //order Status : created ,pending ,onhold ,completed ,failed , refunded
 model Orders {
-  id               Int       @id @default(autoincrement())
-  value            Float
-  createdAt        DateTime  @default(now())
-  serviceId        Int
-  discount         Int
-  orderDescription String    @db.LongText
-  userId           String
-  user             Users?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  service          Services? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  review           Reviews?
-  orderStatus      String    @db.MediumText
-  paymentStatus    Boolean   @default(false)
-  razorpayId       String    @db.MediumText
-  invoiceNumber    String    @db.MediumText
-  invoiceDate      String    @db.MediumText
+  id                   Int       @id @default(autoincrement())
+  value                Float
+  createdAt            DateTime  @default(now())
+  serviceId            Int
+  discount             Int?
+  orderDescription     String    @db.LongText
+  userId               String
+  user                 Users?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service              Services? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  review               Reviews?
+  orderStatus          String    @db.MediumText 
+  paymentStatus        Boolean   @default(false)
+  razorpayId           String    @db.MediumText
+  invoiceNumber        String    @db.MediumText
+  invoiceDate          String    @db.MediumText
+  orderNotes           String?   @db.LongText
+  refundReceiptId      String?   @db.MediumText
+  razorpayRefundStatus String?   @db.MediumText
+  razorpayPaymentId    String?   @db.MediumText
 
   @@index([userId], map: "orders_customerId_fkey")
   @@index([serviceId], map: "orders_serviceId_fkey")

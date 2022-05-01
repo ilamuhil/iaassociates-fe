@@ -14,6 +14,13 @@ import services from './routes/services.js';
 import cookieParser from 'cookie-parser';
 import { authenticateUser } from './controller/authenticate.js';
 import addresses from './routes/addresses.js';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 
 app.use(helmet());
@@ -28,12 +35,25 @@ app.use(cookieParser());
 const port = process.env.PORT || 8000;
 app.use(cors({ origin: process.env.WEBSITE_URL, credentials: true }));
 app.use('/dbdata', dbdata);
-app.use('/addresses',authenticateUser, addresses);
+app.use('/addresses', authenticateUser, addresses);
 app.use('/updates', updates);
 app.use('/user', authenticateUser, users);
 app.use('/authenticate', userAuth);
 app.use('/orders', authenticateUser, orders);
 app.use('/contact', contact);
+
 app.use('/services', services);
+
+app.get('/test', async (req, res) => {
+	res.sendFile('abc.txt', { root: path.join(__dirname) }, err => {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log('abc.txt');
+		}
+	});
+});
+
 app.use(errorhandler);
+
 app.listen(port, () => console.log('Server is running on port ' + port));

@@ -4,10 +4,15 @@ import {
 	addNewService,
 	updateService,
 	deleteService,
+	skipAuth,
 } from '../controller/services.js';
 import { authenticateUser } from '../controller/authenticate.js';
 const route = express.Router();
-route.get('/:filterkey?/:filtervalue?', authenticateUser, getService);
+route.get(
+	'/get-services/:filterkey?/:filtervalue?',
+	skipAuth,
+	getService
+);
 route.post('/', authenticateUser, addNewService);
 route.put('/:id', authenticateUser, updateService);
 route.delete('/:id', authenticateUser, deleteService);
