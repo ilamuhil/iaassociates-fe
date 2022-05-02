@@ -6,7 +6,7 @@ import {
 	verifyToken,
 	generatePassword,
 } from '../functions/util.js';
-import { emaxios } from './sendMail.js';
+import { emaxios, sendPaymentReminder } from './sendMail.js';
 import isEmail from 'validator/lib/isEmail.js';
 const prisma = new PrismaClient();
 const addUserToDb = async user => {
@@ -343,20 +343,7 @@ const updateAvatar = async (req, res, next) => {
 		next(err);
 	}
 };
-const sendPaymentReminder = async (
-	{ params: { user, id }, user: { role } },
-	res,
-	next
-) => {
-	let data = await prisma.orders.findUnique({
-		where: { id },
-		select: {
-			value,
-			razorpayId,
-			email,
-		},
-	});
-};
+
 
 export {
 	registerNewUser,
@@ -366,5 +353,4 @@ export {
 	addUserToDb,
 	updateAvatar,
 	updateMarketing,
-	sendPaymentReminder,
 };

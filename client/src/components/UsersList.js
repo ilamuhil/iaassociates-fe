@@ -311,6 +311,13 @@ const UsersList = () => {
 							username={resetPwdUsername}
 						/>
 						<Dialog
+							sx={{
+								'& .MuiDialog-paper': {
+									backgroundColor: 'white',
+									borderRadius: '1rem',
+									paddingTop: '1rem',
+								},
+							}}
 							fullScreen={fullScreen}
 							open={open}
 							onClose={handleClose}

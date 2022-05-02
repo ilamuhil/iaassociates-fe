@@ -9,13 +9,14 @@ import {
 	SvgIcon,
 	Box,
 	ListSubheader,
+	Stack,
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { ReactComponent as PrinterPrintSvgrepoComIcon } from './../img/printer-print-svgrepo-com.svg';
 import useMq from '../hooks/useWindowResize';
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import axios from '../api/axios';
 import { toast } from 'react-toastify';
 import AuthContext from '../context/AuthProvider';
@@ -98,11 +99,11 @@ const NewOrder = () => {
 			axiosPvt.post('/orders/newOrder', {
 				username: user,
 				orderValue: parseFloat(value),
-				discount:parseInt(discount),
+				discount: parseInt(discount),
 				orderNotes,
 				invoiceNumber,
 				invoiceDate,
-				orderDescription:orderDesc,
+				orderDescription: orderDesc,
 				serviceId: id,
 			}),
 			{
@@ -118,11 +119,15 @@ const NewOrder = () => {
 		discount,
 		axiosPvt,
 		serviceList,
-		orderNotes,invoiceNumber,orderDesc,invoiceDate
+		orderNotes,
+		invoiceNumber,
+		orderDesc,
+		invoiceDate,
 	]);
 	return (
-		<>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+		<Stack direction='column' justifyContent='center' spacing={2} mx='auto'>
+			<h5 className='w-100 my-4 text-black'>Create New Order</h5>
+			<Grid item sx={{ mt: 4 }}>
 				{usersList.length !== 0 && (
 					<>
 						<InputLabel id='select-user'>Select User</InputLabel>
@@ -153,10 +158,11 @@ const NewOrder = () => {
 									</MenuItem>
 								))}
 						</Select>
+						<small>Only users with an address are visible in this list</small>
 					</>
 				)}
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				{serviceList.length !== 0 && (
 					<>
 						<InputLabel id='select-service'>Select Service</InputLabel>
@@ -179,10 +185,10 @@ const NewOrder = () => {
 					</>
 				)}
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<TextField
 					fullWidth
-					step="0.01"
+					step='0.01'
 					variant='standard'
 					label='Order Value (₹)'
 					type='Number'
@@ -194,7 +200,7 @@ const NewOrder = () => {
 					}}
 				/>
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<TextField
 					fullWidth
 					variant='standard'
@@ -208,7 +214,7 @@ const NewOrder = () => {
 				/>
 			</Grid>
 
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<TextField
 					fullWidth
 					variant='standard'
@@ -222,21 +228,8 @@ const NewOrder = () => {
 					required
 				/>
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
-				<TextField
-					fullWidth
-					variant='standard'
-					label='Order Notes'
-					type='text'
-					value={orderNotes}
-					onChange={e => {
-						setOrderNotes(e.target.value);
-					}}
-					helperText='This is will be visible on user dashboard'
-					required
-				/>
-			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+
+			<Grid item>
 				<TextField
 					fullWidth
 					variant='standard'
@@ -249,8 +242,23 @@ const NewOrder = () => {
 					required
 				/>
 			</Grid>
-
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
+				<TextField
+					fullWidth
+					variant='standard'
+					label='Order Notes'
+					type='text'
+					multiline
+					maxRows={4}
+					value={orderNotes}
+					onChange={e => {
+						setOrderNotes(e.target.value);
+					}}
+					helperText='This is will be visible on user dashboard'
+					required
+				/>
+			</Grid>
+			<Grid item>
 				<Box
 					sx={{
 						justifyContent: 'start',
@@ -280,13 +288,12 @@ const NewOrder = () => {
 				</Box>
 			</Grid>
 
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<Box
 					sx={{
 						justifyContent: 'start',
 						display: 'flex',
 						mt: 2,
-						ml: 2,
 					}}>
 					<Button
 						onClick={() => {
@@ -303,7 +310,8 @@ const NewOrder = () => {
 					</Button>
 				</Box>
 			</Grid>
-		</>
+		</Stack>
 	);
 };
+
 export default NewOrder;

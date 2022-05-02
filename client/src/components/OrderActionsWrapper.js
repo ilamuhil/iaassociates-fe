@@ -40,6 +40,11 @@ function OrderActionsWrapper() {
 							control={<Radio />}
 							label='Refund Order'
 						/>
+						<FormControlLabel
+							value='send-payment-link'
+							control={<Radio />}
+							label='Send Payment Link'
+						/>
 					</RadioGroup>
 				</FormControl>
 			</Grid>

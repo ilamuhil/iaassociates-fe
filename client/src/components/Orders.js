@@ -34,7 +34,6 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import OrdersTable from './OrderTable';
 import OrderActionsWrapper from './OrderActionsWrapper';
 
-const CreateNewOrderForm = React.lazy(() => import('./NewOrder'));
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
 	...theme.typography.body2,
@@ -66,15 +65,16 @@ function TabPanel(props) {
 }
 
 const Orders = () => {
+	let authctx = useContext(AuthContext);
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	const [orders, setOrders] = useState([]);
 	const [orderId, setOrderId] = useState(0);
-	let authctx = useContext(AuthContext);
 	const [value, setValue] = useState(0);
 	const [selectedUser, setSelectedUser] = useState('');
 	const [filter, setFilter] = useState('');
-	const [userList, setUserList] = useState();
+
+	const [sort, setSort] = useState('');
 	const [open, setOpen] = useState(false);
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
@@ -99,7 +99,6 @@ const Orders = () => {
 				});
 			} catch (e) {
 				console.log(e);
-
 				toast.update(toastId, {
 					render: e.response
 						? e.response.data
@@ -114,7 +113,10 @@ const Orders = () => {
 	);
 	const sendPaymentReminder = useCallback(() => {
 		toast.promise(
-			axiosPvt.post(`/users/sendReminder/${selectedUser}/`),
+			axiosPvt.post('/payments/send-payment-reminder', {
+				orderId,
+				email: selectedUser,
+			}),
 			{
 				pending: 'Processing request',
 				error: 'An error occurred',
@@ -122,7 +124,7 @@ const Orders = () => {
 			},
 			[selectedUser]
 		);
-	});
+	}, [axiosPvt, selectedUser, orderId]);
 
 	const filterOrders = useCallback(
 		val => {
@@ -140,7 +142,8 @@ const Orders = () => {
 					params: criteria,
 				})
 				.then(({ data }) => {
-					setOrders(data);
+					if (data.length !== 0) setOrders(data);
+					else toast.warn('No orders found for the given criteria');
 				})
 				.catch(e => {});
 		},
@@ -148,12 +151,10 @@ const Orders = () => {
 	);
 	useEffect(() => {
 		let controller = new AbortController();
-		//TODO reqdata from serverside: status, username, value,service title ,id
 		axiosPvt
 			.get('/orders/getorders', { signal: controller.signal })
 			.then(response => {
 				let { data } = response;
-				setUserList([...new Set(data.map(order => order.username).sort())]);
 				setOrders(order => [...order, ...data]);
 			})
 			.catch(e => {
@@ -236,7 +237,7 @@ const Orders = () => {
 								'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',
 						}}>
 						<IconButton
-							aria-label=''
+							aria-label='order-status-icon'
 							sx={{
 								backgroundColor: '#84fb95',
 								backgroundImage:
@@ -310,34 +311,14 @@ const Orders = () => {
 										</Grid>
 										<Grid item lg={3}>
 											<FormControl fullWidth>
-												<InputLabel id='user-list'>Filter by user</InputLabel>
-												<Select
-													value={selectedUser}
-													label='Filter by user'
-													labelId='user-list'
-													defaultValue=''
-													onChange={e => {
-														setSelectedUser(e.target.value);
-														console.log(e.target.value);
-													}}>
-													<MenuItem value='none'>None</MenuItem>
-													{orders &&
-														userList.map(element => (
-															<MenuItem key={`${element}`} value={`${element}`}>
-																{element}
-															</MenuItem>
-														))}
-												</Select>
-											</FormControl>
-										</Grid>
-										<Grid item lg={3}>
-											<FormControl fullWidth>
 												<InputLabel id='Sort'>Sort</InputLabel>
 												<Select
-													value={selectedUser}
+													value={sort}
 													label='Sort'
 													labelId='Sort'
+													defaultValue=''
 													onChange={e => {
+														setSort(e.target.value);
 														setOrders(orders => {
 															if (e.target.value === 'price') {
 																return orders.sort((a, b) => {
@@ -351,7 +332,6 @@ const Orders = () => {
 																});
 															}
 														});
-														filterOrders();
 													}}>
 													<MenuItem value='price'>Order Value</MenuItem>
 													<MenuItem value='createdAt'>Order Date</MenuItem>
@@ -397,6 +377,13 @@ const Orders = () => {
 										)}
 									</Grid>
 									<Dialog
+										sx={{
+											'& .MuiDialog-paper': {
+												backgroundColor: 'white',
+												borderRadius: '1rem',
+												paddingTop: '1rem',
+											},
+										}}
 										fullScreen={fullScreen}
 										open={open}
 										onClose={() => {
@@ -411,7 +398,7 @@ const Orders = () => {
 										<DialogContent>
 											{selectedUser && (
 												<DialogContentText>
-													Are you sure you want to send a payment reminder to
+													Are you sure you want to send a payment reminder to{' '}
 													<b style={{ color: 'black' }}>
 														{selectedUser && selectedUser}?
 													</b>{' '}

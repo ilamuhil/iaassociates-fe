@@ -14,10 +14,11 @@ import {
 	PasswordResetEmail,
 	EmailVerify,
 } from './components/EmailVerify';
-import PaymentStatus from "./components/PaymentStatus";
+import PaymentStatus from './components/PaymentStatus';
 import ProtectedRoute from './api/ProtectedRoute';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { Suspense } from 'react';
+import SendPaymentLink from './components/SendPaymentLink';
 import UserOrder from './components/UserOrder';
 import DbLayout from './components/DbLayout';
 import Invoice from './components/Invoice';
@@ -48,9 +49,12 @@ function App() {
 					<Route path='/contact' element={<Contact />} />
 					<Route path='*' element={<PageNotFound />} />
 					<Route path='/privacy-policy' element={<Privacypolicy />} />
-					
+
 					<Route path='/dashboard' element={<DbLayout />}>
-						<Route path="payment/:verification/:orderId" element={ <PaymentStatus/>}/>
+						<Route
+							path='payment/:verification/:orderId'
+							element={<PaymentStatus />}
+						/>
 						<Route
 							path='profile'
 							element={
@@ -63,7 +67,7 @@ function App() {
 								</>
 							}
 						/>
-					
+
 						<Route
 							element={
 								<>
@@ -147,6 +151,7 @@ function App() {
 							<Route path='new-order' element={<NewOrder />} />
 							<Route path='edit-order' element={<EditOrder />} />
 							<Route path='refund-order' element={<RefundOrder />} />
+							<Route path='send-payment-link' element={<SendPaymentLink />} />
 						</Route>
 					</Route>
 

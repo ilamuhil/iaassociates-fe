@@ -7,12 +7,15 @@ import {
 	TableCell,
 	Chip,
 	ButtonBase,
+	IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useEffect, useState, useCallback, Fragment } from 'react';
 import { v4 as uuid } from 'uuid';
 import { format } from 'date-fns';
 
-const OrdersTable = ({ orders,setOpen,setOrderId ,setSelectedUser}) => {
+const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
 	const [totalVal, setTotalValue] = useState(0);
 	useEffect(() => {
 		setTotalValue(
@@ -21,6 +24,7 @@ const OrdersTable = ({ orders,setOpen,setOrderId ,setSelectedUser}) => {
 				.toFixed(2)
 		);
 	}, [orders]);
+
 	const statuscolor = useCallback(status => {
 		status = status.toLowerCase();
 		if (status === 'completed') {
@@ -46,6 +50,7 @@ const OrdersTable = ({ orders,setOpen,setOrderId ,setSelectedUser}) => {
 							<TableCell sx={{ textAlign: 'end' }}>Order Value</TableCell>
 							<TableCell sx={{ textAlign: 'end' }}>Order Status</TableCell>
 							<TableCell sx={{ textAlign: 'end' }}>Payment Status</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>Order Actions</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -79,10 +84,20 @@ const OrdersTable = ({ orders,setOpen,setOrderId ,setSelectedUser}) => {
 									</TableCell>
 									<TableCell sx={{ textAlign: 'end' }}>
 										<ButtonBase
-											onClick={() => { setSelectedUser(order.email); setOrderId(order.id); setOpen(true); }}
+											onClick={() => {
+												if (!order.paymentStatus) {
+													setSelectedUser(order.email);
+													setOrderId(order.id);
+													setOpen(true);
+												} else {
+													return;
+												}
+											}}
 											sx={{
 												borderRadius: '10px',
-												boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
+												boxShadow: order.paymentStatus
+													? 'none'
+													: 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
 											}}>
 											<Chip
 												label={order.paymentStatus ? 'Paid' : 'unpaid'}
@@ -94,6 +109,30 @@ const OrdersTable = ({ orders,setOpen,setOrderId ,setSelectedUser}) => {
 												size='small'
 											/>
 										</ButtonBase>
+									</TableCell>
+									<TableCell sx={{ textAlign: 'end' }}>
+										<IconButton
+											onClick={() => {}}
+											size='small'
+											sx={{
+												backgroundColor: 'white',
+												color: 'red',
+												mx: 1,
+												boxShadow: 2,
+											}}>
+											<DeleteIcon fontSize='10px' />
+										</IconButton>
+										<IconButton
+											onClick={() => {}}
+											size='small'
+											sx={{
+												backgroundColor: 'white',
+												color: '#07c6f8',
+												mx: 1,
+												boxShadow: 2,
+											}}>
+											<RemoveRedEyeIcon fontSize='10px' />
+										</IconButton>
 									</TableCell>
 								</TableRow>
 							</Fragment>

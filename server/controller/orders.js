@@ -6,17 +6,15 @@ import {
 	orderUpdateEmail,
 	orderRefundedEmail,
 } from './sendMail.js';
-import axios from 'axios';
+import {
+	getAllOrders,
+	getfilteredOrders,
+	rpaxios,
+} from './../functions/orderhelpers.js';
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
 dotenv.config();
-const rpaxios = axios.create({
-	baseURL: 'https://api.razorpay.com/v1',
-	auth: {
-		username: process.env.RAZORPAY_CLIENT_ID,
-		password: process.env.RAZORPAY_CLIENT_SECRET,
-	},
-});
+
 const createNewOrder = async (req, res, next) => {
 	if (req.user.role !== 'admin') {
 		let err = new Error('Unauthorized access');
@@ -80,7 +78,7 @@ const createNewOrder = async (req, res, next) => {
 				},
 			},
 		});
-		let userupdate = await prisma.users.update({
+		await prisma.users.update({
 			where: {
 				username,
 			},
@@ -159,14 +157,12 @@ const refundOrder = async (req, res) => {
 	try {
 		let order = await prisma.orders.update({
 			where: {
-				id: orderId,
+				id: parseInt(orderId),
 			},
 			data: {
 				orderStatus: 'refunded',
 			},
 			include: {
-				razorpayPaymentId: true,
-				value: true,
 				user: {
 					select: {
 						username: true,
@@ -174,10 +170,10 @@ const refundOrder = async (req, res) => {
 					},
 				},
 				service: {
-					title: true,
+					select: {
+						title: true,
+					},
 				},
-				discount: true,
-				orderDescription: true,
 			},
 		});
 		let {
@@ -186,9 +182,10 @@ const refundOrder = async (req, res) => {
 			user: { username, email },
 			service: { title },
 			discount,
+			orderDescription,
 		} = order;
 		discount = discount + '%' || 'NA';
-		let payload = { amount: Number(refundAmt) * 100, speed };
+		let payload = { amount: parseFloat(refundAmt) * 100, speed };
 		//make refund request to razorpay
 		payload = receiptNumber ? { ...payload, receipt: receiptNumber } : payload;
 		let res = await rpaxios.post(
@@ -208,144 +205,14 @@ const refundOrder = async (req, res) => {
 			username,
 			email
 		);
-		res.status(200).send('Refund Processed successfully');
+		res
+			.status(200)
+			.send(`Refund of amount ${refundAmt} sent for processing at razorpay`);
 	} catch (e) {
+		console.log(e);
+		console.log(e?.response);
+		console.log(e?.response?.data);
 		res.status(500).send('Could not process your refund request');
-	}
-};
-
-const flattenOrders = orders => {
-	return (orders = orders.map(order => {
-		let { user, service, ...rest } = order;
-		order = { ...rest, ...user, ...service };
-		return order;
-	}));
-};
-
-const getAllOrders = async (role, idType = '', id = '') => {
-	if (role === 'user') {
-		let err = new Error('No orders found');
-		err.status = 400;
-		return Promise.reject(err);
-	}
-	if (idType) {
-		try {
-			let orders = await prisma.orders.findMany({
-				where: {
-					user: {
-						[idType]: id,
-					},
-				},
-				include: {
-					user: {
-						select: { username: true, email: true },
-					},
-					service: {
-						select: {
-							title: true,
-						},
-					},
-				},
-			});
-			return flattenOrders(orders);
-		} catch (e) {
-			let err = new Error('Could not get orders data');
-			err.status = 500;
-			return Promise.reject(err);
-		}
-	} else {
-		if (role === 'admin') {
-			try {
-				let orders = await prisma.orders.findMany({
-					include: {
-						user: {
-							select: {
-								username: true,
-								email: true,
-							},
-						},
-						service: {
-							select: {
-								title: true,
-							},
-						},
-					},
-				});
-				return flattenOrders(orders);
-			} catch (e) {
-				let err = new Error('Could not get orders data');
-				err.status = 500;
-				return Promise.reject(err);
-			}
-		} else {
-			let err = new Error('Unauthorized Request');
-			err.status = 401;
-			return Promise.reject(err);
-		}
-	}
-};
-
-const getfilteredOrders = async (role, filter, idType = '', id = '') => {
-	if (role === 'user') {
-		let err = new Error('No orders found');
-		err.status = 400;
-		return Promise.reject(err);
-	}
-	if (idType) {
-		try {
-			let orders = await prisma.orders.findMany({
-				where: {
-					user: {
-						[idType]: id,
-					},
-					...filter,
-				},
-				include: {
-					service: {
-						select: { title: true },
-					},
-					user: {
-						select: {
-							username: true,
-							email: true,
-						},
-					},
-				},
-			});
-			return flattenOrders(orders);
-		} catch (e) {
-			console.error(e);
-			let err = new Error('Could not find orders');
-			err.status = 401;
-			Promise.reject(err);
-		}
-	} else {
-		if (role !== 'admin') {
-			let err = new Error('Unauthorized Request');
-			err.status = 401;
-			return Promise.reject(err);
-		} else {
-			try {
-				let orders = await prisma.orders.findMany({
-					where: filter,
-					include: {
-						user: {
-							select: { username: true, email: true },
-						},
-						service: {
-							select: { title: true },
-						},
-					},
-				});
-				if (orders.length === 0) throw Error('');
-				return flattenOrders(orders);
-			} catch (e) {
-				console.error(e);
-				let err = new Error('Could not get orders');
-				err.status = 500;
-				return Promise.reject(err);
-			}
-		}
 	}
 };
 
@@ -509,82 +376,15 @@ const getOrdersByMonth = async (
 	}
 };
 
-const paymentVerification = async (req, res) => {
-	try {
-		// getting the details back from our font-end
-		const {
-			orderCreationId,
-			razorpayPaymentId,
-			razorpayOrderId,
-			razorpaySignature,
-		} = req.body;
-		console.log(
-			'🚀 ~ file: orders.js ~ line 519 ~ paymentVerification ~ razorpaySignature',
-			razorpaySignature
-		);
-		const { id } = req.params;
-		const digest = createHmac('sha256', process.env.RAZORPAY_CLIENT_SECRET)
-			.update(`${orderCreationId}|${razorpayPaymentId}`)
-			.digest('hex');
-		console.log(
-			'🚀 ~ file: orders.js ~ line 524 ~ paymentVerification ~ digest',
-			digest
-		);
-		if (digest !== razorpaySignature) {
-			console.log('failed');
-			res.status(400).json("Oops we couldn't verify your payment!");
-		}
 
-		await prisma.orders.update({
-			where: {
-				id: parseInt(id),
-			},
-			data: {
-				razorpayId: razorpayOrderId,
-				razorpayPaymentId,
-				paymentStatus: true,
-				orderStatus: 'pending',
-			},
-		});
-		console.log('success');
-		res.status(200).send('Success');
-	} catch (error) {
-		res.status(500).send(error);
-	}
-};
+
+
 export {
 	getOrderCount,
 	createNewOrder,
 	getOrders,
-	getAllOrders,
-	getfilteredOrders,
 	getOrdersByMonth,
 	getEditableOrders,
 	refundOrder,
 	updateOrder,
-	paymentVerification,
 };
-//!Test cases to check working of orders
-// getfilteredOrders(
-// 	'admin',
-// 	{ paymentStatus: true },
-// 	'id',
-// 	'051d5921-2ae6-4d69-abe2-48a408e93270'
-// ).then(data => {
-// 	console.log(data);
-// });
-// getfilteredOrders('admin', {
-// 	paymentStatus: false,
-// 	orderStatus: 'refunded',
-// }).then(data => {
-// 	console.log(data);
-// });
-// getfilteredOrders(
-// 	'customer',
-// 	{ orderStatus: 'pending' },
-// 	'id',
-// 	'051d5921-2ae6-4d69-abe2-48a408e93270'
-// ).then(data => console.log(data));
-// getfilteredOrders('admin', { paymentStatus: true }).then(data => {
-// 	console.log(data);
-// });

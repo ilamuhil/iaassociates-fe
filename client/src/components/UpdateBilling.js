@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useCallback, useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import AuthContext from '../context/AuthProvider';
+import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { TextField, Checkbox, Button, FormControlLabel } from '@mui/material';
 const UpdateBilling = ({ email, setEmail }) => {
@@ -16,25 +17,29 @@ const UpdateBilling = ({ email, setEmail }) => {
 	const [adl2, setAdl2] = useState('');
 	const [city, setCity] = useState('');
 	const [state, setState] = useState('');
-	const [zipcode, setZipcode] = useState(0);
+	const [zipcode, setZipcode] = useState('');
 	useEffect(() => {
-		axiosPvt
-			.get(urlpath ? `/addresses/id/${urlpath}` : '/addresses')
-			.then(({ data }) => {
-				setAdl1(data.adl1);
-				setAdl2(data.adl2);
-				setZipcode(data.zipcode);
-				setPhoneNo(data.phoneNo);
-				setFname(data.fName);
-				setLname(data.lName);
-			});
+		if (parseInt(cookies.get('role')) !== 33) {
+			axiosPvt
+				.get(urlpath ? `/addresses/id/${urlpath}` : '/addresses')
+				.then(({ data }) => {
+					if (data) {
+						setAdl1(data.adl1);
+						setAdl2(data.adl2);
+						setZipcode(data.zipcode + '');
+						setPhoneNo(data.phoneNo);
+						setFname(data.fName);
+						setLname(data.lName);
+					}
+				});
+		}
 	}, [axiosPvt, urlpath]);
 	const updateBilling = useCallback(() => {
 		const invoiceType = companyInvoice ? 'company' : 'personal';
 		let payload = {
 			adl1,
 			adl2,
-			zipcode,
+			zipcode: parseInt(zipcode),
 			city,
 			state,
 			fname,
@@ -247,12 +252,11 @@ const UpdateBilling = ({ email, setEmail }) => {
 						<TextField
 							fullWidth
 							id='zipcode'
-							type='number'
 							label='zipcode'
 							variant='standard'
 							value={zipcode}
 							onChange={e => {
-								setZipcode(parseInt(e.target.value));
+								setZipcode(e.target.value);
 							}}
 						/>
 					</div>

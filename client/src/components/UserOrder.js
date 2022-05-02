@@ -4,7 +4,6 @@ import {
 	Grid,
 	Button,
 	Chip,
-	Typography,
 	SvgIcon,
 	Box,
 } from '@mui/material';

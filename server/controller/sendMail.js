@@ -35,6 +35,18 @@ const sendTemplatedEmail = async (
 		}
 	}
 };
+const sendPaymentReminder = async (username, orderId, email, amount) => {
+	sendTemplatedEmail(
+		{
+			paymentLink: `${process.env.WEBSITE_URL}/dashboard/my-orders`,
+			amount,
+			id: orderId,
+		},
+		[{ name: username, email }],
+		11,
+		'Could not send payment reminder email'
+	);
+};
 
 const verifyEmail = async (username, toEmail, verificationId) => {
 	sendTemplatedEmail(
@@ -218,4 +230,5 @@ export {
 	orderRefundedEmail,
 	orderUpdateEmail,
 	contactEmail,
+	sendPaymentReminder,
 };

@@ -15,6 +15,7 @@ import {
 	FormGroup,
 	SvgIcon,
 	Box,
+	Stack,
 } from '@mui/material';
 import useMq from './../hooks/useWindowResize';
 import { toast } from 'react-toastify';
@@ -59,8 +60,9 @@ const EditOrder = () => {
 		};
 	}, [axiosPvt]);
 	return (
-		<>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+		<Stack direction='column' justifyContent='center' spacing={2} mx='auto'>
+			<h5 className='w-100 my-4 text-black'>Update Order</h5>
+			<Grid item>
 				<FormControl variant='standard' fullWidth>
 					<InputLabel id='order-status'>Order Id</InputLabel>
 					<Select
@@ -78,7 +80,7 @@ const EditOrder = () => {
 					</Select>
 				</FormControl>
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<FormControl variant='standard' fullWidth>
 					<InputLabel id='update order status'>Order Id</InputLabel>
 					<Select
@@ -95,7 +97,7 @@ const EditOrder = () => {
 					</Select>
 				</FormControl>
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<TextField
 					fullWidth
 					variant='standard'
@@ -107,7 +109,7 @@ const EditOrder = () => {
 					}}
 				/>
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<FormGroup
 					style={{
 						marginTop: xlscr
@@ -131,7 +133,7 @@ const EditOrder = () => {
 					/>
 				</FormGroup>
 			</Grid>
-			<Grid item sm={12} md={6} lg={4} xl={3}>
+			<Grid item>
 				<Box sx={{ justifyContent: 'start', display: 'flex' }}>
 					<Button
 						onClick={updateOrder}
@@ -146,7 +148,7 @@ const EditOrder = () => {
 					</Button>
 				</Box>
 			</Grid>
-		</>
+		</Stack>
 	);
 };
 

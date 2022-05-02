@@ -14,10 +14,9 @@ import services from './routes/services.js';
 import cookieParser from 'cookie-parser';
 import { authenticateUser } from './controller/authenticate.js';
 import addresses from './routes/addresses.js';
-
+import payments from './routes/payments.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,7 +40,7 @@ app.use('/user', authenticateUser, users);
 app.use('/authenticate', userAuth);
 app.use('/orders', authenticateUser, orders);
 app.use('/contact', contact);
-
+app.use('/payments', payments);
 app.use('/services', services);
 
 app.get('/test', async (req, res) => {
