@@ -20,6 +20,7 @@ import {
 	Checkbox,
 	FormControlLabel,
 	FormLabel,
+	Slide,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LockResetIcon from '@mui/icons-material/LockReset';
@@ -200,109 +201,113 @@ const UsersList = () => {
 									startIcon={<AddIcon />}>
 									Create new User
 								</Button>
-								<Table
-									style={{
-										borderRadius: '4px',
-										marginBlock: '5px',
-										border: '1px solid #cee0f3',
-									}}>
-									<TableHead>
-										<TableRow
-											sx={{
-												borderRadius: 4,
-												backgroundColor: '#1976d2',
-											}}>
-											{columns.map(col => (
-												<TableCell
-													key={`${col.id}`}
-													sx={{ textTransform: 'uppercase', color: 'white' }}>
-													{col.headerName}
-												</TableCell>
-											))}
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										{rows.map(row => (
+								<Slide in={true} timeout={2000} direction='down'>
+									<Table
+										style={{
+											borderRadius: '4px',
+											marginBlock: '5px',
+											border: '1px solid #cee0f3',
+										}}>
+										<TableHead>
 											<TableRow
-												key={row.id}
 												sx={{
-													'&:nth-of-type(even)': {
-														backgroundColor: '#cee0f3',
-													},
-													// hide last border
-													'&:last-child td, &:last-child th': {
-														border: 0,
-													},
+													borderRadius: 4,
+													backgroundColor: '#1976d2',
 												}}>
-												<TableCell>{row.id}</TableCell>
-												<TableCell>{row.username}</TableCell>
-												<TableCell>{row.email}</TableCell>
-												<TableCell>{row.role}</TableCell>
-												<TableCell>
-													<Button
-														size='small'
-														sx={{
-															border: 'none',
-															backgroundColor: 'white',
-															boxShadow: 1,
-														}}
-														onClick={() => {
-															setDeleteUser(false);
-															setResetPwdEmail(row.email);
-															setResetPwdUsername(row.username);
-															setOpen(true);
-														}}>
-														<LockResetIcon sx={{ color: 'red' }} />
-													</Button>
-												</TableCell>
-												<TableCell sx={{ minWidth: '200px' }}>
-													<IconButton
-														size='small'
-														component={Link}
-														to={`/dashboard/user/${row.id}`}
-														sx={{
-															backgroundColor: 'white',
-															color: '#039be5',
-															mx: 1,
-															boxShadow: 2,
-														}}>
-														<EditIcon fontSize='10px'></EditIcon>
-													</IconButton>
-													<IconButton
-														onClick={() => {
-															setDeleteUser(true);
-															setResetPwdUsername(row.username);
-															setResetPwdEmail(row.email);
-															setOpen(true);
-														}}
-														size='small'
-														sx={{
-															backgroundColor: 'white',
-															color: 'red',
-															mx: 1,
-															boxShadow: 2,
-														}}>
-														<DeleteIcon fontSize='10px'></DeleteIcon>
-													</IconButton>
-													<IconButton
-														onClick={() => {
-															setResetPwdUsername(row.username);
-															setOpenDownloadDialog(true);
-														}}
-														size='small'
-														sx={{
-															backgroundColor: 'white',
-															color: '#e1ad01',
-															mx: 1,
-															boxShadow: 2,
-														}}>
-														<FileDownloadIcon fontSize='10px' />
-													</IconButton>
-												</TableCell>
+												{columns.map(col => (
+													<TableCell
+														key={`${col.id}`}
+														sx={{ textTransform: 'uppercase', color: 'white' }}>
+														{col.headerName}
+													</TableCell>
+												))}
 											</TableRow>
-										))}
-									</TableBody>
-								</Table>
+										</TableHead>
+										<TableBody>
+											{rows.map((row, index) => (
+												<Slide in={true} direction='down' timeout={(index+1) * 100}>
+													<TableRow
+														key={row.id}
+														sx={{
+															'&:nth-of-type(even)': {
+																backgroundColor: '#cee0f3',
+															},
+															// hide last border
+															'&:last-child td, &:last-child th': {
+																border: 0,
+															},
+														}}>
+														<TableCell>{row.id}</TableCell>
+														<TableCell>{row.username}</TableCell>
+														<TableCell>{row.email}</TableCell>
+														<TableCell>{row.role}</TableCell>
+														<TableCell>
+															<Button
+																size='small'
+																sx={{
+																	border: 'none',
+																	backgroundColor: 'white',
+																	boxShadow: 1,
+																}}
+																onClick={() => {
+																	setDeleteUser(false);
+																	setResetPwdEmail(row.email);
+																	setResetPwdUsername(row.username);
+																	setOpen(true);
+																}}>
+																<LockResetIcon sx={{ color: 'red' }} />
+															</Button>
+														</TableCell>
+														<TableCell sx={{ minWidth: '200px' }}>
+															<IconButton
+																size='small'
+																component={Link}
+																to={`/dashboard/user/${row.id}`}
+																sx={{
+																	backgroundColor: 'white',
+																	color: '#039be5',
+																	mx: 1,
+																	boxShadow: 2,
+																}}>
+																<EditIcon fontSize='10px'></EditIcon>
+															</IconButton>
+															<IconButton
+																onClick={() => {
+																	setDeleteUser(true);
+																	setResetPwdUsername(row.username);
+																	setResetPwdEmail(row.email);
+																	setOpen(true);
+																}}
+																size='small'
+																sx={{
+																	backgroundColor: 'white',
+																	color: 'red',
+																	mx: 1,
+																	boxShadow: 2,
+																}}>
+																<DeleteIcon fontSize='10px'></DeleteIcon>
+															</IconButton>
+															<IconButton
+																onClick={() => {
+																	setResetPwdUsername(row.username);
+																	setOpenDownloadDialog(true);
+																}}
+																size='small'
+																sx={{
+																	backgroundColor: 'white',
+																	color: '#e1ad01',
+																	mx: 1,
+																	boxShadow: 2,
+																}}>
+																<FileDownloadIcon fontSize='10px' />
+															</IconButton>
+														</TableCell>
+													</TableRow>
+												</Slide>
+											))}
+										</TableBody>
+									</Table>
+								</Slide>
 							</div>
 						</Grid>
 						<DownloadData

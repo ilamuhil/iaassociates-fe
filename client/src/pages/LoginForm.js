@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
 import './../styles/css/LoginForm.css';
+import loginImg from './../img/loginImage.webp';
+
+import React, { Component } from 'react';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -151,11 +153,7 @@ export default class LoginForm extends Component {
 					<div className='container py-4'>
 						<div className='row d-flex justify-content-center align-items-center h-100'>
 							<div className='col-md-9 col-lg-6 col-xl-5'>
-								<img
-									src='https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp'
-									className='img-fluid'
-									alt='Login'
-								/>
+								<img src={loginImg} className='img-fluid' alt='Login' />
 							</div>
 							<div className='col-md-8 col-lg-6 col-xl-4 offset-xl-1'>
 								<form>

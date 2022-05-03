@@ -37,6 +37,7 @@ import AvatarImgm1 from './../img/avatar/avatarm1.png';
 import AvatarImgm2 from './../img/avatar/avatarm2.png';
 import AvatarImgm3 from './../img/avatar/avatarm3.png';
 import AvatarImgm4 from './../img/avatar/avatarm4.png';
+import DashboardIcon from './../img/dashboardicon.png';
 
 const drawerWidth = 200;
 
@@ -200,10 +201,7 @@ export default function DbLayout({ children }) {
 			<Drawer variant='permanent' open={open}>
 				<DrawerHeader>
 					<Box component='div' m='auto'></Box>
-					<Box
-						component='img'
-						src='https://img.icons8.com/color/48/000000/fine-print.png'
-						width={30}></Box>
+					<Box component='img' src={DashboardIcon} width={30}></Box>
 					<Typography
 						variant='p'
 						component='h6'

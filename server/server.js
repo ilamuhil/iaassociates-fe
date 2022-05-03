@@ -22,14 +22,37 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-app.use(helmet());
+app.use(
+	helmet({
+		contentSecurityPolicy: {
+			useDefaults: true,
+			directives: {
+				scriptSrc: [
+					"'self'",
+					'razorpay.com',
+					'*.razorpay.com',
+					'fontawesome.com',
+					'*.fontawesome.com',
+					'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js',
+				],
+				imgSrc: ["'self'", 'data:'],
+				connectSrc: ["'self'", '*.fontawesome.com'],
+				manifestSrc: process.env.SERVER_URL,
+			},
+		},
+	})
+);
 app.use(express.json());
 app.use(
 	express.urlencoded({
 		extended: false,
 	})
 );
-
+// app.use(express.static(path.join(__dirname, 'build')));
+// app.get('/*', function (req, res) {
+// 	res.setHeader('content-type', 'text/html');
+// 	res.sendFile(path.join(__dirname, '/build', 'index.html'));
+// });
 app.use(cookieParser());
 const port = process.env.PORT || 8000;
 app.use(cors({ origin: process.env.WEBSITE_URL, credentials: true }));

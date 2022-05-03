@@ -152,6 +152,16 @@ function App() {
 							<Route path='edit-order' element={<EditOrder />} />
 							<Route path='refund-order' element={<RefundOrder />} />
 							<Route path='send-payment-link' element={<SendPaymentLink />} />
+							<Route
+								path='admin/invoice/:orderId'
+								element={
+									<ProtectedRoute allowedRoles={[33]}>
+										<Suspense fallback={<div>Loading...</div>}>
+											<Invoice/>
+										</Suspense>
+									</ProtectedRoute>
+								}
+							/>
 						</Route>
 					</Route>
 

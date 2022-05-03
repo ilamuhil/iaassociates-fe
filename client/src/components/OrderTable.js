@@ -8,14 +8,23 @@ import {
 	Chip,
 	ButtonBase,
 	IconButton,
+	Grow,
+	Slide,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useEffect, useState, useCallback, Fragment } from 'react';
 import { v4 as uuid } from 'uuid';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 
-const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
+const OrdersTable = ({
+	orders,
+	setOpen,
+	setOrderId,
+	setSelectedUser,
+	setDeleteOrder,
+}) => {
 	const [totalVal, setTotalValue] = useState(0);
 	useEffect(() => {
 		setTotalValue(
@@ -42,19 +51,24 @@ const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
 			<TableContainer>
 				<Table>
 					<TableHead>
-						<TableRow>
-							<TableCell>Order Id</TableCell>
-							<TableCell>Order Date</TableCell>
-							<TableCell>User</TableCell>
-							<TableCell>Service</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>Order Value</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>Order Status</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>Payment Status</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>Order Actions</TableCell>
-						</TableRow>
+						<Grow
+							in={orders.length !== 0}
+							style={{ transformOrigin: '0 0 0' }}
+							{...(orders.length !== 0 ? { timeout: 1000 } : {})}>
+							<TableRow>
+								<TableCell>Order Id</TableCell>
+								<TableCell>Order Date</TableCell>
+								<TableCell>User</TableCell>
+								<TableCell>Service</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>Order Value</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>Order Status</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>Payment Status</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>Order Actions</TableCell>
+							</TableRow>
+						</Grow>
 					</TableHead>
 					<TableBody>
-						{orders.map(order => (
+						{orders.map((order, index) => (
 							<Fragment key={uuid()}>
 								<TableRow>
 									<TableCell>{order.id}</TableCell>
@@ -87,6 +101,7 @@ const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
 											onClick={() => {
 												if (!order.paymentStatus) {
 													setSelectedUser(order.email);
+													setDeleteOrder(false);
 													setOrderId(order.id);
 													setOpen(true);
 												} else {
@@ -112,7 +127,11 @@ const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
 									</TableCell>
 									<TableCell sx={{ textAlign: 'end' }}>
 										<IconButton
-											onClick={() => {}}
+											onClick={e => {
+												setOrderId(order.id);
+												setDeleteOrder(true);
+												setOpen(true);
+											}}
 											size='small'
 											sx={{
 												backgroundColor: 'white',
@@ -123,7 +142,8 @@ const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
 											<DeleteIcon fontSize='10px' />
 										</IconButton>
 										<IconButton
-											onClick={() => {}}
+											component={Link}
+											to={`/admin/invoice/${order.id}`}
 											size='small'
 											sx={{
 												backgroundColor: 'white',
@@ -137,6 +157,7 @@ const OrdersTable = ({ orders, setOpen, setOrderId, setSelectedUser }) => {
 								</TableRow>
 							</Fragment>
 						))}
+
 						<TableRow>
 							<TableCell>
 								<b style={{ color: '#1976d2' }}>Total Order Value</b>

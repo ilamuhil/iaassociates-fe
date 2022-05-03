@@ -279,6 +279,40 @@ const getOrders = async (
 		}
 	}
 };
+
+const getSingleOrderSummary = async({params:{id},user:{role,id:userId}}, res) => {
+	
+	let data = await prisma.orders.findUnique({
+		where: { id }, select: {
+			user: {
+				select: {
+					address: true,id:true
+				}
+			}, id: true,
+			value: true,
+			createdAt: true,
+			discount: true,
+			orderDescription: true,
+			invoiceNumber: true,
+			orderStatus: true,
+			service: {
+				select: {
+					title: true,
+					SAC:true
+				}
+			}
+		}
+	});
+	if (role === "admin") {
+		res.status(200).send(data);
+	} else if (role === "customer") {
+		if (userId !== data.user.id) res.status(403).send("Unauthorized");
+		else res.status(200).send(data);
+	} else {
+		res.status(403).send("Unauthorized");
+	}
+}
+
 const getOrderCount = async (req, res, next) => {
 	let count;
 	if (req.params.orderType === 'total') {
@@ -386,5 +420,5 @@ export {
 	getOrdersByMonth,
 	getEditableOrders,
 	refundOrder,
-	updateOrder,
+	updateOrder,getSingleOrderSummary
 };

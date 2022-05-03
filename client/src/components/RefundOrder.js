@@ -56,11 +56,8 @@ const RefundOrder = () => {
 	};
 	return (
 		<>
-			
 			<Stack direction='column' justifyContent='center' spacing={2} mx='auto'>
-			<h5 className='w-100 my-4 text-black'>
-					Refund Order
-				</h5>
+				<h5 className='w-100 my-4 text-black'>Refund Order</h5>
 				<Grid item sx={{ mt: 4 }}>
 					<FormControl variant='standard' fullWidth>
 						<InputLabel id='order-status'>Order Id</InputLabel>
