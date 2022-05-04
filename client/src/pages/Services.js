@@ -1,9 +1,9 @@
 // import data from './data/db.json';
-import { Layout } from '../components/Layout';
+import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import { Link } from 'react-router-dom';
 import './../styles/css/service.css';
 import { Fragment } from 'react';
-import BreadCrumbs from '../components/Breadcrumbs';
+import BreadCrumbs from '../components/UtilitiesAndWrappers/Breadcrumbs';
 
 const Services = props => {
 	const services = [

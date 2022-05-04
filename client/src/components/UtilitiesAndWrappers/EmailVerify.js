@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import axios from './../api/axios';
-import ResetPassword from '../pages/ResetPassword';
+import axios from '../../api/axios';
+import ResetPassword from '../../pages/ResetPassword';
 import { TextField, Paper, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 

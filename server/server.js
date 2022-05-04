@@ -21,7 +21,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-
+app.use(cors({ origin: process.env.WEBSITE_URL, credentials: true }));
 app.use(
 	helmet({
 		contentSecurityPolicy: {
@@ -48,6 +48,7 @@ app.use(
 		extended: false,
 	})
 );
+
 // app.use(express.static(path.join(__dirname, 'build')));
 // app.get('/*', function (req, res) {
 // 	res.setHeader('content-type', 'text/html');
@@ -55,7 +56,7 @@ app.use(
 // });
 app.use(cookieParser());
 const port = process.env.PORT || 8000;
-app.use(cors({ origin: process.env.WEBSITE_URL, credentials: true }));
+
 app.use('/dbdata', dbdata);
 app.use('/addresses', authenticateUser, addresses);
 app.use('/updates', updates);

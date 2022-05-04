@@ -1,20 +1,13 @@
 import { useEffect, useState, useContext } from 'react';
-import {
-	Paper,
-	Grid,
-	Button,
-	Chip,
-	SvgIcon,
-	Box,
-} from '@mui/material';
-import { ReactComponent as CashIcon } from './../img/cash.svg';
-import { ReactComponent as PackageDeliveredIcon } from './../img/package-delivered.svg';
-import { ReactComponent as PackageDeliveredStatusTimeIcon } from './../img/package-delivered-status-time.svg';
-import { ReactComponent as ParcelBoxPackageIcon } from './../img/parcel-box-package.svg';
-import { ReactComponent as ProductPackageReturnIcon } from './../img/product-package-return.svg';
+import { Paper, Grid, Button, Chip, SvgIcon, Box } from '@mui/material';
+import { ReactComponent as CashIcon } from '../../img/cash.svg';
+import { ReactComponent as PackageDeliveredIcon } from '../../img/package-delivered.svg';
+import { ReactComponent as PackageDeliveredStatusTimeIcon } from '../../img/package-delivered-status-time.svg';
+import { ReactComponent as ParcelBoxPackageIcon } from '../../img/parcel-box-package.svg';
+import { ReactComponent as ProductPackageReturnIcon } from '../../img/product-package-return.svg';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { Link, useNavigate } from 'react-router-dom';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { format } from 'date-fns';
 const PackageIcon = ({ type }) => {
 	if (type === 'completed') {
@@ -208,7 +201,7 @@ function UserOrder() {
 											<Button
 												startIcon={<RemoveRedEyeIcon />}
 												component={Link}
-												to={`/invoices/:${order.id}`}
+												to={`/dashboard/invoice/${order.id}`}
 												sx={{
 													'&:hover': {
 														color: 'white',

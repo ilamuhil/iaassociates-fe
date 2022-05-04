@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import axios from './../api/axios';
+import axios from '../../api/axios';
 import { Paper, Typography } from '@mui/material';
 
 export const PasswordVerify = () => {

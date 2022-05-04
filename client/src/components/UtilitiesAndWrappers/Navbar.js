@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
-import './../styles/css/navbar.css';
-import AuthContext from '../context/AuthProvider';
+import '../../styles/css/navbar.css';
+import AuthContext from '../../context/AuthProvider';
 import { Offcanvas, Accordion } from 'react-bootstrap';
 
 class Navbar extends Component {
@@ -110,7 +110,7 @@ class Navbar extends Component {
 							<li className='dropdown'>
 								<button className='getstarted text-dark'>
 									<img
-										src={require('./../img/i-a inspirations.library/images/KZYNB3P0TNY7X.info/Profile Icons - 77,235 free icons.png')}
+										src={require('../../img/i-a inspirations.library/images/KZYNB3P0TNY7X.info/Profile Icons - 77,235 free icons.png')}
 										alt='profile'
 										className='fluid'
 										width={'30%'}

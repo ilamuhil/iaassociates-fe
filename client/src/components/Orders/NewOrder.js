@@ -14,12 +14,12 @@ import {
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { ReactComponent as PrinterPrintSvgrepoComIcon } from './../img/printer-print-svgrepo-com.svg';
-import useMq from '../hooks/useWindowResize';
+import { ReactComponent as PrinterPrintSvgrepoComIcon } from './../../img/printer-print-svgrepo-com.svg';
+import useMq from '../../hooks/useWindowResize';
 import { useState, useEffect, useCallback, useContext } from 'react';
-import axios from '../api/axios';
+import axios from '../../api/axios';
 import { toast } from 'react-toastify';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 
 const NewOrder = () => {
 	let authctx = useContext(AuthContext);

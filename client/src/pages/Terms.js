@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from '../components/Layout';
+import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import { Link } from 'react-router-dom';
 
 function Terms() {
@@ -64,7 +64,8 @@ function Terms() {
 							the{' '}
 							<a
 								href='https://www.termsfeed.com/terms-conditions-generator/'
-								target='_blank'>
+								target='_blank'
+								rel='noreferrer'>
 								Terms and Conditions Generator
 							</a>
 							.

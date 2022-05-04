@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './../styles/css/contact.css';
-import { Layout } from './../components/Layout';
-import BreadCrumbs from './../components/Breadcrumbs';
+import { Layout } from './../components/UtilitiesAndWrappers/Layout';
+import BreadCrumbs from './../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from '../api/axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

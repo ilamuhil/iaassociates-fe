@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { format } from 'date-fns';
 // import Invoice from './Invoice';
 import { experimentalStyled as styled } from '@mui/material/styles';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import SvgIcon from '@mui/material/SvgIcon';
 import { toast } from 'react-toastify';
 import {
@@ -29,9 +29,9 @@ import {
 } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { ReactComponent as PackageDeliveredIcon } from './../img/package-delivered.svg';
-import { ReactComponent as PackageDeliveredStatusTimeIcon } from './../img/package-delivered-status-time.svg';
-import { ReactComponent as ParcelBoxPackageIcon } from './../img/parcel-box-package.svg';
+import { ReactComponent as PackageDeliveredIcon } from './../../img/package-delivered.svg';
+import { ReactComponent as PackageDeliveredStatusTimeIcon } from './../../img/package-delivered-status-time.svg';
+import { ReactComponent as ParcelBoxPackageIcon } from './../../img/parcel-box-package.svg';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import OrdersTable from './OrderTable';
 import OrderActionsWrapper from './OrderActionsWrapper';

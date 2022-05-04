@@ -6,16 +6,16 @@ import {
 	ContentState,
 	convertFromHTML,
 } from 'draft-js';
-import './../styles/css/editor.css';
+import '../../styles/css/editor.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Button, SvgIcon, TextField } from '@mui/material';
 import { toast } from 'react-toastify';
 import draftToHtml from 'draftjs-to-html';
-import { ReactComponent as DisketteSaveSvgrepoComIcon } from './../img/diskette-save-svgrepo-com.svg';
-import AuthContext from '../context/AuthProvider';
-import axios from "./../api/axios";
-function AddService({ edit }) {
+import { ReactComponent as DisketteSaveSvgrepoComIcon } from '../../img/diskette-save-svgrepo-com.svg';
+import AuthContext from '../../context/AuthProvider';
+import axios from '../../api/axios';
+function AddEditService({ edit }) {
 	const [editorState, setEditorState] = useState(EditorState.createEmpty());
 	const ctx = useContext(AuthContext);
 	const [description, setDescription] = useState('');
@@ -27,14 +27,13 @@ function AddService({ edit }) {
 	const [highlights4, setHighlights4] = useState('');
 	const [title, setTitle] = useState('');
 	const [sac, satSAC] = useState('');
-	const [file, setFile] = useState('');
 	const { id } = useParams();
 	useEffect(() => {
 		const controller = new AbortController();
 		if (edit) {
 			axios
 				.get(`/services/get-services/id/${id}`, {
-					params: { description:true },
+					params: { description: true },
 					signal: controller.signal,
 				})
 				.then(res => {
@@ -68,25 +67,9 @@ function AddService({ edit }) {
 				controller.abort();
 			}
 		};
-	}, [ edit, id]);
+	}, [edit, id]);
 	const updateService = () => {
 		let toastid = toast.loading('Adding service to database');
-		// if (file[0].type === 'image/jpeg' || file[0].type === 'image/png') {
-		// 	const formdata = new FormData();
-		// 	formdata.append(`image`, file[0]);
-		// 	console.log(formdata);
-		// 	axios
-		// 		.post('https://api.imgur.com/3/image', formdata, {
-		// 			headers: {
-		// 				Authorization: `Client-ID ef941db893a655c`,
-		// 				'Content-type': 'multipart/form-data',
-		// 			},
-		// 		})
-		// 		.then(res => {
-		// 			console.log(res.data);
-		// 		})
-		// 		.catch(e => console.error(e));
-		// }
 		axiosPvt
 			.put(`/services/${id}`, {
 				title,
@@ -294,4 +277,4 @@ function AddService({ edit }) {
 	);
 }
 
-export default AddService;
+export default AddEditService;

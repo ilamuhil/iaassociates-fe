@@ -2,6 +2,9 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 dotenv.config();
 import jwt from 'jsonwebtoken';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
+let prisma = new PrismaClient();
 
 //hash any given string
 const hashPassword = password => {
@@ -55,4 +58,5 @@ function generatePassword() {
 
 	return pass;
 }
-export { verifyToken, generateToken, hashPassword, generatePassword };
+
+export { verifyToken, generateToken, hashPassword, generatePassword, prisma };

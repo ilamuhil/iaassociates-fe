@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { ReactComponent as UpdateIcon } from './../img/update-7.svg';
+import { ReactComponent as UpdateIcon } from './../../img/update-7.svg';
 import SvgIcon from '@mui/material/SvgIcon';
-import AuthContext from '../context/AuthProvider';
-import useMq from './../hooks/useWindowResize';
+import AuthContext from '../../context/AuthProvider';
+import useMq from '../../hooks/useWindowResize';
 import {
 	Grid,
 	InputLabel,

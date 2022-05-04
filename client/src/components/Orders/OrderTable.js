@@ -9,7 +9,6 @@ import {
 	ButtonBase,
 	IconButton,
 	Grow,
-	Slide,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -143,7 +142,7 @@ const OrdersTable = ({
 										</IconButton>
 										<IconButton
 											component={Link}
-											to={`/admin/invoice/${order.id}`}
+											to={`/dashboard/admin/invoice/${order.id}`}
 											size='small'
 											sx={{
 												backgroundColor: 'white',

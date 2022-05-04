@@ -13,14 +13,14 @@ import {
 	DialogActions,
 	IconButton,
 } from '@mui/material';
-import AvatarImgf1 from './../img/avatar/avatarf1.png';
-import AvatarImgf2 from './../img/avatar/avatarf2.png';
-import AvatarImgf3 from './../img/avatar/avatarf3.png';
-import AvatarImgf4 from './../img/avatar/avatarf4.png';
-import AvatarImgm1 from './../img/avatar/avatarm1.png';
-import AvatarImgm2 from './../img/avatar/avatarm2.png';
-import AvatarImgm3 from './../img/avatar/avatarm3.png';
-import AvatarImgm4 from './../img/avatar/avatarm4.png';
+import AvatarImgf1 from '../../img/avatar/avatarf1.png';
+import AvatarImgf2 from '../../img/avatar/avatarf2.png';
+import AvatarImgf3 from '../../img/avatar/avatarf3.png';
+import AvatarImgf4 from '../../img/avatar/avatarf4.png';
+import AvatarImgm1 from '../../img/avatar/avatarm1.png';
+import AvatarImgm2 from '../../img/avatar/avatarm2.png';
+import AvatarImgm3 from '../../img/avatar/avatarm3.png';
+import AvatarImgm4 from '../../img/avatar/avatarm4.png';
 import {
 	useState,
 	useEffect,
@@ -31,12 +31,12 @@ import {
 } from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 const UpdateBilling = lazy(() => import('./UpdateBilling'));
 const UpdatePassword = lazy(() => import('./UpdatePassword'));
-const MarketingSetting = lazy(() => import('./MarketingSetting'));
+const MarketingSetting = lazy(() => import('../MarketingAndAnalytics/MarketingSetting'));
 const Profile = props => {
 	const { id: urlpath } = useParams();
 	const ctx = useContext(AuthContext);
@@ -165,7 +165,7 @@ const Profile = props => {
 							<Card
 								{...props}
 								style={{
-									backgroundImage:
+									background:
 										'linear-gradient(315deg, #e7eff9 0%, #cfd6e6 74%)',
 								}}>
 								<CardContent>

@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { v4 as uuid } from 'uuid';
-import { ReactComponent as UpdateIcon } from './../img/update-7.svg';
+import { ReactComponent as UpdateIcon } from './../../img/update-7.svg';
 import {
 	Grid,
 	InputLabel,
@@ -17,7 +17,7 @@ import {
 	Box,
 	Stack,
 } from '@mui/material';
-import useMq from './../hooks/useWindowResize';
+import useMq from '../../hooks/useWindowResize';
 import { toast } from 'react-toastify';
 const EditOrder = () => {
 	const [orderId, setOrderId] = useState(0);

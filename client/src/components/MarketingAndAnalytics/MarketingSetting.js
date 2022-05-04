@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { toast } from 'react-toastify';
 import { Checkbox, Button, FormControlLabel, FormGroup } from '@mui/material';
 

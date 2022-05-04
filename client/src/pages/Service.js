@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/Layout';
+import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import axios from './../api/axios';
 export default function Service() {
 	const [dat, setData] = useState('');

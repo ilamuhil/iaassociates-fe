@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 
 import { Link } from 'react-router-dom';
-import { Layout } from './../components/Layout';
+import { Layout } from './../components/UtilitiesAndWrappers/Layout';
 import axios from '../api/axios';
 import React from 'react';
 

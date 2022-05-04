@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
-import React from 'react';
-import './../styles/css/paymentStatus.css';
+import './../../styles/css/paymentStatus.css';
 import { Link, useParams } from 'react-router-dom';
 const PaymentStatus = () => {
 	let { verification, orderId } = useParams();

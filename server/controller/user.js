@@ -9,13 +9,13 @@ import {
 import { emaxios, sendPaymentReminder } from './sendMail.js';
 import isEmail from 'validator/lib/isEmail.js';
 const prisma = new PrismaClient();
-const addUserToDb = async user => {
+const addUserToDb = async ({ email, username, password, role = 'user' }) => {
 	let newuser = await prisma.users.create({
 		data: {
-			email: user.email,
-			username: user.username,
-			password: user.password,
-			role: 'user',
+			email,
+			username,
+			password,
+			role,
 			marketingPreference: {
 				create: {
 					ServiceOffers: true,
@@ -168,10 +168,15 @@ const registerNewUser = async (
 	res,
 	next
 ) => {
-	//add entered credentials to database  if user exists error will be thrown by prisma which is handled by the error Route
-	if (cookies) {
-		if (verifyToken(cookies.accessToken).role === 'admin')
-			newUser = { ...newUser, password: generatePassword() };
+	if (Object.keys(cookies).length !== 0) {
+		if (
+			verifyToken(cookies.accessToken, process.env.ACCESS_TOKEN_SECRET).role ===
+			'admin'
+		)
+			newUser = {
+				...newUser,
+				password: (Math.random() + 1).toString(36).substring(2),
+			};
 		else {
 			res.status(403).send('Unauthorized Request');
 		}
@@ -183,7 +188,7 @@ const registerNewUser = async (
 		console.log('user added to db');
 		await sendEmailVerification(newUser);
 		//add user to sendInBlue account for marketing purposes
-		let resp = await addToSib(newUser.username, newUser.email);
+		await addToSib(newUser.username, newUser.email);
 		console.log('Verification email sent and id added to db');
 		res.status(200).send('Registration successful. Verify your email to login');
 	} catch (e) {
@@ -343,7 +348,6 @@ const updateAvatar = async (req, res, next) => {
 		next(err);
 	}
 };
-
 
 export {
 	registerNewUser,

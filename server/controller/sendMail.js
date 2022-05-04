@@ -48,11 +48,12 @@ const sendPaymentReminder = async (username, orderId, email, amount) => {
 	);
 };
 
-const verifyEmail = async (username, toEmail, verificationId) => {
+const verifyEmail = async (username, toEmail, verificationId, password) => {
 	sendTemplatedEmail(
 		{
 			confirmationLink: `${process.env.WEBSITE_URL}/verifyemail/${verificationId}`,
 			name: username,
+			password,
 		},
 		[{ name: username, email: toEmail }],
 		5,
@@ -71,7 +72,7 @@ const sendResetPasswordEmail = async (username, toEmail, verificationId) => {
 	);
 };
 
-const sendEmailVerification = async ({ username, email }) => {
+const sendEmailVerification = async ({ username, email, password = '' }) => {
 	try {
 		//creating a jwt for email verification : Expiration time  : 10min
 		const verificationId = generateToken(
@@ -80,7 +81,7 @@ const sendEmailVerification = async ({ username, email }) => {
 			10 * 60
 		);
 		//send Email to with verification id to client
-		verifyEmail(username, email, verificationId);
+		verifyEmail(username, email, verificationId, password);
 
 		//adding verificationId to database
 		const updateUser = await prisma.users.update({

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Layout } from '../components/Layout';
+import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import './../styles/css/checkout.css';
 import AuthContext from '../context/AuthProvider';
 import { Link } from 'react-router-dom';

@@ -1,17 +1,21 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Chip from '@mui/material/Chip';
+import PaidIcon from '@mui/icons-material/Paid';
+import MoneyOffCsredIcon from '@mui/icons-material/MoneyOffCsred';
 import Alert from '@mui/material/Alert';
-import '../styles/css/invoice.css';
-import usePricingCalculator from '../hooks/usePricingCalculator';
-import AuthContext from '../context/AuthProvider';
-import axios from './../api/axios';
+import '../../styles/css/invoice.css';
+import usePricingCalculator from '../../hooks/usePricingCalculator';
+import AuthContext from '../../context/AuthProvider';
+import axios from '../../api/axios';
+import { format } from 'date-fns';
 function Invoice() {
 	const { orderId } = useParams();
 	const [orderValue, setOrderValue] = useState(0);
 	const [paymentStatus, setPaymentStatus] = useState(0);
 	const [address, setAddress] = useState({
-		name: 'Waiting for data...',
+		fName: 'Waiting for data...',
+		lName: 'Waiting for data...',
 		adl1: 'Waiting for data...',
 		adl2: 'Waiting for data...',
 		zipcode: 0,
@@ -25,47 +29,61 @@ function Invoice() {
 	const [orderDiscount, setOrderDiscount] = useState(0);
 	const [dataNotFound, setDataNotFound] = useState(false);
 	const [taxType, setTaxType] = useState('IGST');
-	const [invoiceDate, setInvoiceDate] = useState([]);
+	const [invoiceDate, setInvoiceDate] = useState('');
+	const [invoiceNumber, setInvoiceNumber] = useState('');
+	const [invoiceType, setInvoiceType] = useState('company');
+	const [email, setEmail] = useState('');
 	const price = usePricingCalculator(orderValue, orderDiscount);
 	const authctx = useContext(AuthContext);
 	useEffect(() => {
 		// let axiosPvt = authctx.useAxiosPrivate();
 		const controller = new AbortController();
 		axios
-			.get(`orders/${orderId}`, {
-				signal: controller.signal,
-			})
+			.get(
+				`orders/order-summary/${orderId}`,
+				{
+					signal: controller.signal,
+				},
+				{ controller: controller.signal }
+			)
 			.then(response => {
 				if (!response?.data?.error) {
 					let { data } = response;
-					let { title, SAC, id: serviceId } = data.service;
+					let { title, SAC } = data.service;
 					let {
 						orderDescription,
 						value,
-						address,
+						user,
 						paymentStatus,
 						discount,
-						createdAt,
+						invoiceType,
+						invoiceNumber,
+						invoiceDate,
 					} = data;
+					console.log(
+						'🚀 ~ file: Invoice.js ~ line 54 ~ useEffect ~ data',
+						data
+					);
+					setInvoiceType(invoiceType);
+					setEmail(user.email);
+					setInvoiceNumber(invoiceNumber);
 					setOrderValue(value);
 					setAddress(prevState => {
 						return {
 							...prevState,
-							name: address.name,
-							adl1: address.adl1,
-							adl2: address.adl2,
-							state: address.state,
-							phoneNo: address.phoneNo,
-							zipcode: address.zipcode,
-							city: address.city,
+							fName: user.address.fName,
+							lName: user.address.lName,
+							adl1: user.address.adl1,
+							adl2: user.address.adl2,
+							state: user.address.state,
+							phoneNo: user.address.phoneNo,
+							zipcode: user.address.zipcode,
+							city: user.address.city,
 						};
 					});
-					setInvoiceDate(prevState => [
-						...prevState,
-						createdAt.split('T')[0].split('-'),
-					]);
+					setInvoiceDate(invoiceDate);
 
-					if (address.state === 'TN') {
+					if (user.address.state === 'TN') {
 						setTaxType('CGST + SGST');
 					}
 					if (paymentStatus) {
@@ -109,7 +127,9 @@ function Invoice() {
 											ILAMURUGU &amp; ASSOCIATES
 											<br />
 										</h2>
-										<span className='small'>Invoice #1082</span>
+										<span className='small'>
+											<b>INVOICE :</b> <i># {invoiceNumber}</i>
+										</span>
 									</div>
 								</div>
 							</div>
@@ -121,7 +141,10 @@ function Invoice() {
 										<br />
 										<b style={{ color: '#1976d2' }}>ILAMURUGU AND ASSOCIATES</b>
 										<br />
-										795 Folsom Ave, Suite 600
+										Flat No 23, Sri Iyappa Flats,
+										<br />
+										New No 5 old 3 Ramachandra road,
+										<br /> Mylapore,
 										<br />
 										<b>City: </b>
 										Chennai
@@ -129,19 +152,32 @@ function Invoice() {
 										<b>State: </b>
 										Tamil Nadu
 										<br />
-										<b>Pincode: </b>600074
+										<b>Pincode: </b>600004
 										<br />
-										<b>Phone number:</b> (+91) 9786543210
+										<b>Phone number:</b> (+91) 7200190475
 										<br />
-										<b>GSTIN:</b> 33AAQFC5091H1ZA
+										<b>GSTIN:</b> 33AAEFI2547J1ZG
 									</address>
 									<br />
-									<address>
-										<strong>Payment Method:</strong>
+									<address style={{ lineHeight: '2rem' }}>
+										<strong style={{ fontSize: '1rem' }}>Payment Method</strong>
 										<br />
-										Visa ending **** 1234
+										<Chip
+											size='small'
+											color={paymentStatus === 'PAID' ? 'info' : 'warning'}
+											label={
+												paymentStatus === 'PAID' ? 'Razorpay' : 'Not Applicable'
+											}
+											icon={
+												paymentStatus === 'PAID' ? (
+													<PaidIcon />
+												) : (
+													<MoneyOffCsredIcon />
+												)
+											}
+										/>
 										<br />
-										h.elaine@gmail.com
+										{email}
 										<br />
 									</address>
 								</div>
@@ -149,8 +185,24 @@ function Invoice() {
 									<address>
 										<strong className='d-block'>BILLING ADDRESS:</strong>
 										<br />
-										<b>Name: </b>
-										{address.name}
+										{invoiceType === 'personal' && (
+											<>
+												<b>Name: </b>
+												<br />
+												{`${address.fName} ${address.lName}`}
+											</>
+										)}
+										{invoiceType === 'company' && (
+											<>
+												<b>Name: </b>
+												<br />
+												{address.fName}
+												<br />
+												<b>GSTIN : </b>
+												{address.lName}
+											</>
+										)}
+
 										<br />
 										<b>Phone number: </b>
 										{address.phoneNo}
@@ -175,9 +227,8 @@ function Invoice() {
 									<address>
 										<strong>Invoice generated on:</strong>
 										<br />
-										{invoiceDate !== undefined
-											? `${invoiceDate?.[0]?.[2]}/${invoiceDate?.[0]?.[1]}/${invoiceDate?.[0]?.[0]}`
-											: 'data not retrieved yet'}
+										{invoiceDate &&
+											format(new Date(invoiceDate.toString()), 'do MMMM yyyy')}
 									</address>
 								</div>
 							</div>
@@ -263,9 +314,7 @@ function Invoice() {
 								<div className='col-md-12 text-start identity'>
 									<p>
 										This service is bound by{' '}
-										<Link to='http://vaoh.uz/doezemod'>
-											Terms and Conditions
-										</Link>{' '}
+										<Link to='/terms-of-use'>Terms and Conditions</Link>{' '}
 										mentioned on the website{' '}
 										<Link to='/'>https://www.ilamsca.com</Link>
 										<br />
@@ -278,6 +327,13 @@ function Invoice() {
 										color={paymentStatus === 'PAID' ? 'success' : 'error'}
 										size='small'
 										sx={{ ml: 2 }}
+										icon={
+											paymentStatus === 'PAID' ? (
+												<PaidIcon />
+											) : (
+												<MoneyOffCsredIcon />
+											)
+										}
 									/>
 								</div>
 							</div>

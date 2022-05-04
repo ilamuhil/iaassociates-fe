@@ -1,38 +1,41 @@
+import { lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import useWindowResize from './hooks/useWindowResize';
 import Contact from './pages/Contact';
 import Home from './pages/Home';
-import { lazy } from 'react';
 import Services from './pages/Services';
 import LoginForm from './pages/LoginForm';
 import PageNotFound from './pages/PageNotFound';
 import Checkout from './pages/Checkout';
-import ErrorBoundary from './components/ErrorBoundary';
 import Privacypolicy from './pages/Privacypolicy';
+import ErrorBoundary from './components/Authorization/ErrorBoundary';
+import PaymentStatus from './components/Orders/PaymentStatus';
+import ProtectedRoute from './api/ProtectedRoute';
+import { ToastContainer, Zoom } from 'react-toastify';
+import { Suspense } from 'react';
+import SendPaymentLink from './components/Orders/SendPaymentLink';
+import UserOrder from './components/Orders/UserOrder';
+import Dashboard from './components/UtilitiesAndWrappers/Dashboard';
+import Invoice from './components/Orders/Invoice';
+import AddService from './components/Services/AddEditService';
+import Service from './pages/Service';
+import Terms from './pages/Terms';
+import EditOrder from './components/Orders/EditOrder';
+import NewOrder from './components/Orders/NewOrder';
+import RefundOrder from './components/Orders/RefundOrder';
 import {
 	PasswordVerify,
 	PasswordResetEmail,
 	EmailVerify,
-} from './components/EmailVerify';
-import PaymentStatus from './components/PaymentStatus';
-import ProtectedRoute from './api/ProtectedRoute';
-import { ToastContainer, Zoom } from 'react-toastify';
-import { Suspense } from 'react';
-import SendPaymentLink from './components/SendPaymentLink';
-import UserOrder from './components/UserOrder';
-import DbLayout from './components/DbLayout';
-import Invoice from './components/Invoice';
-import AddService from './components/AddService';
-import Service from './pages/Service';
-import Terms from './pages/Terms';
-import EditOrder from './components/EditOrder';
-import NewOrder from './components/NewOrder';
-import RefundOrder from './components/RefundOrder';
-// const DbLayout = lazy(() => import('./components/DbLayout'));
-const UsersList = lazy(() => import('./components/UsersList'));
-const Orders = lazy(() => import('./components/Orders'));
-const WebAnalytics = lazy(() => import('./components/WebAnalytics'));
-const Profile = lazy(() => import('./components/Profile'));
+} from './components/UtilitiesAndWrappers/EmailVerify';
+import CreateNewUser from './components/Users/CreateNewUser';
+
+const UsersList = lazy(() => import('./components/Users/UsersList'));
+const Orders = lazy(() => import('./components/Orders/Orders'));
+const WebAnalytics = lazy(() =>
+	import('./components/MarketingAndAnalytics/WebAnalytics')
+);
+const Profile = lazy(() => import('./components/Users/Profile'));
 
 function App() {
 	const size = useWindowResize();
@@ -50,7 +53,7 @@ function App() {
 					<Route path='*' element={<PageNotFound />} />
 					<Route path='/privacy-policy' element={<Privacypolicy />} />
 
-					<Route path='/dashboard' element={<DbLayout />}>
+					<Route path='/dashboard' element={<Dashboard />}>
 						<Route
 							path='payment/:verification/:orderId'
 							element={<PaymentStatus />}
@@ -73,7 +76,6 @@ function App() {
 								<>
 									<ProtectedRoute allowedRoles={[105]}>
 										<Suspense fallback={<div>Loading...</div>}>
-											{/* <UserOrder /> */}
 											<AddService edit />
 										</Suspense>
 									</ProtectedRoute>
@@ -107,7 +109,7 @@ function App() {
 							}
 						/>
 						<Route
-							path='invoice:/id'
+							path='invoice/:id'
 							element={
 								<ProtectedRoute allowedRoles={[33, 105]}>
 									<Suspense fallback={<div>Loading...</div>}>
@@ -138,6 +140,7 @@ function App() {
 								</>
 							}
 						/>
+						<Route path='users/newUser' element={<CreateNewUser />} />
 
 						<Route
 							path='orders'
@@ -152,17 +155,9 @@ function App() {
 							<Route path='edit-order' element={<EditOrder />} />
 							<Route path='refund-order' element={<RefundOrder />} />
 							<Route path='send-payment-link' element={<SendPaymentLink />} />
-							<Route
-								path='admin/invoice/:orderId'
-								element={
-									<ProtectedRoute allowedRoles={[33]}>
-										<Suspense fallback={<div>Loading...</div>}>
-											<Invoice/>
-										</Suspense>
-									</ProtectedRoute>
-								}
-							/>
+							
 						</Route>
+						<Route path='admin/invoice/:orderId' element={<Invoice />} />
 					</Route>
 
 					<Route

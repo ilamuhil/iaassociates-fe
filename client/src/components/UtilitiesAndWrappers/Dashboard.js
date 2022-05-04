@@ -25,19 +25,19 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import Avatar from '@mui/material/Avatar';
 import LogoutIcon from '@mui/icons-material/Logout';
-import AuthContext from '../context/AuthProvider';
-import useMediaQuery from '../hooks/useWindowResize';
+import AuthContext from '../../context/AuthProvider';
+import useMediaQuery from '../../hooks/useWindowResize';
 import Alert from '@mui/material/Alert';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import AvatarImgf1 from './../img/avatar/avatarf1.png';
-import AvatarImgf2 from './../img/avatar/avatarf2.png';
-import AvatarImgf3 from './../img/avatar/avatarf3.png';
-import AvatarImgf4 from './../img/avatar/avatarf4.png';
-import AvatarImgm1 from './../img/avatar/avatarm1.png';
-import AvatarImgm2 from './../img/avatar/avatarm2.png';
-import AvatarImgm3 from './../img/avatar/avatarm3.png';
-import AvatarImgm4 from './../img/avatar/avatarm4.png';
-import DashboardIcon from './../img/dashboardicon.png';
+import AvatarImgf1 from './../../img/avatar/avatarf1.png';
+import AvatarImgf2 from './../../img/avatar/avatarf2.png';
+import AvatarImgf3 from './../../img/avatar/avatarf3.png';
+import AvatarImgf4 from './../../img/avatar/avatarf4.png';
+import AvatarImgm1 from './../../img/avatar/avatarm1.png';
+import AvatarImgm2 from './../../img/avatar/avatarm2.png';
+import AvatarImgm3 from './../../img/avatar/avatarm3.png';
+import AvatarImgm4 from './../../img/avatar/avatarm4.png';
+import DashboardIcon from './../../img/dashboardicon.png';
 
 const drawerWidth = 200;
 
@@ -106,7 +106,7 @@ const Drawer = styled(MuiDrawer, {
 	}),
 }));
 
-export default function DbLayout({ children }) {
+export default function Dashboard({ children }) {
 	const tablet = useMediaQuery('md');
 	const ctx = React.useContext(AuthContext);
 	const theme = useTheme();

@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from 'react';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { toast } from 'react-toastify';
 import { TextField, Button } from '@mui/material';
 

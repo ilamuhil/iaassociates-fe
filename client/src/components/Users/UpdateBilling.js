@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useCallback, useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { TextField, Checkbox, Button, FormControlLabel } from '@mui/material';

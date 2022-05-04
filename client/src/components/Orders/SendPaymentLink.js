@@ -1,4 +1,4 @@
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import { useState, useEffect, useContext } from 'react';
 import LinkIcon from '@mui/icons-material/Link';
 import {

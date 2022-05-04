@@ -5,9 +5,9 @@ import React, { Component } from 'react';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Layout } from './../components/Layout';
+import { Layout } from './../components/UtilitiesAndWrappers/Layout';
 import { Link } from 'react-router-dom';
-import BreadCrumbs from './../components/Breadcrumbs';
+import BreadCrumbs from './../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from './../api/axios';
 import AuthContext from '../context/AuthProvider';
 

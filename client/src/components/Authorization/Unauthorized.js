@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import './../styles/css/unauthorized.css';
+import './../../styles/css/unauthorized.css';
 import { Link } from 'react-router-dom';
 
 const Unauthorized = () => {

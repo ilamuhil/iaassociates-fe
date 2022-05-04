@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import AuthContext from '../context/AuthProvider';
+import AuthContext from '../../context/AuthProvider';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import {
@@ -28,7 +28,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from './../api/axios';
+import axios from '../../api/axios';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 const sort = arr => {
 	let adminsorted = arr
