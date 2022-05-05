@@ -4,7 +4,6 @@ import { sendEmailVerification } from './sendMail.js';
 import {
 	hashPassword,
 	verifyToken,
-	generatePassword,
 } from '../functions/util.js';
 import { emaxios, sendPaymentReminder } from './sendMail.js';
 import isEmail from 'validator/lib/isEmail.js';
@@ -168,6 +167,7 @@ const registerNewUser = async (
 	res,
 	next
 ) => {
+    console.log("🚀 ~ file: user.js ~ line 171 ~ cookies", cookies)
 	if (Object.keys(cookies).length !== 0) {
 		if (
 			verifyToken(cookies.accessToken, process.env.ACCESS_TOKEN_SECRET).role ===

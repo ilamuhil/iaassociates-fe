@@ -21,6 +21,7 @@ import {
 	FormControlLabel,
 	FormLabel,
 	Slide,
+	Fade,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import LockResetIcon from '@mui/icons-material/LockReset';
@@ -99,7 +100,7 @@ const UsersList = () => {
 		{
 			id: 1,
 			field: 'id',
-			headerName: 'User Id',
+			headerName: '#',
 			width: 75,
 		},
 
@@ -201,7 +202,7 @@ const UsersList = () => {
 									startIcon={<AddIcon />}>
 									Create new User
 								</Button>
-								<Slide in={true} timeout={2000} direction='down'>
+								<Fade in={true} timeout={2500}>
 									<Table
 										style={{
 											borderRadius: '4px',
@@ -225,7 +226,10 @@ const UsersList = () => {
 										</TableHead>
 										<TableBody>
 											{rows.map((row, index) => (
-												<Slide in={true} direction='down' timeout={(index+1) * 100}>
+												<Slide
+													in={true}
+													direction={index % 2 === 0 ? 'left' : 'right'}
+													timeout={(index + 1) * 100}>
 													<TableRow
 														key={row.id}
 														sx={{
@@ -237,7 +241,7 @@ const UsersList = () => {
 																border: 0,
 															},
 														}}>
-														<TableCell>{row.id}</TableCell>
+														<TableCell>{index}</TableCell>
 														<TableCell>{row.username}</TableCell>
 														<TableCell>{row.email}</TableCell>
 														<TableCell>{row.role}</TableCell>
@@ -307,7 +311,7 @@ const UsersList = () => {
 											))}
 										</TableBody>
 									</Table>
-								</Slide>
+								</Fade>
 							</div>
 						</Grid>
 						<DownloadData

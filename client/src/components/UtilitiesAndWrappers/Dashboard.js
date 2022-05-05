@@ -1,5 +1,5 @@
-// This component is the layout for Dashboard
 import * as React from 'react';
+// This component is the layout for Dashboard
 import { styled, useTheme } from '@mui/material/styles';
 import { Link, Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';

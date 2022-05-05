@@ -285,7 +285,7 @@ const getSingleOrderSummary = async (
 	res
 ) => {
 	let data = await prisma.orders.findUnique({
-		where: { id: parseInt(id) },
+		where: { id: Number(id) },
 		select: {
 			user: {
 				select: {
@@ -418,6 +418,17 @@ const getOrdersByMonth = async (
 	}
 };
 
+const deleteOrder = async (req, res) => {
+	let { id } = req.params;
+	try {
+		await prisma.orders.delete({ where: { id: Number(id) } });
+		res.sendStatus(200);
+	} catch (e) {
+		console.error(e);
+		res.sendStatus(500);
+	}
+};
+
 export {
 	getOrderCount,
 	createNewOrder,
@@ -427,4 +438,5 @@ export {
 	refundOrder,
 	updateOrder,
 	getSingleOrderSummary,
+	deleteOrder,
 };

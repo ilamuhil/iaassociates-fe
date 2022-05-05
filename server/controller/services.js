@@ -13,6 +13,7 @@ const getService = async (req, res, next) => {
 			id: true,
 			title: true,
 			highlights: true,
+			SAC: true,
 			description: req.query.description ? true : false,
 		};
 		try {
@@ -53,7 +54,11 @@ const updateService = async (req, res, next) => {
 		res.status(403).send('Unauthorized request');
 	}
 	let { id } = req.params;
-	let { title, highlights, description } = req.body;
+	let { title, highlights, description, sac } = req.body;
+	console.log(
+		'🚀 ~ file: services.js ~ line 57 ~ updateService ~ req.body',
+		req.body
+	);
 	try {
 		await prisma.services.update({
 			where: {
@@ -68,6 +73,7 @@ const updateService = async (req, res, next) => {
 		});
 		res.status(200).send('Updated service successfully');
 	} catch (e) {
+		console.error(e);
 		let err = new Error('Error occurred while updating service');
 		err.status = 500;
 		next(err);

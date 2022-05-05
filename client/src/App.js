@@ -17,7 +17,7 @@ import SendPaymentLink from './components/Orders/SendPaymentLink';
 import UserOrder from './components/Orders/UserOrder';
 import Dashboard from './components/UtilitiesAndWrappers/Dashboard';
 import Invoice from './components/Orders/Invoice';
-import AddService from './components/Services/AddEditService';
+import AddEditService from './components/Services/AddEditService';
 import Service from './pages/Service';
 import Terms from './pages/Terms';
 import EditOrder from './components/Orders/EditOrder';
@@ -29,6 +29,7 @@ import {
 	EmailVerify,
 } from './components/UtilitiesAndWrappers/EmailVerify';
 import CreateNewUser from './components/Users/CreateNewUser';
+import ServiceList from './components/Services/ServiceList';
 
 const UsersList = lazy(() => import('./components/Users/UsersList'));
 const Orders = lazy(() => import('./components/Orders/Orders'));
@@ -45,7 +46,7 @@ function App() {
 				<Routes>
 					{/* Routes starting with "/*" are absolute routes relative Routes do not start with /  */}
 					<Route path='/' element={<Home />} />
-					<Route path='/service' element={<Service />} />
+					<Route path='/service/:id' element={<Service />} />
 					<Route path='/terms-of-use' element={<Terms />} />
 					<Route path='/services' element={<Services />} />
 					<Route path='/login' element={<LoginForm />} />
@@ -70,18 +71,30 @@ function App() {
 								</>
 							}
 						/>
-
+						<Route path='services' element={<ServiceList />} />
 						<Route
 							element={
 								<>
 									<ProtectedRoute allowedRoles={[105]}>
 										<Suspense fallback={<div>Loading...</div>}>
-											<AddService edit />
+											<AddEditService edit />
 										</Suspense>
 									</ProtectedRoute>
 								</>
 							}
 							path='services/:id'
+						/>
+						<Route
+							element={
+								<>
+									<ProtectedRoute allowedRoles={[105]}>
+										<Suspense fallback={<div>Loading...</div>}>
+											<AddEditService  />
+										</Suspense>
+									</ProtectedRoute>
+								</>
+							}
+							path='add-service'
 						/>
 						<Route
 							path='analytics'
@@ -109,7 +122,7 @@ function App() {
 							}
 						/>
 						<Route
-							path='invoice/:id'
+							path='invoice/:orderId'
 							element={
 								<ProtectedRoute allowedRoles={[33, 105]}>
 									<Suspense fallback={<div>Loading...</div>}>
@@ -155,7 +168,6 @@ function App() {
 							<Route path='edit-order' element={<EditOrder />} />
 							<Route path='refund-order' element={<RefundOrder />} />
 							<Route path='send-payment-link' element={<SendPaymentLink />} />
-							
 						</Route>
 						<Route path='admin/invoice/:orderId' element={<Invoice />} />
 					</Route>

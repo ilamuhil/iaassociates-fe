@@ -31,7 +31,6 @@ function Invoice() {
 	const [taxType, setTaxType] = useState('IGST');
 	const [invoiceDate, setInvoiceDate] = useState('');
 	const [invoiceNumber, setInvoiceNumber] = useState('');
-	const [invoiceType, setInvoiceType] = useState('company');
 	const [email, setEmail] = useState('');
 	const price = usePricingCalculator(orderValue, orderDiscount);
 	const authctx = useContext(AuthContext);
@@ -56,15 +55,9 @@ function Invoice() {
 						user,
 						paymentStatus,
 						discount,
-						invoiceType,
 						invoiceNumber,
 						invoiceDate,
 					} = data;
-					console.log(
-						'🚀 ~ file: Invoice.js ~ line 54 ~ useEffect ~ data',
-						data
-					);
-					setInvoiceType(invoiceType);
 					setEmail(user.email);
 					setInvoiceNumber(invoiceNumber);
 					setOrderValue(value);
@@ -79,6 +72,7 @@ function Invoice() {
 							phoneNo: user.address.phoneNo,
 							zipcode: user.address.zipcode,
 							city: user.address.city,
+							invoiceType: user.address.invoiceType,
 						};
 					});
 					setInvoiceDate(invoiceDate);
@@ -185,14 +179,14 @@ function Invoice() {
 									<address>
 										<strong className='d-block'>BILLING ADDRESS:</strong>
 										<br />
-										{invoiceType === 'personal' && (
+										{address.invoiceType === 'personal' && (
 											<>
 												<b>Name: </b>
 												<br />
 												{`${address.fName} ${address.lName}`}
 											</>
 										)}
-										{invoiceType === 'company' && (
+										{address.invoiceType === 'company' && (
 											<>
 												<b>Name: </b>
 												<br />
@@ -227,8 +221,9 @@ function Invoice() {
 									<address>
 										<strong>Invoice generated on:</strong>
 										<br />
-										{invoiceDate &&
-											format(new Date(invoiceDate.toString()), 'do MMMM yyyy')}
+										{invoiceDate !== 'NA' && invoiceDate
+											? format(new Date(invoiceDate.toString()), 'do MMMM yyyy')
+											: 'NA'}
 									</address>
 								</div>
 							</div>

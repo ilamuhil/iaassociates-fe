@@ -27,6 +27,7 @@ import {
 	Slide,
 	Grow,
 } from '@mui/material';
+
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { ReactComponent as PackageDeliveredIcon } from './../../img/package-delivered.svg';
@@ -113,12 +114,19 @@ const Orders = () => {
 		},
 		[axiosPvt]
 	);
-	const deleteOrder = value => {
-		toast.promise(axiosPvt.delete(`/orders/delete-order/${value}`), {
-			pending: 'deleting order...',
-			success: 'order deleted successfully',
-			error: 'failed to delete order!',
-		});
+	const deleteOrder = () => {
+		let promise = axiosPvt.delete(`/orders/delete-order/${orderId}`);
+		toast
+			.promise(promise, {
+				pending: 'deleting order...',
+				success: 'Order deleted successfully',
+				error: 'Order could not be delted',
+			})
+			.then(() => {
+				let ind = orders.findIndex(order => order.id === orderId);
+				setOrders(prev => [...prev.slice(0, ind), ...prev.slice(ind + 1)]);
+			});
+		setOpen(false);
 	};
 	const sendPaymentReminder = useCallback(() => {
 		toast.promise(

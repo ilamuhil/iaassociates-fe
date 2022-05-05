@@ -10,6 +10,11 @@ import {
 	Box,
 	ListSubheader,
 	Stack,
+	Card,
+	CardContent,
+	TableRow,
+	TableCell,
+	Table,
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -20,7 +25,7 @@ import { useState, useEffect, useCallback, useContext } from 'react';
 import axios from '../../api/axios';
 import { toast } from 'react-toastify';
 import AuthContext from '../../context/AuthProvider';
-
+import usePricingCalculator from '../../hooks/usePricingCalculator';
 const NewOrder = () => {
 	let authctx = useContext(AuthContext);
 	const axiosPvt = authctx.useAxiosPrivate();
@@ -34,6 +39,7 @@ const NewOrder = () => {
 	const [serviceList, setServices] = useState([]);
 	const [selectedService, setSelectedService] = useState(0);
 	const [invoiceNumber, setInvoiceNumber] = useState('');
+	const price = usePricingCalculator(value, discount);
 	const lgscr = useMq('lg');
 
 	useEffect(() => {
@@ -200,12 +206,14 @@ const NewOrder = () => {
 					}}
 				/>
 			</Grid>
+
 			<Grid item>
 				<TextField
 					fullWidth
 					variant='standard'
 					label='Discount %'
 					type='number'
+					max={100}
 					helperText='Your order value is inclusive of your discount percentage. Leave blank as is if not applicable'
 					value={discount}
 					onChange={e => {
@@ -213,7 +221,7 @@ const NewOrder = () => {
 					}}
 				/>
 			</Grid>
-
+			
 			<Grid item>
 				<TextField
 					fullWidth
@@ -228,7 +236,6 @@ const NewOrder = () => {
 					required
 				/>
 			</Grid>
-
 			<Grid item>
 				<TextField
 					fullWidth
@@ -287,6 +294,51 @@ const NewOrder = () => {
 					</FormControl>
 				</Box>
 			</Grid>
+			<Card sx={{ pt: 3, maxWidth: '300px' }}>
+				<h5 className='text-center'>Pricing Breakdown</h5>
+				<CardContent>
+					<Table size='small'>
+						<TableRow>
+							<TableCell>
+								<b>Base Price : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>
+								{price.basePrice} ₹
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Discount Price : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>
+								{price.discountValue} ₹
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Taxable Value : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>
+								{price.taxableValue} ₹
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Tax (18%) : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>
+								{price.taxValue} ₹
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Total value : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>{value} ₹</TableCell>
+						</TableRow>
+					</Table>
+				</CardContent>
+			</Card>
 
 			<Grid item>
 				<Box
@@ -310,6 +362,7 @@ const NewOrder = () => {
 					</Button>
 				</Box>
 			</Grid>
+			
 		</Stack>
 	);
 };

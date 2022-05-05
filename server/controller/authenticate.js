@@ -341,6 +341,7 @@ const logInHandler = async (req, res, next) => {
 	}
 };
 
+
 export {
 	logInHandler,
 	updatePassword,

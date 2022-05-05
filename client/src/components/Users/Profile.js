@@ -12,6 +12,8 @@ import {
 	DialogContent,
 	DialogActions,
 	IconButton,
+	Backdrop,
+	CircularProgress,
 } from '@mui/material';
 import AvatarImgf1 from '../../img/avatar/avatarf1.png';
 import AvatarImgf2 from '../../img/avatar/avatarf2.png';
@@ -36,7 +38,9 @@ import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 const UpdateBilling = lazy(() => import('./UpdateBilling'));
 const UpdatePassword = lazy(() => import('./UpdatePassword'));
-const MarketingSetting = lazy(() => import('../MarketingAndAnalytics/MarketingSetting'));
+const MarketingSetting = lazy(() =>
+	import('../MarketingAndAnalytics/MarketingSetting')
+);
 const Profile = props => {
 	const { id: urlpath } = useParams();
 	const ctx = useContext(AuthContext);
@@ -50,6 +54,7 @@ const Profile = props => {
 	const [editMode, setEditMode] = useState(false);
 	const [open, setOpen] = useState(false);
 	const axiosPvt = ctx.useAxiosPrivate();
+	const [isLoading, setLoading] = useState(true);
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -89,7 +94,7 @@ const Profile = props => {
 		const payload = { avatar: newAvatar };
 		const toastId = toast.loading('Updating Avatar...');
 		selectAvatar();
-		const URL = urlpath ? `user/avatar/${urlpath}` : "user/avatar/";
+		const URL = urlpath ? `user/avatar/${urlpath}` : 'user/avatar/';
 		axiosPvt
 			.put(URL, payload)
 			.then(res => {
@@ -111,7 +116,7 @@ const Profile = props => {
 				});
 				setOpen(false);
 			});
-	}, [newAvatar, selectAvatar, axiosPvt,urlpath]);
+	}, [newAvatar, selectAvatar, axiosPvt, urlpath]);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -149,12 +154,13 @@ const Profile = props => {
 			}
 		};
 		getUser();
+		setTimeout(() => {
+			setLoading(false);
+		}, 1000);
 		return () => {
 			controller.abort();
 		};
 	}, [axiosPvt, selectAvatar, urlpath]);
-
-	
 
 	return (
 		<>
@@ -475,6 +481,16 @@ const Profile = props => {
 					</div>
 				</div>
 			)}
+			<Backdrop
+				sx={{
+					color: '#000',
+					zIndex: theme => theme.zIndex.drawer + 1,
+					backdropFilter: 'blur(100px)',
+					transitionDuration: '1s',
+				}}
+				open={isLoading}>
+				<CircularProgress color='inherit' />
+			</Backdrop>
 		</>
 	);
 };

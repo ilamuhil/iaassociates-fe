@@ -26,7 +26,7 @@ function AddEditService({ edit }) {
 	const [highlights3, setHighlights3] = useState('');
 	const [highlights4, setHighlights4] = useState('');
 	const [title, setTitle] = useState('');
-	const [sac, satSAC] = useState('');
+	const [sac, setSAC] = useState('');
 	const { id } = useParams();
 	useEffect(() => {
 		const controller = new AbortController();
@@ -44,7 +44,7 @@ function AddEditService({ edit }) {
 					setHighlights2(highlights[1]);
 					setHighlights3(highlights[2]);
 					setHighlights4(highlights[3]);
-					satSAC(sac);
+					setSAC(sac);
 					setDescription(description);
 					const blocksFromHTML = convertFromHTML(description);
 					setEditorState(
@@ -159,7 +159,9 @@ function AddEditService({ edit }) {
 				}}>
 				<div className='row gy-3'>
 					<div className='col-12'>
-						<h1 className='text-center'>Create New Service</h1>
+						<h1 className='text-center'>
+							{edit ? 'Edit' : 'Create New'} Service
+						</h1>
 					</div>
 					<div className='col-12'>
 						<h4>Service Title</h4>
@@ -169,6 +171,7 @@ function AddEditService({ edit }) {
 							label='Service Title'
 							variant='standard'
 							fullWidth
+							value={title}
 							onChange={e => {
 								setTitle(e.target.value);
 							}}
@@ -180,11 +183,12 @@ function AddEditService({ edit }) {
 					</div>
 					<div className='col-lg-4 col-md-8'>
 						<TextField
-							label='Service Sac Code'
+							label='Service SAC'
 							variant='standard'
 							fullWidth
+							value={sac}
 							onChange={e => {
-								satSAC(e.target.value);
+								setSAC(e.target.value);
 							}}
 						/>
 					</div>
@@ -199,6 +203,7 @@ function AddEditService({ edit }) {
 							label='Highlight 1'
 							variant='standard'
 							fullWidth
+							value={highlights1}
 							onChange={e => {
 								setHighlights1(e.target.value);
 							}}
@@ -209,6 +214,7 @@ function AddEditService({ edit }) {
 							label='Highlight 2'
 							variant='standard'
 							fullWidth
+							value={highlights2}
 							onChange={e => {
 								setHighlights2(e.target.value);
 							}}
@@ -219,6 +225,7 @@ function AddEditService({ edit }) {
 							label='Highlight 3'
 							variant='standard'
 							fullWidth
+							value={highlights3}
 							onChange={e => {
 								setHighlights3(e.target.value);
 							}}
@@ -229,6 +236,7 @@ function AddEditService({ edit }) {
 							label='Highlight 4'
 							variant='standard'
 							fullWidth
+							value={highlights4}
 							onChange={e => {
 								setHighlights4(e.target.value);
 							}}
