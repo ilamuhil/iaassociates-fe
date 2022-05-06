@@ -38,6 +38,7 @@ import AvatarImgm2 from './../../img/avatar/avatarm2.png';
 import AvatarImgm3 from './../../img/avatar/avatarm3.png';
 import AvatarImgm4 from './../../img/avatar/avatarm4.png';
 import DashboardIcon from './../../img/dashboardicon.png';
+import { toast } from 'react-toastify';
 
 const drawerWidth = 200;
 
@@ -151,6 +152,13 @@ export default function Dashboard({ children }) {
 				setActive(AvatarImgm1);
 		}
 	}, [avatar]);
+	const sendEmailVerification = () => {
+		toast.promise(axiosPvt.post('/user/confirm-email'), {
+			pending: 'sending email please wait..',
+			success: 'Email Sent successfully',
+			error: 'Could not send email. Try agian later',
+		});
+	};
 	React.useEffect(() => {
 		axiosPvt
 			.get('user/', { params: { avatar: true, active: true } })
@@ -412,14 +420,15 @@ export default function Dashboard({ children }) {
 					<ArrowBackIcon style={{ color: 'white' }} />
 				</IconButton>
 
-				{userIsActive && (
+				{!userIsActive && (
 					<Alert severity='warning' sx={{ mb: 2 }}>
 						Your account is inactive{' '}
 						<Button
 							sx={{ mx: 4 }}
 							size='small'
 							color='warning'
-							variant='outlined'>
+							variant='outlined'
+							onClick={sendEmailVerification}>
 							Confirm Email
 						</Button>
 					</Alert>

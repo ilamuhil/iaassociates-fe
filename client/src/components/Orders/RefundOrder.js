@@ -41,18 +41,31 @@ const RefundOrder = () => {
 	}, [axiosPvt]);
 
 	const refundOrder = async () => {
-		toast.promise(
-			axiosPvt.put(`/orders/refund/${orderId}`, {
+		let toastId = toast.loading(
+			'Processing request. Please do not refresh the page...'
+		);
+		try {
+			let res = await axiosPvt.put(`/orders/refund/${orderId}`, {
 				speed: optimumSpeed ? 'normal' : 'optimum',
 				refundAmt,
 				receiptNumber,
-			}),
-			{
-				pending: 'Processing refund request...',
-				error: 'error processing refund request',
-				success: 'Successfully placed refund request',
-			}
-		);
+			});
+			toast.update(toastId, {
+				render: res.data,
+				type: 'success',
+				isLoading: false,
+				autoClose: 500,
+			});
+		} catch (e) {
+			toast.update(toastId, {
+				render: e?.response
+					? e.response.data
+					: 'Server Unavailable try again later',
+				type: 'error',
+				isLoading: false,
+				autoClose: 2000,
+			});
+		}
 	};
 	return (
 		<>

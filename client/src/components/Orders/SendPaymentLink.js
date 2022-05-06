@@ -61,7 +61,7 @@ const PaymentLink = () => {
 	const sendPaymentLink = () => {
 		let email = usersList.filter(element => element.name === user)[0].email;
 		toast.promise(
-			axiosPvt.post('/orders/sendPaymentLink', {
+			axiosPvt.post('/payments/send-payment-link', {
 				username: user,
 				amount,
 				email,

@@ -1,6 +1,12 @@
-import { verifyToken, generateToken, hashPassword } from '../functions/util.js';
+import {
+	verifyToken,
+	generateToken,
+	hashPassword,
+	getRoleCodes,
+} from '../functions/util.js';
 import { verifyEmail } from './sendMail.js';
 import { findUser } from './user.js';
+
 import dotenv from 'dotenv';
 import pkg from '@prisma/client';
 dotenv.config();
@@ -12,7 +18,7 @@ const authenticateUser = (req, res, next) => {
 	let usertoken = req.cookies.accessToken;
 	if (!usertoken) {
 		let err = new Error('No access token available');
-		err.status = 401;
+		err.status = 403;
 		next(err);
 		return;
 	} else {
@@ -130,7 +136,7 @@ const logOutHandler = async (req, res, next) => {
 	try {
 		await prisma.users.update({
 			where: {
-				email: req.user.email,
+				id: req.user.id,
 			},
 			data: {
 				refreshToken: '',
@@ -139,8 +145,10 @@ const logOutHandler = async (req, res, next) => {
 		res.clearCookie('accessToken');
 		res.clearCookie('refreshToken');
 		res.clearCookie('isLoggedIn');
+		res.clearCookie('role');
 		res.status(200).send('logout successful');
 	} catch (e) {
+		console.log(e);
 		let err = new Error('Error occurred while logging out!');
 		err.status = 500;
 		next(err);
@@ -171,13 +179,18 @@ const getNewTokenHandler = async (req, res, next) => {
 		);
 
 		if (tokenPayload.id === user.id) {
+			res.cookie('isLoggedIn', 'true', { maxAge: 36000000 });
+			res.cookie('accessToken', accessToken, {
+				httpOnly: true,
+				maxAge: 36000000,
+				//10 hours
+			});
+			res.cookie('role', getRoleCodes(tokenPayload.id), { maxAge: 36000000 });
 			res.status(200).send({
-				accessToken: generateToken(user, process.env.ACCESS_TOKEN_SECRET),
 				message: 'refresh token vaidation successful',
 			});
 		} else {
-			res.clearCookie('refreshToken', { httpOnly: true });
-			console.log('expired Refresh Token');
+			res.clearCookie('refreshToken');
 			res.status(401).send('Login expired');
 		}
 	} catch (e) {
@@ -259,6 +272,7 @@ const logInHandler = async (req, res, next) => {
 			'email',
 			'role'
 		);
+        console.log("🚀 ~ file: authenticate.js ~ line 275 ~ logInHandler ~ isValidUser", isValidUser)
 		if (!isValidUser) {
 			let err = new Error(
 				'Details not found in out database. Try registering instead'
@@ -271,7 +285,6 @@ const logInHandler = async (req, res, next) => {
 	}
 	//check if password matches the entered password and if true generate a refresh and access token
 	if (isValidUser && isValidUser.password === user.password) {
-		console.log('user validated');
 		let accessToken;
 		let refreshToken;
 		let payload = {
@@ -284,13 +297,13 @@ const logInHandler = async (req, res, next) => {
 			accessToken = generateToken(
 				payload,
 				process.env.ACCESS_TOKEN_SECRET,
-				'10h'
+				36000000
 			);
 			//refresh token validity of 30 days.
 			refreshToken = generateToken(
 				payload,
 				process.env.REFRESH_TOKEN_SECRET,
-				'720h'
+				2592000000
 			);
 		} catch (e) {
 			next(e);
@@ -307,40 +320,30 @@ const logInHandler = async (req, res, next) => {
 					refreshToken,
 				},
 			});
-			let code;
-			switch (isValidUser.role) {
-				case 'admin':
-					code = 33;
-					break;
-				case 'customer':
-					code = 105;
-					break;
-				default:
-					code = 91;
-			}
+			let code = getRoleCodes(isValidUser.role);
 			//send refresh and access token to react client
-			res.cookie('isLoggedIn', 'true', { maxAge: 1000 * 60 * 60 });
+			res.cookie('isLoggedIn', 'true', { maxAge: 36000000 });
 			res.cookie('accessToken', accessToken, {
 				httpOnly: true,
-				maxAge: 100000 * 60 * 60,
+				maxAge: 36000000,
+				//10 hours
 			});
 			//expires in 5 minutes
 			res.cookie('refreshToken', refreshToken, {
 				httpOnly: true,
-				maxAge: 72 * 60000,
+				maxAge: 2592000000,
 			}); //expires in 30 days
-			res.cookie('role', code, { maxAge: 1000 * 60 * 60 });
+			res.cookie('role', code, { maxAge: 36000000 });
 			res.status(200).send('Login Successful. Redirecting you to dashboard');
 		} catch (err) {
 			next(err);
 		}
 	} else {
-		let err = new Error('Incorrect credentials.');
+		let err = new Error('Incorrect credentials');
 		err.status = 400;
 		next(err);
 	}
 };
-
 
 export {
 	logInHandler,

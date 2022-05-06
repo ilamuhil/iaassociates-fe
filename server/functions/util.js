@@ -35,6 +35,9 @@ const generateToken = (payload, secret, time = '300s') => {
 		throw err;
 	}
 };
+const getRoleCodes = (role) => {
+	return role === "admin" ? 33 : role==="customer" ? 105 : 91;
+}
 const verifyToken = (token, secret) => {
 	try {
 		let payload = jwt.verify(token, secret);
@@ -59,4 +62,4 @@ function generatePassword() {
 	return pass;
 }
 
-export { verifyToken, generateToken, hashPassword, generatePassword, prisma };
+export { verifyToken, generateToken, hashPassword, generatePassword, prisma,getRoleCodes };

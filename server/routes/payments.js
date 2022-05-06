@@ -9,7 +9,7 @@ import {
 const route = express.Router();
 route.use(authenticateUser);
 route.post('/send-payment-reminder', paymentReminder);
-route.post('/sendPaymentLink', sendPaymentLink);
+route.post('/send-payment-link', sendPaymentLink);
 route.post('/verification/:id', paymentVerification);
 route.post('/retry-payment', retryPayment);
 export default route;

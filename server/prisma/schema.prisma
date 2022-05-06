@@ -12,7 +12,7 @@ model Users {
   username              String               @unique @db.VarChar(255)
   email                 String               @unique @db.VarChar(255)
   password              String               @db.VarChar(255)
-  refreshToken          String?              @unique @db.VarChar(255)
+  refreshToken          String?              @db.VarChar(255)
   avatar                String?
   role                  String               @default("user")
   createdAt             DateTime             @default(now())

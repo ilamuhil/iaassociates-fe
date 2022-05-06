@@ -7,7 +7,12 @@ import {
 	DialogContentText,
 	TextField,
 	DialogActions,
+	Accordion,
+	Typography,
+	AccordionSummary,
+	AccordionDetails,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Link } from 'react-router-dom';
 import { Layout } from './../components/UtilitiesAndWrappers/Layout';
@@ -22,6 +27,11 @@ const Home = () => {
 	const handleClose = () => {
 		setOpen(false);
 		axios.post('/sendMessage', { email, phoneNumber, message });
+	};
+	const [expanded, setExpanded] = React.useState(false);
+
+	const handleChange = panel => (event, isExpanded) => {
+		setExpanded(isExpanded ? panel : false);
 	};
 	return (
 		<Layout>
@@ -92,20 +102,90 @@ const Home = () => {
 				{/* <!-- End About Us Section -->
 
  <!-- ======= Why Us Section ======= --> */}
-				<section id='why-us' className='why-us section-bg'>
+				<section
+					id='why-us'
+					className='why-us section-bg'
+					>
 					<div className='container-fluid'>
-						<div className='row'>
-							<div className='col-lg-7 d-flex flex-column justify-content-center align-items-stretch order-2 order-lg-1'>
+						<div className='row justify-content-center'>
+							<div className='col-lg-6 d-flex flex-column  align-items-stretch'>
 								<div className='content'>
-									<h3>Where We Specialize</h3>
-									<p>
+									<h3 className='text-center'>Where We Specialize</h3>
+									<p className='text-center'>
 										Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
 										do eiusmod tempor incididunt ut labore et dolore magna
 										aliqua. Duis aute irure dolor in reprehenderit
 									</p>
 								</div>
+								<Accordion
+									sx={{ borderTop: 'none', mt: 4, boxShadow: 'none' }}
+									className='border-0'
+									expanded={expanded === 'panel1'}
+									onChange={handleChange('panel1')}>
+									<AccordionSummary
+										expandIcon={<ExpandMoreIcon />}
+										aria-controls='panel1bh-content'
+										id='panel1bh-header'>
+										<Typography
+											sx={{ width: '33%', flexShrink: 0 }}
+											variant='inherit'
+											component='h6'>
+											Gst Services
+										</Typography>
+									</AccordionSummary>
+									<AccordionDetails>
+										<Typography variant='inherit'>
+											GST Migrations and Registrations. Filing of GST Returns.
+											GST Consultancy/ Advisory on various issues of GST..
+										</Typography>
+									</AccordionDetails>
+								</Accordion>
+								<Accordion
+									sx={{ boxShadow: 'none' }}
+									expanded={expanded === 'panel3'}
+									onChange={handleChange('panel3')}>
+									<AccordionSummary
+										expandIcon={<ExpandMoreIcon />}
+										aria-controls='panel3bh-content'
+										id='panel3bh-header'>
+										<Typography
+											sx={{ width: '33%', flexShrink: 0 }}
+											variant='inherit'
+											component='h6'>
+											Accounting
+										</Typography>
+									</AccordionSummary>
+									<AccordionDetails>
+										<Typography>
+											Businesses increasingly find it difficult to keep up to
+											the myriad and abstruse...
+										</Typography>
+									</AccordionDetails>
+								</Accordion>
+								<Accordion
+									sx={{ boxShadow: 'none' }}
+									expanded={expanded === 'panel4'}
+									onChange={handleChange('panel4')}>
+									<AccordionSummary
+										expandIcon={<ExpandMoreIcon />}
+										aria-controls='panel4bh-content'
+										id='panel4bh-header'>
+										<Typography
+											sx={{ width: '33%', flexShrink: 0 }}
+											variant='inherit'
+											component='h6'>
+											Audit Services
+										</Typography>
+									</AccordionSummary>
+									<AccordionDetails>
+										<Typography>
+											Indepth study of existing systems, procedures and controls
+											for proper understanding. Suggestions..
+										</Typography>
+									</AccordionDetails>
+								</Accordion>
 
-								<div className='accordion-list'>
+								{/* <div className='accordion-list'>
 									<ul>
 										<li>
 											<a
@@ -171,15 +251,7 @@ const Home = () => {
 											</div>
 										</li>
 									</ul>
-								</div>
-							</div>
-							{/*eslint-disable-next-line no-undef*/}
-							<div
-								className='col-lg-5 align-items-stretch order-1 order-lg-2 img'
-								style={{
-									backgroundImage: 'url("./../img/why-us.png")',
-								}}>
-								&nbsp;
+								</div> */}
 							</div>
 						</div>
 					</div>
@@ -187,7 +259,7 @@ const Home = () => {
 				{/* <!-- End Why Us Section -->
 
  <!-- ======= Skills Section ======= --> */}
-				<section id='skills' className='skills'>
+				<section id='skills' className='skills' style={{ backgroundColor: 'white' }}>
 					<div className='container'>
 						<div className='row'>
 							<div className='col-lg-6 d-flex align-items-center'>

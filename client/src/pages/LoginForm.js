@@ -144,7 +144,7 @@ export default class LoginForm extends Component {
 	};
 	render() {
 		if (this.state.redirect) {
-			return <Navigate to='/dashboard/profile' />;
+			return <Navigate to='/dashboard/profile' replace={true} />;
 		}
 		return (
 			<Layout>

@@ -130,8 +130,8 @@ function UserOrder() {
 			: () => {};
 	};
 	const contactDialog = useCallback(id => {
-		console.log('first');
-	}, []);
+		navigate("/dashboard/contact", { state: {id} });
+	}, [navigate]);
 	const retryPayment = useCallback(
 		async id => {
 			try {

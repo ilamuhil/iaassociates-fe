@@ -4,17 +4,16 @@ import cookie from 'js-cookie';
 import { toast } from 'react-toastify';
 
 const AuthContext = createContext({
-	isLoggedIn: false,
+	isLoggedIn: Boolean(cookie.get('isLoggedIn')),
 	login: accesstoken => {},
-	updateToken: refreshToken => {},
 	logout: () => {},
-	userRole: 0,
-	useAxiosPrivate: () => { }
+	userRole: cookie.get('isLoggedIn') ? cookie.get('isLoggedIn') : 0,
+	useAxiosPrivate: () => {},
 });
 
 export const AuthProvider = props => {
 	const [userIsLoggedIn, setUserIsLoggedIn] = useState(p => {
-		return Boolean(cookie.get('refreshToken'));
+		return Boolean(cookie.get('accessToken'));
 	});
 	const [role, setRole] = useState(parseInt(cookie.get('role')) || 0);
 	const loginHandler = (accessToken, refreshToken, roleCode) => {
@@ -32,10 +31,10 @@ export const AuthProvider = props => {
 					isLoading: false,
 				});
 				window.location.replace('/');
-
 				setUserIsLoggedIn(false);
 			})
 			.catch(e => {
+				console.log(e);
 				toast.update(id, {
 					render: e.response.data,
 					type: 'error',

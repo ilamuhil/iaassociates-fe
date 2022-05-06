@@ -224,6 +224,19 @@ const updateSibList = async (
 		}
 	}
 };
+const confirmEmail = async(req,res) => {
+	let { id, role, ...rest } = req.user;
+	console.log("🚀 ~ file: user.js ~ line 229 ~ confirmEmail ~ req.user", req.user);
+	try {
+		await sendEmailVerification(rest);
+		res.sendStatus(200);
+	} catch (e) {
+		console.log(e);
+		res.status(500).send("Could not send the email try again later");
+	}
+	
+
+}
 const updateMarketing = async (req, res) => {
 	let {
 		body: { serviceOffers, complianceInfo },
@@ -356,5 +369,5 @@ export {
 	deleteUser,
 	addUserToDb,
 	updateAvatar,
-	updateMarketing,
+	updateMarketing,confirmEmail
 };

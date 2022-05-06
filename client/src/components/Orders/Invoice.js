@@ -7,6 +7,7 @@ import Alert from '@mui/material/Alert';
 import '../../styles/css/invoice.css';
 import usePricingCalculator from '../../hooks/usePricingCalculator';
 import AuthContext from '../../context/AuthProvider';
+import { Fade, Skeleton } from '@mui/material';
 import axios from '../../api/axios';
 import { format } from 'date-fns';
 function Invoice() {
@@ -14,13 +15,13 @@ function Invoice() {
 	const [orderValue, setOrderValue] = useState(0);
 	const [paymentStatus, setPaymentStatus] = useState(0);
 	const [address, setAddress] = useState({
-		fName: 'Waiting for data...',
-		lName: 'Waiting for data...',
-		adl1: 'Waiting for data...',
-		adl2: 'Waiting for data...',
+		fName: '',
+		lName: '',
+		adl1: '',
+		adl2: '',
 		zipcode: 0,
-		state: 'NA',
-		city: 'NA',
+		state: '',
+		city: '',
 		phoneNo: 0,
 	});
 	const [serviceTitle, setServiceTitle] = useState();
@@ -122,7 +123,18 @@ function Invoice() {
 											<br />
 										</h2>
 										<span className='small'>
-											<b>INVOICE :</b> <i># {invoiceNumber}</i>
+											<b>INVOICE :</b>{' '}
+											{invoiceNumber ? (
+												<Fade in={true} timeout={1000}>
+													<i># {invoiceNumber}</i>
+												</Fade>
+											) : (
+												<Skeleton
+													variant='rectangular'
+													width={100}
+													sx={{ borderRadius: 2, display: 'inline-block' }}
+												/>
+											)}
 										</span>
 									</div>
 								</div>
@@ -156,20 +168,34 @@ function Invoice() {
 									<address style={{ lineHeight: '2rem' }}>
 										<strong style={{ fontSize: '1rem' }}>Payment Method</strong>
 										<br />
-										<Chip
-											size='small'
-											color={paymentStatus === 'PAID' ? 'info' : 'warning'}
-											label={
-												paymentStatus === 'PAID' ? 'Razorpay' : 'Not Applicable'
-											}
-											icon={
-												paymentStatus === 'PAID' ? (
-													<PaidIcon />
-												) : (
-													<MoneyOffCsredIcon />
-												)
-											}
-										/>
+										{paymentStatus ? (
+											<Fade in={true} timeout={1000}>
+												<Chip
+													size='small'
+													color={paymentStatus === 'PAID' ? 'info' : 'warning'}
+													label={
+														paymentStatus === 'PAID'
+															? 'Razorpay'
+															: 'Not Applicable'
+													}
+													icon={
+														paymentStatus === 'PAID' ? (
+															<PaidIcon />
+														) : (
+															<MoneyOffCsredIcon />
+														)
+													}
+												/>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												height={25}
+												sx={{ borderRadius: 3 }}
+											/>
+										)}
+
 										<br />
 										{email}
 										<br />
@@ -179,42 +205,111 @@ function Invoice() {
 									<address>
 										<strong className='d-block'>BILLING ADDRESS:</strong>
 										<br />
-										{address.invoiceType === 'personal' && (
-											<>
-												<b>Name: </b>
-												<br />
-												{`${address.fName} ${address.lName}`}
-											</>
+										<b>Name: </b>
+										{address.invoiceType ? (
+											address.invoiceType === 'personal' ? (
+												<Fade in={true} timeout={1000}>
+													<span className='mb-0'>
+														<br />
+														{`${address.fName} ${address.lName}`}
+													</span>
+												</Fade>
+											) : (
+												<Fade in={true} timeout={1000}>
+													<span className='mb-0'>
+														<br />
+														{address.fName}
+														<br />
+														<b>GSTIN : </b>
+														{address.lName}
+													</span>
+												</Fade>
+											)
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 1 }}
+											/>
 										)}
-										{address.invoiceType === 'company' && (
-											<>
-												<b>Name: </b>
-												<br />
-												{address.fName}
-												<br />
-												<b>GSTIN : </b>
-												{address.lName}
-											</>
-										)}
-
 										<br />
 										<b>Phone number: </b>
-										{address.phoneNo}
+										{address.phoneNo ? (
+											<Fade in={true} timeout={1000}>
+												<span>{address.phoneNo}</span>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 2, display: 'inline-block' }}
+											/>
+										)}
+										{}
 										<br />
 										<b>Address: </b>
-
-										{address.adl1}
+										{address.adl1 ? (
+											<Fade in={true} timeout={1000}>
+												<span>{address.adl1}</span>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 2, display: 'inline-block' }}
+											/>
+										)}
 										<br />
-										{address.adl2}
+										{address.adl2 ? (
+											<Fade in={true} timeout={1000}>
+												<span>{address.adl2}</span>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 2, display: 'inline-block' }}
+											/>
+										)}
 										<br />
 										<b>City: </b>
-										{address.city}
+										{address.city ? (
+											<Fade in={true} timeout={1000}>
+												<span>{address.city}</span>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 2, display: 'inline-block' }}
+											/>
+										)}
 										<br />
 										<b>State: </b>
-										{address.state}
+										{address.state ? (
+											<Fade in={true} timeout={1000}>
+												<span>{address.state}</span>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 2, display: 'inline-block' }}
+											/>
+										)}
 										<br />
 										<b>Pincode: </b>
-										{address.zipcode}
+										{address.zipcode ? (
+											<Fade in={true} timeout={1000}>
+												<div>{address.zipcode}</div>
+											</Fade>
+										) : (
+											<Skeleton
+												variant='rectangular'
+												width={100}
+												sx={{ borderRadius: 2 }}
+											/>
+										)}
 										<br />
 									</address>
 									<br />
@@ -256,40 +351,81 @@ function Invoice() {
 											<tr>
 												<td>1</td>
 												<td>
-													<strong>{serviceTitle}</strong>
-													<br />
-													{orderDesc}
+													{serviceTitle ? (
+														<Fade in={true} timeout={1000}>
+															<span>
+																<strong>{serviceTitle}</strong>
+																<br />
+																{orderDesc}
+															</span>
+														</Fade>
+													) : (
+														<Skeleton
+															variant='rectangular'
+															width={200}
+															height={40}
+															sx={{ borderRadius: 1 }}
+														/>
+													)}
 												</td>
 												<td className='text-end'>{sac}</td>
 
 												<td className='text-end'>
-													{orderDiscount !== 0 ? (
+													{orderDiscount !== 0 && serviceTitle && (
 														<>
-															<b>{orderDiscount}%</b>
+															<Fade in={true} timeout={1000}>
+																<b>{orderDiscount}%</b>
+															</Fade>
 															<br />
 														</>
-													) : (
-														'NA'
+													)}
+													{serviceTitle && orderDiscount === 0 && 'NA'}
+													{!serviceTitle && (
+														<Skeleton
+															variant='rectangular'
+															width={100}
+															sx={{ borderRadius: 2 }}
+														/>
 													)}
 												</td>
 												<td className='text-end'>
-													{price.basePrice}₹<br />
-													<small className='text-success'>
-														-{price.discountValue}₹
-													</small>
+													<Fade
+														in={
+															parseFloat(price.basePrice) !== 0 ? true : false
+														}
+														timeout={1000}>
+														<span>
+															{price.basePrice}₹<br />
+															<small className='text-success'>
+																-{price.discountValue}₹
+															</small>
+														</span>
+													</Fade>
 												</td>
 											</tr>
 
 											<tr>
 												<td colSpan='3'></td>
 												<td className='text-end'>
-													<strong>
-														{taxType}
-														<strong> (18%) </strong>
-													</strong>
+													<Fade
+														in={
+															parseFloat(price.basePrice) !== 0 ? true : false
+														}
+														transition={1000}>
+														<strong>
+															{taxType}
+															<strong> (18%) </strong>
+														</strong>
+													</Fade>
 												</td>
 												<td className='text-end'>
-													<small>+{price.taxValue}₹ </small>
+													<Fade
+														in={
+															parseFloat(price.basePrice) !== 0 ? true : false
+														}
+														transition={1000}>
+														<small>+{price.taxValue}₹ </small>
+													</Fade>
 												</td>
 											</tr>
 											<tr>
@@ -298,7 +434,13 @@ function Invoice() {
 													<strong>Total</strong>
 												</td>
 												<td className='text-end'>
-													<strong>{orderValue}₹</strong>
+													<Fade
+														in={
+															parseFloat(price.basePrice) !== 0 ? true : false
+														}
+														transition={1000}>
+														<strong>{orderValue}₹</strong>
+													</Fade>
 												</td>
 											</tr>
 										</tbody>
@@ -317,19 +459,32 @@ function Invoice() {
 									<small className='ml-0'>
 										<b>This invoice is</b>
 									</small>
-									<Chip
-										label={paymentStatus}
-										color={paymentStatus === 'PAID' ? 'success' : 'error'}
-										size='small'
-										sx={{ ml: 2 }}
-										icon={
-											paymentStatus === 'PAID' ? (
-												<PaidIcon />
-											) : (
-												<MoneyOffCsredIcon />
-											)
-										}
-									/>
+									{address.adl1 ? (
+										<Chip
+											label={paymentStatus}
+											color={paymentStatus === 'PAID' ? 'success' : 'error'}
+											size='small'
+											sx={{ ml: 2 }}
+											icon={
+												paymentStatus === 'PAID' ? (
+													<PaidIcon />
+												) : (
+													<MoneyOffCsredIcon />
+												)
+											}
+										/>
+									) : (
+										<Skeleton
+											variant='rectangular'
+											width={100}
+											height={25}
+											sx={{
+												borderRadius: 3,
+												display: 'inline-block',
+												mx: 2,
+											}}
+										/>
+									)}
 								</div>
 							</div>
 						</div>

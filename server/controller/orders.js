@@ -1,6 +1,7 @@
 import pkg from '@prisma/client';
 import dotenv from 'dotenv';
 import { createHmac } from 'crypto';
+
 import {
 	newOrderEmail,
 	orderUpdateEmail,
@@ -150,17 +151,14 @@ const updateOrder = async ({ user: { role }, body, params: { id } }, res) => {
 	}
 };
 
-const refundOrder = async (req, res) => {
+const refundOrder = async (req, res, next) => {
 	let { refundAmt, speed, receiptNumber } = req.body;
 	let { orderId } = req.params;
-	//update Database
+	//query orders database to make refund request to razorpay
 	try {
-		let order = await prisma.orders.update({
+		let order = await prisma.orders.findUnique({
 			where: {
 				id: parseInt(orderId),
-			},
-			data: {
-				orderStatus: 'refunded',
 			},
 			include: {
 				user: {
@@ -176,6 +174,7 @@ const refundOrder = async (req, res) => {
 				},
 			},
 		});
+		//prepare payload for email send to user regarding refund
 		let {
 			razorpayPaymentId,
 			value,
@@ -185,34 +184,75 @@ const refundOrder = async (req, res) => {
 			orderDescription,
 		} = order;
 		discount = discount + '%' || 'NA';
+		refundAmt =
+			parseFloat(refundAmt) === 0 ? parseFloat(value) : parseFloat(refundAmt);
+
+		//prepare payload for refund request at razorpay
 		let payload = { amount: parseFloat(refundAmt) * 100, speed };
+
 		//make refund request to razorpay
 		payload = receiptNumber ? { ...payload, receipt: receiptNumber } : payload;
-		let res = await rpaxios.post(
-			`/payments/${razorpayPaymentId}/refund`,
-			payload
-		);
+		let response;
+		try {
+			response = await rpaxios.post(
+				`/payments/${razorpayPaymentId}/refund`,
+				payload
+			);
+		} catch (e) {
+			clg(e);
+			let err = new Error('Refund Unsuccessful');
+			err.status = 500;
+			throw err;
+		}
+
+		//saving razorpay refundId in the database
+		try {
+			await prisma.orders.update({
+				where: {
+					id: parseFloat(orderId),
+				},
+				data: {
+					refundReceiptId: response.data.id,
+					orderStatus: 'refunded',
+				},
+			});
+		} catch (e) {
+			console.log(e);
+			let err = new Error(
+				'Refund sent to razorpay.Database not updated. Email could not be sent to user'
+			);
+			err.status = 500;
+			throw err;
+		}
+
 		//send refund email to user
-		await orderRefundedEmail(
-			title,
-			orderDescription,
-			value,
-			'18%',
-			discount,
-			value,
-			id,
-			refundAmt,
-			username,
-			email
-		);
+		try {
+			await orderRefundedEmail(
+				title,
+				orderDescription,
+				value,
+				'18%',
+				discount,
+				value,
+				id,
+				refundAmt,
+				username,
+				email
+			);
+		} catch (e) {
+			console.log(e);
+			let err = new Error(
+				'Refund sent to razorpay. Email could not be sent to user'
+			);
+			err.status = 500;
+			throw err;
+		}
+
 		res
 			.status(200)
 			.send(`Refund of amount ${refundAmt} sent for processing at razorpay`);
 	} catch (e) {
-		console.log(e);
-		console.log(e?.response);
-		console.log(e?.response?.data);
-		res.status(500).send('Could not process your refund request');
+		next(e);
 	}
 };
 
@@ -429,6 +469,13 @@ const deleteOrder = async (req, res) => {
 	}
 };
 
+const sendOrderUpdateEmail = async (req, res) => {
+	const { body: form } = req.body;
+	console.log(req.body);
+	console.log(req?.file, req?.files);
+	res.status(200).send('Received files');
+};
+
 export {
 	getOrderCount,
 	createNewOrder,
@@ -439,4 +486,5 @@ export {
 	updateOrder,
 	getSingleOrderSummary,
 	deleteOrder,
+	sendOrderUpdateEmail,
 };

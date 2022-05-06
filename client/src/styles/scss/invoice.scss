@@ -6,38 +6,34 @@
 
 .invoice {
 	padding: 30px;
-}
-
-.invoice {
 	h2,
 	h5 {
 		margin-top: 0px;
 		line-height: 0.8em;
 	}
+	.small {
+		font-weight: 300;
+		font-size: 1rem;
+	}
+	hr {
+		margin-top: 10px;
+		border-color: #ddd;
+	}
+	.table {
+		tr.line {
+			border-bottom: 1px solid #ccc;
+		}
+		td {
+			border: none;
+		}
+	}
 }
+
 .invoice-title {
 	color: rgb(0, 0, 0);
 }
 
-.invoice .small {
-	font-weight: 300;
-	font-size: 1rem;
-}
-
-.invoice hr {
-	margin-top: 10px;
-	border-color: #ddd;
-}
-
-.invoice .table tr.line {
-	border-bottom: 1px solid #ccc;
-}
-
-.invoice .table td {
-	border: none;
-}
-
-.invoice .identity {
+.invoice .table .invoice .identity {
 	margin-top: 10px;
 	font-size: 1.1em;
 	font-weight: 300;

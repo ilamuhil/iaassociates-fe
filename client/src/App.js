@@ -23,6 +23,8 @@ import Terms from './pages/Terms';
 import EditOrder from './components/Orders/EditOrder';
 import NewOrder from './components/Orders/NewOrder';
 import RefundOrder from './components/Orders/RefundOrder';
+import Unauthorized from './components/Authorization/Unauthorized';
+import OrderContact from './components/Orders/OrderContact';
 import {
 	PasswordVerify,
 	PasswordResetEmail,
@@ -52,6 +54,7 @@ function App() {
 					<Route path='/login' element={<LoginForm />} />
 					<Route path='/contact' element={<Contact />} />
 					<Route path='*' element={<PageNotFound />} />
+					<Route path='/unauthorized' element={<Unauthorized />} />
 					<Route path='/privacy-policy' element={<Privacypolicy />} />
 
 					<Route path='/dashboard' element={<Dashboard />}>
@@ -71,6 +74,11 @@ function App() {
 								</>
 							}
 						/>
+						<Route
+							path='contact'
+							allowedRoles={105}
+							element={<OrderContact />}
+						/>
 						<Route path='services' element={<ServiceList />} />
 						<Route
 							element={
@@ -89,7 +97,7 @@ function App() {
 								<>
 									<ProtectedRoute allowedRoles={[105]}>
 										<Suspense fallback={<div>Loading...</div>}>
-											<AddEditService  />
+											<AddEditService />
 										</Suspense>
 									</ProtectedRoute>
 								</>
@@ -154,7 +162,6 @@ function App() {
 							}
 						/>
 						<Route path='users/newUser' element={<CreateNewUser />} />
-
 						<Route
 							path='orders'
 							element={

@@ -10,7 +10,7 @@ Custom Styles
 --------------------------------------------------------------*/
 
 body {
-	font-family: 'Poppins', sans-serif;
+	font-family: 'AvenirNext, Helvetica Neue, Helvetica, Arial, sans-serif';
 	color: #444444;
 }
 
@@ -30,36 +30,6 @@ h4,
 h5,
 h6 {
 	font-family: 'Jost', sans-serif;
-}
-
-/*--------------------------------------------------------------
-# Back to top button
---------------------------------------------------------------*/
-.back-to-top {
-	position: fixed;
-	visibility: hidden;
-	opacity: 0;
-	right: 15px;
-	bottom: 15px;
-	z-index: 996;
-	background: #47b2e4;
-	width: 40px;
-	height: 40px;
-	border-radius: 50px;
-	transition: all 0.4s;
-}
-.back-to-top i {
-	font-size: 24px;
-	color: #fff;
-	line-height: 0;
-}
-.back-to-top:hover {
-	background: #6bc1e9;
-	color: #fff;
-}
-.back-to-top.active {
-	visibility: visible;
-	opacity: 1;
 }
 
 /*--------------------------------------------------------------
@@ -241,9 +211,11 @@ section {
 	transition: all 0.4s ease-in-out;
 	display: inline-block;
 	padding: 15px 0;
+	-webkit-filter: grayscale(100);
 	filter: grayscale(100);
 }
 .clients img:hover {
+	-webkit-filter: none;
 	filter: none;
 	transform: scale(1.1);
 }
@@ -281,6 +253,7 @@ section {
 }
 .about .content p:last-child {
 	margin-bottom: 0;
+	line-height: 1.8rem;
 }
 .about .content .btn-learn-more {
 	font-family: 'Poppins', sans-serif;

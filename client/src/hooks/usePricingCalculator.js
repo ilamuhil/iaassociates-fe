@@ -4,11 +4,8 @@ function usePricingCalculator(finalPrice, discountPercent) {
 	const [price, setPrice] = useState({});
 	useEffect(() => {
 		let basePrice = (finalPrice * 100 * 100) / (118 * (100 - discountPercent));
-
 		let discountValue = (discountPercent / 100) * basePrice;
-
 		let taxableValue = basePrice - discountValue;
-
 		let taxValue = taxableValue * 0.18;
 		taxableValue = taxableValue.toFixed(2);
 		basePrice = basePrice.toFixed(2);

@@ -6,6 +6,7 @@ import { useState, Fragment, useEffect } from 'react';
 import BreadCrumbs from '../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from '../api/axios';
 import { v4 as uuid } from 'uuid';
+import { Skeleton, Fade } from '@mui/material';
 
 const Services = props => {
 	const [services, setServices] = useState([]);
@@ -101,9 +102,45 @@ const Services = props => {
 			<div className='container'>
 				<div className='header'>
 					<h1 className='text-center my-4'>Our Services</h1>
-					<div className='border-bottom'></div>
 				</div>
-				<ServiceCardLayout type='blog' services={services} />
+				{services.length !== 0 ? (
+					<ServiceCardLayout type='blog' services={services} />
+				) : (
+					<div className='row justify-content-center' key={uuid()}>
+						<div className='col-lg-4 col-xxl-3 col-md-6 col-sm-9'>
+							<Skeleton
+								variant='rectangular'
+								height={300}
+								width={300}
+								sx={{ borderRadius: 3, m: 3 }}
+							/>
+						</div>
+						<div className='col-lg-4 col-xxl-3 col-md-6 col-sm-9'>
+							<Skeleton
+								variant='rectangular'
+								height={300}
+								width={300}
+								sx={{ borderRadius: 3, m: 3 }}
+							/>
+						</div>
+						<div className='col-lg-4 col-xxl-3 col-md-6 col-sm-9'>
+							<Skeleton
+								variant='rectangular'
+								height={300}
+								width={300}
+								sx={{ borderRadius: 3, m: 3 }}
+							/>
+						</div>
+						<div className='col-lg-4 col-xxl-3 col-md-6 col-sm-9'>
+							<Skeleton
+								variant='rectangular'
+								height={300}
+								width={300}
+								sx={{ borderRadius: 3, m: 3 }}
+							/>
+						</div>
+					</div>
+				)}
 			</div>
 
 			{/* <div>{servicedata && servicedata.content}</div> */}
@@ -127,7 +164,7 @@ export const ServiceCard = props => {
 					)
 				)}
 				<li>
-					<Link to={props.link}>{ props.linkText}</Link>
+					<Link to={props.link}>{props.linkText}</Link>
 					<span>
 						<img src={require('./../img/arrow.png')} width={'15px'} alt='' />
 					</span>
@@ -141,20 +178,27 @@ export const ServiceCardLayout = ({ services, type }) => {
 	return (
 		<div className='row mb-4 justify-content-center'>
 			{services &&
-				services.map(service => {
+				
+				services.map((service, index) => {
 					return (
 						<div className='col-lg-4 col-xxl-3 col-md-6 col-sm-9' key={uuid()}>
-							<ServiceCard
-								servicefeatureOverview={JSON.parse(service.highlights)}
-								serviceTitle={service.title}
-								serviceId={service.id}
-								link={
-									type === 'blog'
-										? `/service/${service.id}`
-										: `/dashboard/services/${service.id}`
-								}
-								linkText={type === 'blog' ? 'Read more' : `Edit this service`}
-							/>
+							<Fade in={true} timeout={Math.log(index + 2) * 1000}>
+								<div>
+									<ServiceCard
+										servicefeatureOverview={JSON.parse(service.highlights)}
+										serviceTitle={service.title}
+										serviceId={service.id}
+										link={
+											type === 'blog'
+												? `/service/${service.id}`
+												: `/dashboard/services/${service.id}`
+										}
+										linkText={
+											type === 'blog' ? 'Read more' : `Edit this service`
+										}
+									/>
+								</div>
+							</Fade>
 						</div>
 					);
 				})}
