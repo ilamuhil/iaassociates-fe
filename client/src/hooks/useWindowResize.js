@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 export const useMediaQuery = scrSize => {
 	const sm = '(min-width:576px)';
 	const md = '(min-width:768px)';
@@ -34,6 +33,7 @@ export const useMediaQuery = scrSize => {
 		window.addEventListener('resize', listener);
 		return () => window.removeEventListener('resize', listener);
 	}, [scrSize]);
+
 	return matches;
 };
 export default useMediaQuery;

@@ -83,7 +83,7 @@ function App() {
 						<Route
 							element={
 								<>
-									<ProtectedRoute allowedRoles={[105]}>
+									<ProtectedRoute allowedRoles={[33]}>
 										<Suspense fallback={<div>Loading...</div>}>
 											<AddEditService edit />
 										</Suspense>

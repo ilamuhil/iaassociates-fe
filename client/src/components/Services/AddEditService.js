@@ -7,9 +7,19 @@ import {
 	convertFromHTML,
 } from 'draft-js';
 import '../../styles/css/editor.css';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { Button, SvgIcon, TextField } from '@mui/material';
+import {
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContentText,
+	DialogTitle,
+	DialogContent,
+	SvgIcon,
+	TextField,
+} from '@mui/material';
 import { toast } from 'react-toastify';
 import draftToHtml from 'draftjs-to-html';
 import { ReactComponent as DisketteSaveSvgrepoComIcon } from '../../img/diskette-save-svgrepo-com.svg';
@@ -28,6 +38,7 @@ function AddEditService({ edit }) {
 	const [title, setTitle] = useState('');
 	const [sac, setSAC] = useState('');
 	const { id } = useParams();
+	const [open, setOpen] = useState(false);
 	useEffect(() => {
 		const controller = new AbortController();
 		if (edit) {
@@ -68,6 +79,17 @@ function AddEditService({ edit }) {
 			}
 		};
 	}, [edit, id]);
+	const handleClose = () => {
+		setOpen(false);
+	};
+	const deleteService = () => {
+		toast.promise(axiosPvt.delete(`/services/${id}`), {
+			pending: 'Deleting this service..',
+			success: 'Successfully deleted this service',
+			error: 'An error occurred while deleting this service',
+		});
+	};
+
 	const updateService = () => {
 		let toastid = toast.loading('Adding service to database');
 		axiosPvt
@@ -270,6 +292,8 @@ function AddEditService({ edit }) {
 									addService();
 								}
 							}}
+							sx={{ mr: 2 }}
+							size='small'
 							color={edit ? 'warning' : 'success'}
 							endIcon={
 								<SvgIcon>
@@ -278,7 +302,59 @@ function AddEditService({ edit }) {
 							}>
 							Save changes
 						</Button>
+						{edit && (
+							<Button
+								variant='contained'
+								size='small'
+								onClick={() => {
+									setOpen(true);
+								}}
+								color='error'
+								endIcon={
+									<SvgIcon>
+										<DeleteForeverIcon />
+									</SvgIcon>
+								}>
+								Delete this service
+							</Button>
+						)}
 					</div>
+					<Dialog
+						open={open}
+						onClose={handleClose}
+						sx={{
+							'& .MuiDialog-paper': {
+								backgroundColor: 'white',
+								borderRadius: '1rem',
+								paddingTop: '1rem',
+							},
+						}}>
+						<DialogTitle color='error'>Warning!</DialogTitle>
+						<DialogContent>
+							<DialogContentText>
+								Deleting this service will delete all orders and reviews
+								associated with this service.This will also mean that customers
+								will no longer be able to view their invoices associated with
+								this service. Are you sure you want to proceed?
+							</DialogContentText>
+							<DialogActions>
+								<Button
+									color='error'
+									onClick={deleteService}
+									variant='contained'>
+									Delete
+								</Button>
+								<Button
+									color='success'
+									onClick={handleClose}
+									autoFocus
+									variant='contained'>
+									{' '}
+									Exit
+								</Button>
+							</DialogActions>
+						</DialogContent>
+					</Dialog>
 				</div>
 			</div>
 		</>

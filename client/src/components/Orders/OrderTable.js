@@ -78,7 +78,11 @@ const OrdersTable = ({
 										<br />
 										{format(new Date(order.createdAt), 'do MMMM')}
 									</TableCell>
-									<TableCell>{order.username}</TableCell>
+									<TableCell>
+										{order.username}
+										<br />
+										<small>{order.email}</small>
+									</TableCell>
 									<TableCell>{order.title}</TableCell>
 									<TableCell sx={{ textAlign: 'end' }}>
 										{new Intl.NumberFormat('en-IN', {

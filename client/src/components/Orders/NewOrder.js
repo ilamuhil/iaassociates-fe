@@ -221,7 +221,7 @@ const NewOrder = () => {
 					}}
 				/>
 			</Grid>
-			
+
 			<Grid item>
 				<TextField
 					fullWidth
@@ -294,7 +294,7 @@ const NewOrder = () => {
 					</FormControl>
 				</Box>
 			</Grid>
-			<Card sx={{ pt: 3, maxWidth: '300px' }}>
+			<Card sx={{ pt: 3, maxWidth: '450px' }}>
 				<h5 className='text-center'>Pricing Breakdown</h5>
 				<CardContent>
 					<Table size='small'>
@@ -332,9 +332,31 @@ const NewOrder = () => {
 						</TableRow>
 						<TableRow>
 							<TableCell>
-								<b>Total value : </b>
+								<b>Customer pays : </b>
 							</TableCell>
 							<TableCell sx={{ textAlign: 'end' }}>{value} ₹</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Gateway charges (2.5% of order value) : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>
+								{price.razorpayCharges} ₹
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Tax on gateway charges(18%) : </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>
+								{price.taxOnRazorpayCharges} ₹
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell>
+								<b>Estimated settlement: </b>
+							</TableCell>
+							<TableCell sx={{ textAlign: 'end' }}>{price.pMargin} ₹</TableCell>
 						</TableRow>
 					</Table>
 				</CardContent>
@@ -362,7 +384,6 @@ const NewOrder = () => {
 					</Button>
 				</Box>
 			</Grid>
-			
 		</Stack>
 	);
 };

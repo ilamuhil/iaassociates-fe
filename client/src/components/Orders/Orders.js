@@ -66,16 +66,37 @@ function TabPanel(props) {
 		</div>
 	);
 }
+const sortOrder = (orders, criteria) => {
+	console.log(criteria);
+	if (criteria === 'price') {
+		return orders.sort((a, b) => {
+			return a.value >= b.value ? -1 : 1;
+		});
+	} else if (criteria === 'createdAt') {
+		return orders.sort((a, b) => {
+			return a.createdAt >= b.createdAt ? -1 : 1;
+		});
+	} else if (criteria === 'username') {
+		return orders.sort((a, b) => {
+			return a.username.toLowerCase() >= b.username.toLowerCase() ? 1 : -1;
+		});
+	} else {
+		return orders.sort((a, b) => {
+			return a.email.toLowerCase() >= b.email.toLowerCase() ? 1 : -1;
+		});
+	}
+};
 
 const Orders = () => {
 	let authctx = useContext(AuthContext);
 	const theme = useTheme();
 	const [orders, setOrders] = useState([]);
+	const [filteredOrders, setFilteredOrders] = useState([]);
 	const [deleteorder, setDeleteOrder] = useState(false);
 	const [orderId, setOrderId] = useState(0);
 	const [value, setValue] = useState(0);
 	const [selectedUser, setSelectedUser] = useState('');
-	const [filter, setFilter] = useState('');
+	const [filter, setFilter] = useState('none');
 	const [sort, setSort] = useState('');
 	const [open, setOpen] = useState(false);
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -114,6 +135,7 @@ const Orders = () => {
 		},
 		[axiosPvt]
 	);
+
 	const deleteOrder = () => {
 		let promise = axiosPvt.delete(`/orders/delete-order/${orderId}`);
 		toast
@@ -128,6 +150,7 @@ const Orders = () => {
 			});
 		setOpen(false);
 	};
+
 	const sendPaymentReminder = useCallback(() => {
 		toast.promise(
 			axiosPvt.post('/payments/send-payment-reminder', {
@@ -145,26 +168,32 @@ const Orders = () => {
 
 	const filterOrders = useCallback(
 		val => {
+			if (val === 'none') {
+				return;
+			}
 			let criteria;
-			if (filter === 'true' || filter === 'false') {
-				criteria = { paymentStatus: val };
+			if (val === 'paid' || val === 'unpaid') {
+				criteria =
+					val === 'paid' ? { paymentStatus: true } : { paymentStatus: false };
+				console.log(
+					'🚀 ~ file: Orders.js ~ line 171 ~ Orders ~ criteria',
+					criteria
+				);
 			} else {
 				criteria = { orderStatus: val };
 			}
-			let url = selectedUser
-				? `/orders/getorders/username/${selectedUser}`
-				: '/orders/getorders';
+			let url = '/orders/getorders';
 			axiosPvt
 				.get(url, {
 					params: criteria,
 				})
 				.then(({ data }) => {
-					if (data.length !== 0) setOrders(data);
+					if (data.length !== 0) setFilteredOrders(data);
 					else toast.warn('No orders found for the given criteria');
 				})
 				.catch(e => {});
 		},
-		[axiosPvt, selectedUser, filter]
+		[axiosPvt]
 	);
 	useEffect(() => {
 		let controller = new AbortController();
@@ -314,6 +343,7 @@ const Orders = () => {
 													<Select
 														value={filter}
 														labelId='status'
+														defaultValue='none'
 														onChange={e => {
 															if (e.target.value === 'none') {
 																setFilter('');
@@ -323,7 +353,7 @@ const Orders = () => {
 															filterOrders(e.target.value);
 														}}
 														label='Filter by status'>
-														<MenuItem value=''>None</MenuItem>
+														<MenuItem value='none'>None</MenuItem>
 														<ListSubheader>Order Status</ListSubheader>
 														<MenuItem value='onhold'>On Hold</MenuItem>
 														<MenuItem value='pending'>Pending</MenuItem>
@@ -331,8 +361,8 @@ const Orders = () => {
 														<MenuItem value='completed'>Completed</MenuItem>
 														<MenuItem value='failed'>Failed</MenuItem>
 														<ListSubheader>Payment Status</ListSubheader>
-														<MenuItem value='true'>Paid Orders</MenuItem>
-														<MenuItem value='false'>Unpaid Orders</MenuItem>
+														<MenuItem value='paid'>Paid Orders</MenuItem>
+														<MenuItem value='unpaid'>Unpaid Orders</MenuItem>
 													</Select>
 												</FormControl>
 											</Grid>
@@ -343,25 +373,25 @@ const Orders = () => {
 														value={sort}
 														label='Sort'
 														labelId='Sort'
-														defaultValue=''
+														defaultValue='createdAt'
 														onChange={e => {
 															setSort(e.target.value);
-															setOrders(orders => {
-																if (e.target.value === 'price') {
-																	return orders.sort((a, b) => {
-																		if (a.value >= b.value) return -1;
-																		return 1;
-																	});
-																} else {
-																	return orders.sort((a, b) => {
-																		if (a.createdAt >= b.createdAt) return -1;
-																		return 1;
-																	});
-																}
-															});
+															if (filter !== 'none') {
+																console.log('filtered orders being sorted');
+																setFilteredOrders(filteredOrders =>
+																	sortOrder(filteredOrders, e.target.value)
+																);
+															} else {
+																console.log('orders being sorted');
+																setOrders(orders =>
+																	sortOrder(orders, e.target.value)
+																);
+															}
 														}}>
 														<MenuItem value='price'>Order Value</MenuItem>
 														<MenuItem value='createdAt'>Order Date</MenuItem>
+														<MenuItem value='username'>Username</MenuItem>
+														<MenuItem value='email'>Email</MenuItem>
 													</Select>
 												</FormControl>
 											</Grid>
@@ -467,7 +497,7 @@ const Orders = () => {
 										</Dialog>
 										<OrdersTable
 											setDeleteOrder={setDeleteOrder}
-											orders={orders}
+											orders={filter === 'none' ? orders : filteredOrders}
 											setOpen={setOpen}
 											setOrderId={setOrderId}
 											setSelectedUser={setSelectedUser}

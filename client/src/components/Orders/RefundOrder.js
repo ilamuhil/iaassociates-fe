@@ -84,7 +84,7 @@ const RefundOrder = () => {
 								}}
 								label='Order Status'>
 								{orderIdList.map(order => (
-									<MenuItem key={uuid} value={order.id}>
+									<MenuItem key={uuid()} value={order.id}>
 										{order.id}
 									</MenuItem>
 								))}

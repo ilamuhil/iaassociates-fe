@@ -7,6 +7,16 @@ function usePricingCalculator(finalPrice, discountPercent) {
 		let discountValue = (discountPercent / 100) * basePrice;
 		let taxableValue = basePrice - discountValue;
 		let taxValue = taxableValue * 0.18;
+		let razorpayCharges = 0.025 * finalPrice;
+		let taxOnRazorpayCharges = 0.18 * razorpayCharges;
+		let pMargin = (
+			taxableValue -
+			taxValue -
+			razorpayCharges -
+			taxOnRazorpayCharges
+		).toFixed(2);
+		razorpayCharges = razorpayCharges.toFixed(2);
+		taxOnRazorpayCharges = taxOnRazorpayCharges.toFixed(2);
 		taxableValue = taxableValue.toFixed(2);
 		basePrice = basePrice.toFixed(2);
 		discountValue = discountValue.toFixed(2);
@@ -19,6 +29,9 @@ function usePricingCalculator(finalPrice, discountPercent) {
 				taxableValue,
 				discountValue,
 				taxValue,
+				pMargin,
+				razorpayCharges,
+				taxOnRazorpayCharges,
 			};
 		});
 	}, [finalPrice, discountPercent]);

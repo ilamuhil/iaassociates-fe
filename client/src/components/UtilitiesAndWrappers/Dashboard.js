@@ -160,8 +160,13 @@ export default function Dashboard({ children }) {
 		});
 	};
 	React.useEffect(() => {
+		const controller = new AbortController();
 		axiosPvt
-			.get('user/', { params: { avatar: true, active: true } })
+			.get(
+				'user/',
+				{ params: { avatar: true, active: true } },
+				{ signal: controller.signal }
+			)
 			.then(res => {
 				let { data } = res;
 				SetAvatar(data.avatar);
@@ -171,6 +176,9 @@ export default function Dashboard({ children }) {
 			.catch(err => {
 				console.error(err);
 			});
+		return () => {
+			controller.abort();
+		};
 	}, [axiosPvt, selectAvatar]);
 	return (
 		<Box sx={{ display: 'flex' }}>
