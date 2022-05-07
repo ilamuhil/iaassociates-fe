@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import { useParams } from 'react-router-dom';
 import { Container, Stack, Box, Fade, Skeleton } from '@mui/material';
+import Breadcrumbs from './../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from './../api/axios';
 export default function Service() {
 	const [dat, setData] = useState('');
@@ -23,6 +24,7 @@ export default function Service() {
 
 	return (
 		<Layout>
+			<Breadcrumbs pageName={`${dat.title}`} />
 			<Container>
 				<Stack
 					direction='column'

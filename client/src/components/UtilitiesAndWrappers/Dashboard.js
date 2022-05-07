@@ -1,4 +1,5 @@
 import * as React from 'react';
+import HomeIcon from '@mui/icons-material/Home';
 // This component is the layout for Dashboard
 import { styled, useTheme } from '@mui/material/styles';
 import { Link, Outlet } from 'react-router-dom';
@@ -318,36 +319,38 @@ export default function Dashboard({ children }) {
 							sx={{ opacity: open ? 1 : 0, color: '#1976d2' }}
 						/>
 					</ListItemButton>
-
-					<ListItemButton
-						onMouseEnter={e => {
-							setAnchorEl(e.currentTarget);
-							setPopOverText('Users');
-						}}
-						onMouseLeave={() => {
-							setAnchorEl(null);
-						}}
-						divider={true}
-						component={Link}
-						to='users'
-						sx={{
-							minHeight: 48,
-							justifyContent: open ? 'initial' : 'center',
-							px: 2.5,
-						}}>
-						<ListItemIcon
+					{ctx.userRole === 33 && (
+						<ListItemButton
+							onMouseEnter={e => {
+								setAnchorEl(e.currentTarget);
+								setPopOverText('Users');
+							}}
+							onMouseLeave={() => {
+								setAnchorEl(null);
+							}}
+							divider={true}
+							component={Link}
+							to='users'
 							sx={{
-								minWidth: 0,
-								mr: open ? 3 : 'auto',
-								justifyContent: 'center',
+								minHeight: 48,
+								justifyContent: open ? 'initial' : 'center',
+								px: 2.5,
 							}}>
-							<GroupIcon sx={{ color: '#1976d2' }}></GroupIcon>
-						</ListItemIcon>
-						<ListItemText
-							primary='Users'
-							sx={{ opacity: open ? 1 : 0, color: '#1976d2' }}
-						/>
-					</ListItemButton>
+							<ListItemIcon
+								sx={{
+									minWidth: 0,
+									mr: open ? 3 : 'auto',
+									justifyContent: 'center',
+								}}>
+								<GroupIcon sx={{ color: '#1976d2' }}></GroupIcon>
+							</ListItemIcon>
+							<ListItemText
+								primary='Users'
+								sx={{ opacity: open ? 1 : 0, color: '#1976d2' }}
+							/>
+						</ListItemButton>
+					)}
+
 					<ListItemButton
 						onMouseEnter={e => {
 							setAnchorEl(e.currentTarget);
@@ -426,6 +429,21 @@ export default function Dashboard({ children }) {
 					to={-1}
 					onClick={() => {}}>
 					<ArrowBackIcon style={{ color: 'white' }} />
+				</IconButton>
+				<IconButton
+					sx={{
+						borderRadius: '50%',
+						backgroundColor: '#039be5',
+						boxShadow: ' rgba(0, 0, 0, 0.16) 0px 1px 4px;',
+						mb: 2,
+						'&:hover': {
+							backgroundColor: '#039be5',
+						},
+						mx: 2,
+					}}
+					component='a'
+					href='/'>
+					<HomeIcon style={{ color: 'white' }} />
 				</IconButton>
 
 				{!userIsActive && (

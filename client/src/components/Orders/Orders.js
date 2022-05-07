@@ -228,7 +228,6 @@ const Orders = () => {
 									'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',
 							}}>
 							<IconButton
-								aria-label=''
 								sx={{
 									backgroundColor: '#fbb034',
 									backgroundImage:
@@ -258,7 +257,6 @@ const Orders = () => {
 									'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',
 							}}>
 							<IconButton
-								aria-label=''
 								sx={{
 									backgroundColor: '#fbb034',
 									backgroundImage:
@@ -345,11 +343,10 @@ const Orders = () => {
 														labelId='status'
 														defaultValue='none'
 														onChange={e => {
-															if (e.target.value === 'none') {
-																setFilter('');
+															setFilter(e.target.value);
+															if (e.target.value === "none") {
 																return;
 															}
-															setFilter(e.target.value);
 															filterOrders(e.target.value);
 														}}
 														label='Filter by status'>

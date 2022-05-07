@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import AuthContext from '../../context/AuthProvider';
 import { Link } from 'react-router-dom';
 const Footer = () => {
+	const ctx = useContext(AuthContext);
 	return (
 		<footer id='footer'>
-			<NewsLetter />
+			{!ctx.isLoggedIn && ctx.userRole !== 33 && <NewsLetter />}
 			<div className='footer-top'>
 				<div className='container'>
 					<div className='row'>
 						<div className='col-lg-3 col-md-6 footer-contact'>
-							<h3>Ilamurugu & Associates</h3>
+							<h3
+								style={{
+									fontFamily:
+										'Baskerville, Baskerville Old Face, Garamond, Times New Roman, serif',
+								}}>
+								Ilamurugu & Associates
+							</h3>
 							<p>
 								<strong>Phone:</strong> 04448553020
 								<br />
@@ -29,12 +37,9 @@ const Footer = () => {
 							<ul>
 								<li>
 									<i className='bx bx-chevron-right'></i>{' '}
-									<a href='www.google.com'>Home</a>
+									<Link to='/'>Home</Link>
 								</li>
-								<li>
-									<i className='bx bx-chevron-right'></i>{' '}
-									<a href='www.google.com'>About us</a>
-								</li>
+
 								<li>
 									<i className='bx bx-chevron-right'></i>{' '}
 									<Link to='/services'>Services</Link>
@@ -55,23 +60,23 @@ const Footer = () => {
 							<ul>
 								<li>
 									<i className='bx bx-chevron-right'></i>{' '}
-									<a href='www.google.com'>GST</a>
+									<Link to='/service/3'>GST</Link>
 								</li>
 								<li>
 									<i className='bx bx-chevron-right'></i>
-									<a href='www.google.com'>Accounting</a>
+									<Link to='/service/1'>Accounting</Link>
 								</li>
 								<li>
 									<i className='bx bx-chevron-right'></i>
-									<a href='www.google.com'>Payroll</a>
+									<Link to='/service/4'>ITR</Link>
 								</li>
 								<li>
 									<i className='bx bx-chevron-right'></i>{' '}
-									<a href='www.google.com'>Audit</a>
+									<Link to='/service/9'>TDS</Link>
 								</li>
 								<li>
 									<i className='bx bx-chevron-right'></i>
-									<a href='www.google.com'>Corporate</a>
+									<Link to='/service/7'>Corporate</Link>
 								</li>
 							</ul>
 						</div>

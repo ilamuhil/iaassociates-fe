@@ -12,9 +12,9 @@ const AuthContext = createContext({
 });
 
 export const AuthProvider = props => {
-	const [userIsLoggedIn, setUserIsLoggedIn] = useState(p => {
-		return Boolean(cookie.get('accessToken'));
-	});
+	const [userIsLoggedIn, setUserIsLoggedIn] = useState(
+		Boolean(cookie.get('isLoggedIn'))
+	);
 	const [role, setRole] = useState(parseInt(cookie.get('role')) || 0);
 	const loginHandler = (accessToken, refreshToken, roleCode) => {
 		setUserIsLoggedIn(true);

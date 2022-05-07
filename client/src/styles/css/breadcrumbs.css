@@ -4,20 +4,30 @@
   min-height: 40px;
   margin-top: 7rem;
 }
-@media (min-width: 768px) {
-  .breadcrumbs {
-    margin-top: 3.85rem;
-  }
-}
 @media (min-width: 1200px) {
   .breadcrumbs {
-    margin-top: 4.65rem;
+    margin-top: 4.5rem;
   }
 }
 
-@media (min-width: 483px) and (max-width: 768px) {
+@media (min-width: 770px) and (max-width: 991px) {
   .breadcrumbs {
-    margin-top: 3.85rem;
+    margin-top: 5rem;
+  }
+}
+@media (min-width: 542px) and (max-width: 768px) {
+  .breadcrumbs {
+    margin-top: 5rem;
+  }
+}
+@media (max-width: 540px) {
+  .breadcrumbs {
+    margin-top: 5.5rem;
+  }
+}
+@media (min-width: 993px) and (max-width: 1200px) {
+  .breadcrumbs {
+    margin-top: 5.6rem;
   }
 }
 .breadcrumbs h2 {

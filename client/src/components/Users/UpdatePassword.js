@@ -2,7 +2,7 @@ import { useCallback, useContext, useState } from 'react';
 import AuthContext from '../../context/AuthProvider';
 import { toast } from 'react-toastify';
 import { TextField, Button } from '@mui/material';
-
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 function UpdatePassword() {
 	const [pwd, setPwd] = useState('');
 	const [confNewPwd, setConfNewPwd] = useState('');
@@ -101,6 +101,7 @@ function UpdatePassword() {
 			<div className='row'>
 				<div className='col'>
 					<Button
+						startIcon={<ChangeCircleIcon />}
 						variant='contained'
 						size='small'
 						color='warning'

@@ -23,6 +23,7 @@ import AvatarImgm1 from '../../img/avatar/avatarm1.png';
 import AvatarImgm2 from '../../img/avatar/avatarm2.png';
 import AvatarImgm3 from '../../img/avatar/avatarm3.png';
 import AvatarImgm4 from '../../img/avatar/avatarm4.png';
+import CallIcon from '@mui/icons-material/Call';
 import {
 	useState,
 	useEffect,
@@ -31,6 +32,7 @@ import {
 	lazy,
 	Suspense,
 } from 'react';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from 'react-toastify';
 import AuthContext from '../../context/AuthProvider';
@@ -384,6 +386,7 @@ const Profile = props => {
 						<div className='card-body'>
 							<div className='px-xl-3'>
 								<Button
+									startIcon={<AccountCircleIcon />}
 									onClick={handleClickOpen}
 									variant='contained'
 									size='small'
@@ -414,7 +417,7 @@ const Profile = props => {
 							<p className='card-text'>
 								Get fast, free help from our friendly assistants.
 							</p>
-							<Button variant='contained' size='small'>
+							<Button variant='contained' size='small' startIcon={<CallIcon />}>
 								Contact Us
 							</Button>
 						</div>

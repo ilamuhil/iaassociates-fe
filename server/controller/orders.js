@@ -113,7 +113,7 @@ const updateOrder = async ({ user: { role }, body, params: { id } }, res) => {
 	try {
 		data = await prisma.orders.update({
 			where: {
-				id,
+				id: parseInt(id),
 			},
 			data: update,
 		});

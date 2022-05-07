@@ -5,6 +5,7 @@ import AuthContext from '../../context/AuthProvider';
 import cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import { TextField, Checkbox, Button, FormControlLabel } from '@mui/material';
+import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 const UpdateBilling = ({ email, setEmail }) => {
 	const ctx = useContext(AuthContext);
 	const axiosPvt = ctx.useAxiosPrivate();
@@ -265,6 +266,7 @@ const UpdateBilling = ({ email, setEmail }) => {
 			<div className='row mb-4'>
 				<div className='col-lg-6 mb-3'>
 					<Button
+						startIcon={<BrowserUpdatedIcon/>}
 						color='warning'
 						variant='contained'
 						size='small'

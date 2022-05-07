@@ -33,13 +33,20 @@ const Home = () => {
 	const handleChange = panel => (event, isExpanded) => {
 		setExpanded(isExpanded ? panel : false);
 	};
+
 	return (
 		<Layout>
 			<section id='hero' className='d-flex align-items-center'>
 				<div className='container'>
 					<div className='row'>
 						<div className='col-lg-6 d-flex flex-column justify-content-center pt-4 pt-lg-0 order-2 order-lg-1'>
-							<h1>Incorporate your Business today !</h1>
+							<h1
+								style={{
+									fontFamily:
+										'Baskerville, Baskerville Old Face, Garamond, Times New Roman, serif',
+								}}>
+								Incorporate your Business today !
+							</h1>
 							<h2>
 								Let us take care of your compliances,
 								<br />
@@ -102,10 +109,7 @@ const Home = () => {
 				{/* <!-- End About Us Section -->
 
  <!-- ======= Why Us Section ======= --> */}
-				<section
-					id='why-us'
-					className='why-us section-bg'
-					>
+				<section id='why-us' className='why-us section-bg'>
 					<div className='container-fluid'>
 						<div className='row justify-content-center'>
 							<div className='col-lg-6 d-flex flex-column  align-items-stretch'>
@@ -118,7 +122,10 @@ const Home = () => {
 									</p>
 								</div>
 								<Accordion
-									sx={{ borderTop: 'none', mt: 4, boxShadow: 'none' }}
+									sx={{
+										mt: 4,
+										boxShadow: 'none',
+									}}
 									className='border-0'
 									expanded={expanded === 'panel1'}
 									onChange={handleChange('panel1')}>
@@ -163,6 +170,7 @@ const Home = () => {
 									</AccordionDetails>
 								</Accordion>
 								<Accordion
+									square={true}
 									sx={{ boxShadow: 'none' }}
 									expanded={expanded === 'panel4'}
 									onChange={handleChange('panel4')}>
@@ -184,74 +192,6 @@ const Home = () => {
 										</Typography>
 									</AccordionDetails>
 								</Accordion>
-
-								{/* <div className='accordion-list'>
-									<ul>
-										<li>
-											<a
-												data-bs-toggle='collapse'
-												className='collapse'
-												data-bs-target='#accordion-list-1'
-												href='https://google.com'>
-												<span>01</span> GST Services
-												<i className='bx bx-chevron-down icon-show'></i>
-												<i className='bx bx-chevron-up icon-close'></i>
-											</a>
-											<div
-												id='accordion-list-1'
-												className='collapse show'
-												data-bs-parent='.accordion-list'>
-												<p>
-													GST Migrations and Registrations. Filing of GST
-													Returns. GST Consultancy/ Advisory on various issues
-													of GST..
-												</p>
-											</div>
-										</li>
-
-										<li>
-											<a
-												data-bs-toggle='collapse'
-												data-bs-target='#accordion-list-2'
-												className='collapsed'
-												href='https://google.com'>
-												<span>02</span> Accounting
-												<i className='bx bx-chevron-down icon-show'></i>
-												<i className='bx bx-chevron-up icon-close'></i>
-											</a>
-											<div
-												id='accordion-list-2'
-												className='collapse'
-												data-bs-parent='.accordion-list'>
-												<p>
-													Businesses increasingly find it difficult to keep up
-													to the myriad and abstruse...
-												</p>
-											</div>
-										</li>
-
-										<li>
-											<a
-												data-bs-toggle='collapse'
-												data-bs-target='#accordion-list-3'
-												className='collapsed'
-												href='https://google.com'>
-												<span>03</span> Audit Services
-												<i className='bx bx-chevron-down icon-show'></i>
-												<i className='bx bx-chevron-up icon-close'></i>
-											</a>
-											<div
-												id='accordion-list-3'
-												className='collapse'
-												data-bs-parent='.accordion-list'>
-												<p>
-													Indepth study of existing systems, procedures and
-													controls for proper understanding. Suggestions..
-												</p>
-											</div>
-										</li>
-									</ul>
-								</div> */}
 							</div>
 						</div>
 					</div>
@@ -259,7 +199,10 @@ const Home = () => {
 				{/* <!-- End Why Us Section -->
 
  <!-- ======= Skills Section ======= --> */}
-				<section id='skills' className='skills' style={{ backgroundColor: 'white' }}>
+				<section
+					id='skills'
+					className='skills'
+					style={{ backgroundColor: 'white' }}>
 					<div className='container'>
 						<div className='row'>
 							<div className='col-lg-6 d-flex align-items-center'>
@@ -382,7 +325,7 @@ const Home = () => {
 										<i className='bx bx-file'></i>
 									</div>
 									<h4>
-										<Link to=''>Accounts Outsourcing</Link>
+										<Link to='service/1'>Accounts Outsourcing</Link>
 									</h4>
 									<p className='mb-3'>
 										A refinance allows you to take out new personal loans that
@@ -584,7 +527,6 @@ const Home = () => {
 										<p>
 											Aut maiores voluptates amet et quis praesentium qui senda
 											para
-											<Link to='/checkout'>CheckOut</Link>
 										</p>
 										<div className='social'>
 											<a href='https://google.com'>

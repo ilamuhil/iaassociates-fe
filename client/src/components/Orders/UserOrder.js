@@ -129,9 +129,12 @@ function UserOrder() {
 			? contactDialog
 			: () => {};
 	};
-	const contactDialog = useCallback(id => {
-		navigate("/dashboard/contact", { state: {id} });
-	}, [navigate]);
+	const contactDialog = useCallback(
+		id => {
+			navigate('/dashboard/contact', { state: { id } });
+		},
+		[navigate]
+	);
 	const retryPayment = useCallback(
 		async id => {
 			try {
@@ -198,9 +201,9 @@ function UserOrder() {
 					</div>
 					<div className='row justify-content-center'>
 						<div className='col'>
-							<h6>
+							<small>
 								<b>Service</b> : {order.title}
-							</h6>
+							</small>
 						</div>
 						<div className='col'>
 							<h6 className='text-danger'>
@@ -218,7 +221,10 @@ function UserOrder() {
 						<div className='col-md-6 order-1 order-md-0'>
 							<div className='row mb-2'>
 								<div className='col'>
-									<b>Description</b> :{' '}
+									<small>
+										<b>Description</b>
+									</small>
+									:{' '}
 									<small>
 										<i>{order.orderDescription}</i>
 									</small>
@@ -227,13 +233,13 @@ function UserOrder() {
 							<div className='row mb-2'>
 								<div className='col'>
 									<small className='mr-2'>
-										<b>Order Status : </b>
+										<b>Order Status </b>:
 									</small>
 									<Chip
 										color='success'
 										label={order.orderStatus}
 										size='small'
-										sx={{ backgroundColor: color(order.orderStatus) }}
+										sx={{ backgroundColor: color(order.orderStatus), mx: 1 }}
 									/>
 								</div>
 							</div>
@@ -258,7 +264,8 @@ function UserOrder() {
 								order.orderStatus !== 'refunded' &&
 								order.orderStatus !== 'failed' && (
 									<div className='row mt-3'>
-										<div className='col'>
+									<div className='col'>
+										{order.invoiceDate>=order}
 											<Button
 												startIcon={<RemoveRedEyeIcon />}
 												component={Link}
@@ -268,8 +275,9 @@ function UserOrder() {
 														color: 'white',
 														backgroundColor: 'black',
 													},
+													borderRadius: 0,
 												}}
-												variant='contained'
+												variant='outlined'
 												size='small'>
 												View Invoice
 											</Button>{' '}
@@ -284,10 +292,12 @@ function UserOrder() {
 								boxShadow: 'rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset',
 								paddingBlock: '0.5rem',
 								borderRadius: '5px',
-								maxHeight: '200px',
+								maxHeight: '250px',
 								overflowY: 'scroll',
 							}}>
-							<h6>Order Notes</h6>
+							<h6>
+								<i>Order Notes</i>
+							</h6>
 							<code
 								style={{
 									fontSize: '0.8rem',
@@ -386,7 +396,8 @@ const OrderActionButton = ({ id, orderStatus, exec }) => {
 			onClick={() => {
 				exec(orderStatus)(id);
 			}}
-			variant='contained'
+			sx={{ borderRadius: 0 }}
+			variant='outlined'
 			color={style.color}
 			startIcon={style.icon}>
 			{style.text}

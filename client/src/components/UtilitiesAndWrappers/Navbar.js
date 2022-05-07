@@ -3,13 +3,15 @@ import { Link } from 'react-router-dom';
 import '../../styles/css/navbar.css';
 import AuthContext from '../../context/AuthProvider';
 import { Offcanvas, Accordion } from 'react-bootstrap';
-
+import axios from '../../api/axios';
 class Navbar extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			loggedIn: false,
 			show: false,
+			services: [],
+			controller: new AbortController(),
 		};
 	}
 	handleClose() {
@@ -26,18 +28,37 @@ class Navbar extends Component {
 	componentDidMount() {
 		let authctx = this.context;
 		this.setState({ loggedIn: authctx.isLoggedIn });
+
+		axios
+			.get('/services/get-services/', { signal: this.state.controller.signal })
+			.then(res => {
+				this.setState({
+					services: res.data,
+				});
+			})
+			.catch(e => {
+				console.table(e);
+			});
+	}
+	componentWillUnmount() {
+		this.state.controller.abort();
 	}
 
 	render() {
-		let { isLoggedIn } = this.context;
+		let { isLoggedIn, userRole } = this.context;
 		return (
 			<header id='header' className='fixed-top'>
 				<div className='container d-flex align-items-center'>
 					<h1 className='logo me-auto'>
-						<Link to='/'>Ilamurugu & Associates</Link>
+						<Link
+							to='/'
+							style={{
+								fontFamily:
+									'Baskerville, Baskerville Old Face, Garamond, Times New Roman, serif',
+							}}>
+							Ilamurugu & Associates
+						</Link>
 					</h1>
-					{/* <!-- Uncomment below if you prefer to use an image logo -->
-          <!-- <Link to="index.html" className="logo me-auto"><img src="assets/img/logo.png" alt="" className="img-fluid"/></Link>--> */}
 
 					<nav id='navbar' className='navbar'>
 						<ul>
@@ -46,62 +67,19 @@ class Navbar extends Component {
 									Home
 								</Link>
 							</li>
-							<li>
-								<a className='nav-link scrollto' href='#about'>
-									About
-								</a>
-							</li>
+
 							<li className='dropdown'>
 								<Link to='/services'>
 									<span>Services</span> <i className='bi bi-chevron-down'></i>
 								</Link>
 								<ul>
-									<li>
-										<Link to='services/1'>Accounting Services</Link>
-									</li>
-									<li className='dropdown'>
-										<Link to='#'>
-											<span>Corporate</span>{' '}
-											<i className='bi bi-chevron-right'></i>
-										</Link>
-										<ul>
-											<li>
-												<Link to='#'>Corporate Finance</Link>
-											</li>
-											<li>
-												<Link to='#'>Corporate Services</Link>
-											</li>
-											<li>
-												<Link to='#'>Corporate Governance</Link>
-											</li>
-										</ul>
-									</li>
-									<li>
-										<Link to='/services/'>Payroll</Link>
-									</li>
-									<li>
-										<Link to='#'>Benefits of Outsourcing</Link>
-									</li>
-									<li>
-										<Link to='#'>Income Tax</Link>
-									</li>
-									<li>
-										<Link to='#'>Audit</Link>
-									</li>
-									<li>
-										<Link to='#'>GST</Link>
-									</li>
-									<li>
-										<Link to='#'>Services For Non Residents</Link>
-									</li>
+									{this.state.services.map(service => (
+										<li key={`${service.id}`} className='text-capitalize'>
+											<Link to={`/service/${service.id}`}>{service.title}</Link>
+										</li>
+									))}
 								</ul>
 							</li>
-							<li>
-								<Link className='nav-link scrollto' to='#team'>
-									Team
-								</Link>
-							</li>
-
 							<li>
 								<Link className='nav-link scrollto' to='/contact'>
 									Contact
@@ -123,7 +101,14 @@ class Navbar extends Component {
 												<Link to='/dashboard/profile'>Profile</Link>
 											</li>
 											<li>
-												<Link to='/dashboard/orders'>Orders</Link>
+												<Link
+													to={
+														userRole === 33
+															? `/dashboard/orders`
+															: `/dashboard/my-orders`
+													}>
+													Orders
+												</Link>
 											</li>
 											<li>
 												<Link to='/' onClick={this.logout}>
