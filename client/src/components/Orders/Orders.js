@@ -1,4 +1,10 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react';
+import React, {
+	useEffect,
+	useContext,
+	useState,
+	useCallback,
+	useRef,
+} from 'react';
 import { format } from 'date-fns';
 // import Invoice from './Invoice';
 import { experimentalStyled as styled } from '@mui/material/styles';
@@ -26,6 +32,8 @@ import {
 	DialogTitle,
 	Slide,
 	Grow,
+	TextField,
+	Stack,
 } from '@mui/material';
 
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -36,6 +44,7 @@ import { ReactComponent as ParcelBoxPackageIcon } from './../../img/parcel-box-p
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import OrdersTable from './OrderTable';
 import OrderActionsWrapper from './OrderActionsWrapper';
+import useDebounce from '../../hooks/useDebounce';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -86,6 +95,34 @@ const sortOrder = (orders, criteria) => {
 		});
 	}
 };
+let orderRegexFilter = (orders, searchTerm) => {
+	if (!searchTerm || orders.length === 0 || !orders) return;
+	let searchCriteria;
+	if (searchTerm.match(/^un (.+)/i)) {
+		searchCriteria = 'username';
+		searchTerm = searchTerm.split(' ')[1];
+	} else if (searchTerm.match(/^od (.+)/i)) {
+		searchCriteria = 'orderDescription';
+		searchTerm = searchTerm.split(' ')[1];
+	} else if (searchTerm.match(/^on (.+)/i)) {
+		searchCriteria = 'orderNotes';
+		searchTerm = searchTerm.split(' ')[1];
+	} else if (searchTerm.match(/^em (.*)/i)) {
+		searchCriteria = 'email';
+		searchTerm = searchTerm.split(' ')[1];
+	} else if (searchTerm.match(/^st (.+)/i)) {
+		searchCriteria = 'title';
+		searchTerm = searchTerm.split(' ')[1];
+	}
+	if (!searchCriteria) return;
+	searchTerm = searchTerm.toLowerCase();
+	let data = orders.filter(order => {
+		if (order[searchCriteria].toLowerCase().includes(searchTerm)) return true;
+		return false;
+	});
+	console.log(data.length);
+	return data;
+};
 
 const Orders = () => {
 	let authctx = useContext(AuthContext);
@@ -100,11 +137,25 @@ const Orders = () => {
 	const [sort, setSort] = useState('');
 	const [open, setOpen] = useState(false);
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+	const [search, setSearch] = useState("");
+	const debouncedValue = useDebounce(search, 2000);
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
 	const [downloadLink, setDownloadLink] = useState('');
 	let axiosPvt = authctx.useAxiosPrivate();
+	const initialRender = useRef(true);
+	useEffect(() => {
+		if (initialRender.current) {
+			initialRender.current = false;
+			return;
+		}
+		let searchFilteredOrders = orderRegexFilter(orders, debouncedValue);
+		if (searchFilteredOrders?.length > 0)
+			setFilteredOrders([...searchFilteredOrders]);
+		else setSearch('');
+	}, [orders, debouncedValue]);
+
 	const downloadData = useCallback(
 		async value => {
 			const toastId = toast.loading('fetching data');
@@ -334,19 +385,36 @@ const Orders = () => {
 							<TabPanel value={value} index={0}>
 								{orders.length !== 0 && (
 									<>
-										<Grid container spacing={2}>
-											<Grid item lg={3} md={4}>
+										<Stack
+											direction='column'
+											justifyContent='center'
+											spacing={2}
+											mx='auto'>
+											<Grid item lg={3} md={5}>
+												<TextField
+													size='small'
+													variant='standard'
+													type='text'
+													onChange={e => setSearch(e.target.value)}
+													label='Search orders'
+													helperText="Search by username, email, order description, order notes or service title. use keywords followed by your search term. Ex: 'un valerie, em abc@example.com, st gst service,od myOrderDescription, on myOrderNotes' "
+												/>
+											</Grid>
+											<Grid item lg={3} md={5}>
 												<FormControl fullWidth>
 													<InputLabel id='status'>Filter by status</InputLabel>
 													<Select
+														size='small'
+														variant='standard'
 														value={filter}
 														labelId='status'
 														defaultValue='none'
 														onChange={e => {
 															setFilter(e.target.value);
-															if (e.target.value === "none") {
+															if (e.target.value === 'none') {
 																return;
 															}
+															setFilter(e.target.value);
 															filterOrders(e.target.value);
 														}}
 														label='Filter by status'>
@@ -363,10 +431,13 @@ const Orders = () => {
 													</Select>
 												</FormControl>
 											</Grid>
-											<Grid item lg={3}>
+
+											<Grid item lg={3} md={5}>
 												<FormControl fullWidth>
 													<InputLabel id='Sort'>Sort</InputLabel>
 													<Select
+														size='small'
+														variant='standard'
 														value={sort}
 														label='Sort'
 														labelId='Sort'
@@ -392,14 +463,14 @@ const Orders = () => {
 													</Select>
 												</FormControl>
 											</Grid>
-										</Grid>
-										<Grid container spacing={2} sx={{ my: 4 }}>
-											<Grid item lg={3}>
+											<Grid item lg={3} md={5}>
 												<FormControl fullWidth>
 													<InputLabel id='Download monthly orders'>
 														Download monthly orders report
 													</InputLabel>
 													<Select
+														size='small'
+														variant='standard'
 														value={selectedUser}
 														label='Download monthly orders'
 														labelId='Download monthly orders'
@@ -416,6 +487,8 @@ const Orders = () => {
 													</Select>
 												</FormControl>
 											</Grid>
+										</Stack>
+										<Grid container spacing={2} sx={{ my: 4 }}>
 											{downloadLink && (
 												<Grid item lg={3}>
 													<Button
@@ -494,7 +567,7 @@ const Orders = () => {
 										</Dialog>
 										<OrdersTable
 											setDeleteOrder={setDeleteOrder}
-											orders={filter === 'none' ? orders : filteredOrders}
+											orders={!(search||filter!=="none") ? orders : filteredOrders}
 											setOpen={setOpen}
 											setOrderId={setOrderId}
 											setSelectedUser={setSelectedUser}

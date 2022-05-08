@@ -9,6 +9,7 @@ import { findUser } from './user.js';
 
 import dotenv from 'dotenv';
 import pkg from '@prisma/client';
+import { passwordvalidate } from '../functions/validate.js';
 dotenv.config();
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
@@ -233,6 +234,8 @@ const updatePwd = async (req, res, next) => {
 
 const updatePassword = async (req, res, next) => {
 	const { updatedPassword, email } = req.body;
+	if (!passwordvalidate(password))
+		res.status(400).send('Password validation failed');
 	try {
 		let updatedRecord = await prisma.users.update({
 			where: {
@@ -253,13 +256,7 @@ const updatePassword = async (req, res, next) => {
 		next(e);
 	}
 };
-/**
- * @param  {} req
- * @param  {} res
- * @param  {} next
- * {@link verifyLink()}
- *
- */
+
 const logInHandler = async (req, res, next) => {
 	let user = req.body.userLogin;
 	let isValidUser;
@@ -272,7 +269,10 @@ const logInHandler = async (req, res, next) => {
 			'email',
 			'role'
 		);
-        console.log("🚀 ~ file: authenticate.js ~ line 275 ~ logInHandler ~ isValidUser", isValidUser)
+		console.log(
+			'🚀 ~ file: authenticate.js ~ line 275 ~ logInHandler ~ isValidUser',
+			isValidUser
+		);
 		if (!isValidUser) {
 			let err = new Error(
 				'Details not found in out database. Try registering instead'

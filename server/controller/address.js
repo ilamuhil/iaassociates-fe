@@ -1,4 +1,5 @@
 import pkg from '@prisma/client';
+import { phonevalidate } from '../functions/validate.js';
 import { sendEmailVerification } from './sendMail.js';
 import { findUser } from './user.js';
 const { PrismaClient } = pkg;
@@ -43,6 +44,8 @@ const updateAddress = async (req, res, next) => {
 		zipcode,
 		phoneNo,
 	} = req.body;
+	if (!phonevalidate(phoneNo))
+		res.status(400).send('Provide a valid phone number');
 	if (req.params.idType) {
 		if (req.user.role !== 'admin') {
 			let err = new Error('Unauthorized request');

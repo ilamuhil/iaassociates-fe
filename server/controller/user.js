@@ -1,12 +1,9 @@
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 import { sendEmailVerification } from './sendMail.js';
-import {
-	hashPassword,
-	verifyToken,
-} from '../functions/util.js';
-import { emaxios, sendPaymentReminder } from './sendMail.js';
-import isEmail from 'validator/lib/isEmail.js';
+import { emailvalidate, usernamevalidate } from '../functions/validate.js';
+import { hashPassword, verifyToken } from '../functions/util.js';
+import { emaxios } from './sendMail.js';
 const prisma = new PrismaClient();
 const addUserToDb = async ({ email, username, password, role = 'user' }) => {
 	let newuser = await prisma.users.create({
@@ -167,7 +164,7 @@ const registerNewUser = async (
 	res,
 	next
 ) => {
-    console.log("🚀 ~ file: user.js ~ line 171 ~ cookies", cookies)
+	console.log('🚀 ~ file: user.js ~ line 171 ~ cookies', cookies);
 	if (Object.keys(cookies).length !== 0) {
 		if (
 			verifyToken(cookies.accessToken, process.env.ACCESS_TOKEN_SECRET).role ===
@@ -181,8 +178,12 @@ const registerNewUser = async (
 			res.status(403).send('Unauthorized Request');
 		}
 	}
-	if (!isEmail(newUser.email))
+	if (!emailvalidate(newUser.email))
 		res.status(400).send('This is not a valid email');
+	if (!usernamevalidate(newUser.username))
+		res.status(400).send('This is not a valid username');
+	if (!cookies?.accessToken && !passwordvalidate(newUser.password))
+		res.status(400).send('This is not a valid password');
 	try {
 		await addUserToDb(newUser);
 		console.log('user added to db');
@@ -224,19 +225,20 @@ const updateSibList = async (
 		}
 	}
 };
-const confirmEmail = async(req,res) => {
+const confirmEmail = async (req, res) => {
 	let { id, role, ...rest } = req.user;
-	console.log("🚀 ~ file: user.js ~ line 229 ~ confirmEmail ~ req.user", req.user);
+	console.log(
+		'🚀 ~ file: user.js ~ line 229 ~ confirmEmail ~ req.user',
+		req.user
+	);
 	try {
 		await sendEmailVerification(rest);
 		res.sendStatus(200);
 	} catch (e) {
 		console.log(e);
-		res.status(500).send("Could not send the email try again later");
+		res.status(500).send('Could not send the email try again later');
 	}
-	
-
-}
+};
 const updateMarketing = async (req, res) => {
 	let {
 		body: { serviceOffers, complianceInfo },
@@ -369,5 +371,6 @@ export {
 	deleteUser,
 	addUserToDb,
 	updateAvatar,
-	updateMarketing,confirmEmail
+	updateMarketing,
+	confirmEmail,
 };
