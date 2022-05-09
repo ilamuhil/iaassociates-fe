@@ -14,7 +14,7 @@ import {
 	CardContent,
 	TableRow,
 	TableCell,
-	Table,
+	Table,TableBody
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -298,66 +298,70 @@ const NewOrder = () => {
 				<h5 className='text-center'>Pricing Breakdown</h5>
 				<CardContent>
 					<Table size='small'>
-						<TableRow>
-							<TableCell>
-								<b>Base Price : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>
-								{price.basePrice} ₹
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Discount Price : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>
-								{price.discountValue} ₹
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Taxable Value : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>
-								{price.taxableValue} ₹
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Tax (18%) : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>
-								{price.taxValue} ₹
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Customer pays : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>{value} ₹</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Gateway charges (2.5% of order value) : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>
-								{price.razorpayCharges} ₹
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Tax on gateway charges(18%) : </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>
-								{price.taxOnRazorpayCharges} ₹
-							</TableCell>
-						</TableRow>
-						<TableRow>
-							<TableCell>
-								<b>Estimated settlement: </b>
-							</TableCell>
-							<TableCell sx={{ textAlign: 'end' }}>{price.pMargin} ₹</TableCell>
-						</TableRow>
+						<TableBody>
+							<TableRow>
+								<TableCell>
+									<b>Base Price : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.basePrice} ₹
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Discount Price : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.discountValue} ₹
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Taxable Value : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.taxableValue} ₹
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Tax (18%) : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.taxValue} ₹
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Customer pays : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>{value} ₹</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Gateway charges (2.5% of order value) : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.razorpayCharges} ₹
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Tax on gateway charges(18%) : </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.taxOnRazorpayCharges} ₹
+								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell>
+									<b>Estimated settlement: </b>
+								</TableCell>
+								<TableCell sx={{ textAlign: 'end' }}>
+									{price.pMargin} ₹
+								</TableCell>
+							</TableRow>
+						</TableBody>
 					</Table>
 				</CardContent>
 			</Card>

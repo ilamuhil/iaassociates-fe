@@ -143,4 +143,14 @@ const getAllOrders = async (role, idType = '', id = '') => {
 		}
 	}
 };
-export {getAllOrders,getfilteredOrders,rpaxios}
+
+function getBase64(file) {
+	console.log('getBase64 executed');
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = error => reject(error);
+	});
+}
+export { getAllOrders, getfilteredOrders, getBase64, rpaxios };

@@ -13,9 +13,9 @@ import {
 	AccordionDetails,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import '../styles/css/home.css';
 import { Link } from 'react-router-dom';
-import { Layout } from './../components/UtilitiesAndWrappers/Layout';
+import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import axios from '../api/axios';
 import React from 'react';
 

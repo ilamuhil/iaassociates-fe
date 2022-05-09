@@ -1,6 +1,6 @@
 import pkg from '@prisma/client';
 import { rpaxios } from './../functions/orderhelpers.js';
-import { sendPaymentReminder } from './sendMail.js';
+import { sendPaymentReminder, orderConfirmedEmail } from './sendMail.js';
 import { createHmac } from 'crypto';
 const { PrismaClient } = pkg;
 const prisma = new PrismaClient();
@@ -100,18 +100,25 @@ const paymentVerification = async (req, res) => {
 			.update(`${orderCreationId}|${razorpayPaymentId}`)
 			.digest('hex');
 		if (digest !== razorpaySignature) {
-			await prisma.orders.update({
-				where: {
-					razorpayId: razorpayOrderId,
-				},
-				data: {
-					orderStatus: 'failed',
-				},
-			});
-			res.status(400).json("Oops we couldn't verify your payment!");
+			try {
+				await prisma.orders.update({
+					where: {
+						razorpayId: razorpayOrderId,
+					},
+					data: {
+						orderStatus: 'failed',
+					},
+				});
+			} catch (e) {
+				console.log('could not update database', e);
+			} finally {
+				res.status(400).json("Oops we couldn't verify your payment!");
+			}
 		}
+		let order;
+
 		try {
-			await prisma.orders.update({
+			order = await prisma.orders.update({
 				where: {
 					id: Number(id),
 				},
@@ -121,11 +128,28 @@ const paymentVerification = async (req, res) => {
 					paymentStatus: true,
 					orderStatus: 'pending',
 				},
+				include: {
+					service: {
+						select: { title: true },
+					},
+				},
 			});
 		} catch (e) {
 			console.log(e);
 		}
-
+		let base =
+			(order.value * 100 * 100) / (118 * (100 - order.discount)).toFixed(2);
+		await orderConfirmedEmail(
+			order.service.title,
+			order.orderDescription,
+			base,
+			0.18 * (base - (order.discount / 100) * base).toFixed(2),
+			((order.discount / 100) * base).toFixed(2),
+			order.value.toFixed(2),
+			order.id,
+			req.user.username,
+			req.user.email
+		);
 		res.status(200).send('Success');
 	} catch (error) {
 		console.log(error);

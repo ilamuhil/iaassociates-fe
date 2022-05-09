@@ -441,8 +441,8 @@ export default function Dashboard({ children }) {
 						},
 						mx: 2,
 					}}
-					component='a'
-					href='/'>
+					component={Link}
+					to='/'>
 					<HomeIcon style={{ color: 'white' }} />
 				</IconButton>
 

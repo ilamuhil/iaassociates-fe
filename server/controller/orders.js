@@ -1,7 +1,6 @@
 import pkg from '@prisma/client';
 import dotenv from 'dotenv';
-import { createHmac } from 'crypto';
-
+import { orderUpdateEmailForAdmin } from './sendMail.js';
 import {
 	newOrderEmail,
 	orderUpdateEmail,
@@ -53,6 +52,7 @@ const createNewOrder = async (req, res, next) => {
 			data: {
 				value: orderValue,
 				discount,
+				orderNotes,
 				orderDescription,
 				orderStatus: 'created',
 				razorpayId: order.data.id,
@@ -469,11 +469,25 @@ const deleteOrder = async (req, res) => {
 	}
 };
 
-const sendOrderUpdateEmail = async (req, res) => {
-	const { body: form } = req.body;
-	console.log(req.body);
-	console.log(req?.file, req?.files);
-	res.status(200).send('Received files');
+const sendOrderUpdateEmail = async (req, res, next) => {
+	const {
+		body: { message, orderId },
+		user: { username },
+		files,
+	} = req;
+	console.log(req.user.username);
+	try {
+		await orderUpdateEmailForAdmin(
+			orderId,
+			username,
+			message,
+			files['file 0'],
+			'ilamuhil@gmail.com'
+		);
+		res.status(200).send('Sent file successfully');
+	} catch (e) {
+		next(e);
+	}
 };
 
 export {

@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-
 import AuthContext from '../context/AuthProvider';
-import { Navigate } from 'react-router-dom';
+import { Navigate,useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 function ProtectedRoute({ children, allowedRoles }) {
+	const navigate = useNavigate();
 	const ctx = useContext(AuthContext);
 	console.log(allowedRoles);
 	if (Boolean(Cookies.get('isLoggedIn'))) {
@@ -13,9 +13,8 @@ function ProtectedRoute({ children, allowedRoles }) {
 			<Navigate to='/unauthorized' replace={true} />
 		);
 	} else {
-		window.location.replace('/login');
+		navigate('/login');
 	}
-	console.log(allowedRoles);
 	return children;
 }
 

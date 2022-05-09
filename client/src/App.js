@@ -1,3 +1,4 @@
+import './styles/css/global.css';
 import { lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import useWindowResize from './hooks/useWindowResize';

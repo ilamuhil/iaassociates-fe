@@ -12,8 +12,8 @@ const PaymentStatus = () => {
 				'✗',
 		  ]
 		: [
-				`We received your payment for order #${orderId}`,
-				"we'll be in touch shortly!",
+				`We received your payment for order #${orderId}. An email confirmation has been sent to your registered email address`,
+				"we'll be in touch with you shortly!",
 				'✓',
 		  ];
 	return (

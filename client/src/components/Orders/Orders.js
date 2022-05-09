@@ -120,7 +120,6 @@ let orderRegexFilter = (orders, searchTerm) => {
 		if (order[searchCriteria].toLowerCase().includes(searchTerm)) return true;
 		return false;
 	});
-	console.log(data.length);
 	return data;
 };
 

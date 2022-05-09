@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import AuthContext from '../../context/AuthProvider';
+import './../../styles/css/footer.css';
 import { Link } from 'react-router-dom';
 const Footer = () => {
 	const ctx = useContext(AuthContext);

@@ -5,6 +5,7 @@ const { PrismaClient } = pkg;
 import { generateToken } from '../functions/util.js';
 const prisma = new PrismaClient();
 import axios from 'axios';
+import { getBase64 } from '../functions/orderhelpers.js';
 
 //email send via sendinblue axios instance setup
 export const emaxios = axios.create({
@@ -27,12 +28,41 @@ const sendTemplatedEmail = async (
 			templateId: id,
 		});
 	} catch (e) {
+		console.log(e);
 		if (e.response) {
 			console.error(e.response.data);
 			let err = new Error(errorMsg);
 			err.status = 500;
 			throw err;
 		}
+	}
+};
+const orderUpdateEmailForAdmin = async (
+	orderId,
+	username,
+	message,
+	file,
+	email
+) => {
+	console.log(orderId, username, message, file, email);
+	// let base64Content = await getBase64(file);
+	let attachment = [{ name: username, content: file}];
+	try {
+		await emaxios.post('/smtp/email', {
+			params: {
+				username,
+				orderId,
+				message,
+			},
+			to: [{ name: username, email }],
+			templateId: 14,
+			attachment,
+		});
+	} catch (e) {
+		console.log(e);
+		let err = new Error('Could not send the message to admin');
+		err.status = 500;
+		throw err;
 	}
 };
 const sendPaymentReminder = async (username, orderId, email, amount) => {
@@ -143,7 +173,7 @@ const orderConfirmedEmail = async (
 			orderTotal,
 		},
 		[{ name: username, email: toEmail }],
-		1,
+		3,
 		'Could not send Order Confirmation email'
 	);
 };
@@ -232,4 +262,5 @@ export {
 	orderUpdateEmail,
 	contactEmail,
 	sendPaymentReminder,
+	orderUpdateEmailForAdmin,
 };

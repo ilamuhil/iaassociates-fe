@@ -23,6 +23,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../../context/AuthProvider';
 import { format } from 'date-fns';
 import { toast } from 'react-toastify';
+
 const PackageIcon = ({ type }) => {
 	if (type === 'completed') {
 		return <PackageDeliveredIcon />;
@@ -34,12 +35,14 @@ const PackageIcon = ({ type }) => {
 		return <PackageDeliveredStatusTimeIcon />;
 	}
 };
+
 function UserOrder() {
 	const [ordersData, setOrdersData] = useState([]);
 	const authctx = useContext(AuthContext);
 	const [isLoading, setLoading] = useState(true);
 	const axiosPvt = authctx.useAxiosPrivate();
 	const navigate = useNavigate();
+
 	useEffect(() => {
 		const controller = new AbortController();
 		loadScript('https://checkout.razorpay.com/v1/checkout.js');
@@ -55,6 +58,7 @@ function UserOrder() {
 			controller.abort();
 		};
 	}, [axiosPvt]);
+
 	const loadScript = src => {
 		return new Promise(resolve => {
 			const script = document.createElement('script');
@@ -118,6 +122,7 @@ function UserOrder() {
 		},
 		[axiosPvt, navigate, ordersData]
 	);
+
 	const exec = orderStatus => {
 		return orderStatus === 'refunded'
 			? fetchRefundStatus
@@ -129,12 +134,14 @@ function UserOrder() {
 			? contactDialog
 			: () => {};
 	};
+
 	const contactDialog = useCallback(
 		id => {
 			navigate('/dashboard/contact', { state: { id } });
 		},
 		[navigate]
 	);
+
 	const retryPayment = useCallback(
 		async id => {
 			try {
@@ -152,6 +159,7 @@ function UserOrder() {
 
 		[axiosPvt, loadPaymentWindow]
 	);
+
 	const fetchRefundStatus = useCallback(
 		async id => {
 			try {
@@ -165,6 +173,7 @@ function UserOrder() {
 		},
 		[axiosPvt]
 	);
+
 	const color = status => {
 		status = status?.toLowerCase();
 		if (status === 'completed') {
@@ -177,6 +186,7 @@ function UserOrder() {
 			return '#aecad6';
 		} else return '#039be5';
 	};
+
 	return ordersData.length !== 0 && isLoading === false ? (
 		ordersData.map(order => (
 			<Grid container key={`${order.id}`}>
@@ -264,23 +274,24 @@ function UserOrder() {
 								order.orderStatus !== 'refunded' &&
 								order.orderStatus !== 'failed' && (
 									<div className='row mt-3'>
-									<div className='col'>
-										{order.invoiceDate>=order}
-											<Button
-												startIcon={<RemoveRedEyeIcon />}
-												component={Link}
-												to={`/dashboard/invoice/${order.id}`}
-												sx={{
-													'&:hover': {
-														color: 'white',
-														backgroundColor: 'black',
-													},
-													borderRadius: 0,
-												}}
-												variant='outlined'
-												size='small'>
-												View Invoice
-											</Button>{' '}
+										<div className='col'>
+											{order.invoiceDate <= Date.now() && (
+												<Button
+													startIcon={<RemoveRedEyeIcon />}
+													component={Link}
+													to={`/dashboard/invoice/${order.id}`}
+													sx={{
+														'&:hover': {
+															color: 'white',
+															backgroundColor: 'black',
+														},
+														borderRadius: 0,
+													}}
+													variant='outlined'
+													size='small'>
+													View Invoice
+												</Button>
+											)}
 										</div>
 									</div>
 								)}

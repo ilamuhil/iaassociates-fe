@@ -227,11 +227,11 @@ const UsersList = () => {
 										<TableBody>
 											{rows.map((row, index) => (
 												<Slide
+													key={`${row.id}`}
 													in={true}
 													direction={index % 2 === 0 ? 'left' : 'right'}
 													timeout={(index + 1) * 100}>
 													<TableRow
-														key={row.id}
 														sx={{
 															'&:nth-of-type(even)': {
 																backgroundColor: '#cee0f3',

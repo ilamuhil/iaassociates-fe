@@ -188,7 +188,7 @@ const getNewTokenHandler = async (req, res, next) => {
 			});
 			res.cookie('role', getRoleCodes(tokenPayload.id), { maxAge: 36000000 });
 			res.status(200).send({
-				message: 'refresh token vaidation successful',
+				message: 'refresh token validation successful',
 			});
 		} else {
 			res.clearCookie('refreshToken');
@@ -209,8 +209,14 @@ const updatePwd = async (req, res, next) => {
 		next(err);
 	}
 
-	if (response.password !== password) {
-		res.status(403).send('Your old Password was Incorrect!');
+	if (!passwordvalidate(newPassword))
+		res
+			.status(400)
+			.send(
+				'Your password should contain atleast one number and one character'
+			);
+	else if (response.password !== password) {
+		res.status(400).send('Your old Password was Incorrect!');
 	} else {
 		try {
 			await prisma.users.update({
@@ -267,6 +273,7 @@ const logInHandler = async (req, res, next) => {
 			'password',
 			'id',
 			'email',
+			'username',
 			'role'
 		);
 		console.log(

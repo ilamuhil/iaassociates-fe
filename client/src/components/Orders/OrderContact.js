@@ -27,13 +27,13 @@ const OrderContact = () => {
 		'image/jpeg',
 	];
 	const submitUpdate = () => {
-		console.log(files);
 		const axiosPvt = ctx.useAxiosPrivate();
 		const formdata = new FormData();
 		files.forEach((file, index) => {
 			formdata.append(`file ${index}`, file);
 		});
 		formdata.append('message', message);
+		formdata.append('orderId', location.state.id);
 		console.log(formdata);
 		console.log('firstfile', files[0]);
 

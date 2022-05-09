@@ -1,5 +1,5 @@
 import express from 'express';
-import multer from 'multer';
+import fileUpload from 'express-fileupload';
 
 import { authenticateUser } from '../controller/authenticate.js';
 import {
@@ -14,7 +14,7 @@ import {
 	deleteOrder,
 	sendOrderUpdateEmail,
 } from '../controller/orders.js';
-const upload = multer({ dest: './uploads' });
+
 const route = express.Router();
 route.use(authenticateUser);
 route.get('/getorders/:idType?/:id?', getOrders);
@@ -26,6 +26,10 @@ route.post('/newOrder', createNewOrder);
 route.put('/refund/:orderId', refundOrder);
 route.put('/updateOrder/:id', updateOrder);
 route.delete('/delete-order/:id', deleteOrder);
-route.post('/order-update', upload.array('myfiles', 1), sendOrderUpdateEmail);
+route.post(
+	'/order-update',
+	fileUpload(),
+	sendOrderUpdateEmail
+);
 
 export default route;
