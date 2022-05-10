@@ -43,6 +43,8 @@ const UpdatePassword = lazy(() => import('./UpdatePassword'));
 const MarketingSetting = lazy(() =>
 	import('../MarketingAndAnalytics/MarketingSetting')
 );
+
+
 const Profile = props => {
 	const { id: urlpath } = useParams();
 	const ctx = useContext(AuthContext);
@@ -122,7 +124,7 @@ const Profile = props => {
 
 	useEffect(() => {
 		const controller = new AbortController();
-		const getUser = async () => {
+		(async () => {
 			try {
 				const reqPath = urlpath ? `/user/id/${urlpath}` : `/user`;
 				let resp = await axiosPvt.get(reqPath, {
@@ -148,17 +150,12 @@ const Profile = props => {
 				setUsername(username);
 				setActive(avatar);
 				selectAvatar();
-
 				setRole(role);
 				setJoined(createdAt);
 			} catch (e) {
 				console.error(e);
 			}
-		};
-		getUser();
-		setTimeout(() => {
-			setLoading(false);
-		}, 1000);
+		})();
 		return () => {
 			controller.abort();
 		};
@@ -484,16 +481,7 @@ const Profile = props => {
 					</div>
 				</div>
 			)}
-			<Backdrop
-				sx={{
-					color: '#000',
-					zIndex: theme => theme.zIndex.drawer + 1,
-					backdropFilter: 'blur(100px)',
-					transitionDuration: '1s',
-				}}
-				open={isLoading}>
-				<CircularProgress color='inherit' />
-			</Backdrop>
+			
 		</>
 	);
 };

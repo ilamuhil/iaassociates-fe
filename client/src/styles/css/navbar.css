@@ -167,11 +167,6 @@
   padding: 0.625rem;
   color: #fff;
 }
-@media (min-width: 992px) {
-  .mobile-nav-toggle {
-    display: none;
-  }
-}
 
 .offcanvas-bg {
   background-color: black;

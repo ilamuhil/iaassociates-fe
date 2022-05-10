@@ -1,32 +1,22 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { ServiceCardLayout } from '../../pages/Services';
 import { Button } from '@mui/material';
-import axios from '../../api/axios';
+
 import { Link } from 'react-router-dom';
 import PlusOneIcon from '@mui/icons-material/PlusOne';
 import AuthContext from '../../context/AuthProvider';
+import useServices from '../../hooks/useServices';
 const ServiceList = () => {
 	const ctx = useContext(AuthContext);
-	const [services, setServices] = useState([]);
-	useEffect(() => {
-		const controller = new AbortController();
-		axios
-			.get('/services/get-services/', { signal: controller.signal })
-			.then(res => {
-				setServices(prev => {
-					return [...res.data];
-				});
-			});
-		return () => {
-			controller.abort();
-		};
-	}, []);
+	const services = useServices();
 	return (
 		<>
-			<ServiceCardLayout
-				services={services}
-				type={ctx.userRole === 33 ? 'edit-service' : 'blog'}
-			/>
+			{services && (
+				<ServiceCardLayout
+					services={services}
+					type={ctx.userRole === 33 ? 'edit-service' : 'blog'}
+				/>
+			)}
 			{ctx.userRole === 33 && (
 				<Button
 					component={Link}

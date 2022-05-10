@@ -2,100 +2,14 @@
 import { Layout } from '../components/UtilitiesAndWrappers/Layout';
 import { Link } from 'react-router-dom';
 import './../styles/css/service.css';
-import { useState, Fragment, useEffect } from 'react';
+import { Fragment} from 'react';
 import BreadCrumbs from '../components/UtilitiesAndWrappers/Breadcrumbs';
-import axios from '../api/axios';
 import { v4 as uuid } from 'uuid';
 import { Skeleton, Fade } from '@mui/material';
+import useServices from '../hooks/useServices';
 
 const Services = props => {
-	const [services, setServices] = useState([]);
-	useEffect(() => {
-		const controller = new AbortController();
-		axios
-			.get('/services/get-services/', { signal: controller.signal })
-			.then(res => {
-				setServices(prev => {
-					return [...res.data];
-				});
-			});
-		return () => {
-			controller.abort();
-		};
-	}, []);
-	// const services = [
-	// 	{
-	// 		servicetitle: 'Gst Services',
-	// 		serviceId: 1,
-	// 		serviceFeature: [
-	// 			'GST Migrations and Registrations',
-	// 			'Filing of GST Returns',
-	// 			'GST Consultancy/Advisory on various issues of GST',
-	// 			'Impact Analysis on Business Segments',
-	// 		],
-	// 		serviceIconLink: 'gst.png',
-	// 	},
-	// 	{
-	// 		servicetitle: 'Accounting Services',
-	// 		serviceId: 2,
-	// 		serviceFeature: [
-	// 			'Financial Reporting',
-	// 			'Budgeting',
-	// 			'Asset Accounting Management',
-	// 			'MIS Reports',
-	// 		],
-	// 		serviceIconLink: 'accounting.png',
-	// 	},
-	// 	{
-	// 		servicetitle: 'Payroll Services',
-	// 		serviceId: 3,
-	// 		serviceFeature: [
-	// 			'Preparation of Monthly Salary Sheet',
-	// 			'Deductions as per applicable laws like Income Tax and Provident Fund',
-	// 			'Disbursement/ Online Payment of Salary',
-	// 			'Pay slip by password protected e-mail',
-	// 			'Reimbursement of telephone, medical bills etc',
-	// 		],
-	// 		serviceIconLink: 'government.png',
-	// 	},
-	// 	{
-	// 		servicetitle: 'Incorporation Services',
-	// 		serviceId: 4,
-	// 		serviceFeature: [
-	// 			'GST Migrations and Registrations',
-	// 			'Filing of GST Returns',
-	// 			'GST Consultancy/Advisory on various issues of GST',
-	// 			'Impact Analysis on Business Segments',
-	// 			'Impact Analysis on Business Segments',
-	// 		],
-	// 		serviceIconLink: 'company.png',
-	// 	},
-	// 	{
-	// 		servicetitle: 'Incorporation Services',
-	// 		serviceId: 4,
-	// 		serviceFeature: [
-	// 			'GST Migrations and Registrations',
-	// 			'Filing of GST Returns',
-	// 			'GST Consultancy/Advisory on various issues of GST',
-	// 			'Impact Analysis on Business Segments',
-	// 			'Impact Analysis on Business Segments',
-	// 		],
-	// 		serviceIconLink: 'company.png',
-	// 	},
-	// 	{
-	// 		servicetitle: 'ITR Services',
-	// 		serviceId: 4,
-	// 		serviceFeature: [
-	// 			'GST Migrations and Registrations',
-	// 			'Filing of GST Returns',
-	// 			'GST Consultancy/Advisory on various issues of GST',
-	// 			'Impact Analysis on Business Segments',
-	// 			'Impact Analysis on Business Segments',
-	// 		],
-	// 		serviceIconLink: 'itr-for-professionals.png',
-	// 	},
-	// ];
-
+	const services= useServices();
 	return (
 		<Layout>
 			<BreadCrumbs pageName='Services' />
@@ -142,8 +56,6 @@ const Services = props => {
 					</div>
 				)}
 			</div>
-
-			{/* <div>{servicedata && servicedata.content}</div> */}
 		</Layout>
 	);
 };

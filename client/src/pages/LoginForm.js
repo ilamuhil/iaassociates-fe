@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import BreadCrumbs from './../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from './../api/axios';
 import AuthContext from '../context/AuthProvider';
+import Cookies from 'js-cookie';
 
 export default class LoginForm extends Component {
 	constructor(props) {
@@ -40,13 +41,6 @@ export default class LoginForm extends Component {
 		//performing request cleanup
 		this.state.controller.abort();
 	}
-	componentDidMount() {
-		let authctx = this.context;
-		if (authctx.isLoggedIn) {
-			this.setState({ redirectUrl: true });
-		}
-	}
-
 	displayLoginFormContent = e => {
 		e.preventDefault();
 		this.setState({ isRegister: !this.state.isRegister });
@@ -126,8 +120,10 @@ export default class LoginForm extends Component {
 					isLoading: false,
 					autoClose: 1500,
 				});
-				authctx.login();
-				this.setState({ redirect: true });
+				if (!requestroute.match(/register/)) {
+					authctx.login();
+					this.setState({ redirect: true });
+				}
 			}
 		} catch (err) {
 			let restxt = err.response
@@ -143,7 +139,8 @@ export default class LoginForm extends Component {
 		}
 	};
 	render() {
-		if (this.state.redirect) {
+		let authctx = this.context;
+		if (authctx.isLoggedIn) {
 			return <Navigate to='/dashboard/profile' replace={true} />;
 		}
 		return (

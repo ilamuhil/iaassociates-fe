@@ -481,7 +481,7 @@ const sendOrderUpdateEmail = async (req, res, next) => {
 			orderId,
 			username,
 			message,
-			files['file 0'],
+			files['file-0'],
 			'ilamuhil@gmail.com'
 		);
 		res.status(200).send('Sent file successfully');

@@ -401,7 +401,15 @@ const Home = () => {
 									className='cta-btn align-middle'>
 									Request a callback
 								</Button>
-								<Dialog open={open}>
+								<Dialog
+									open={open}
+									sx={{
+										'& .MuiDialog-paper': {
+											backgroundColor: 'white',
+											borderRadius: '1rem',
+											paddingTop: '1rem',
+										},
+									}}>
 									<DialogTitle>Message</DialogTitle>
 									<DialogContent>
 										<DialogContentText>
@@ -493,21 +501,6 @@ const Home = () => {
 											Explicabo voluptatem mollitia et repellat qui dolorum
 											quasi
 										</p>
-										<div className='social'>
-											<a href='google.com'>
-												<i className='ri-twitter-fill'></i>
-											</a>
-											<a href='google.com'>
-												<i className='ri-facebook-fill'></i>
-											</a>
-											<a href='google.com'>
-												<i className='ri-instagram-fill'></i>
-											</a>
-											<a href='google.com'>
-												{' '}
-												<i className='ri-linkedin-box-fill'></i>{' '}
-											</a>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -528,21 +521,6 @@ const Home = () => {
 											Aut maiores voluptates amet et quis praesentium qui senda
 											para
 										</p>
-										<div className='social'>
-											<a href='https://google.com'>
-												<i className='ri-twitter-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												<i className='ri-facebook-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												<i className='ri-instagram-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												{' '}
-												<i className='ri-linkedin-box-fill'></i>{' '}
-											</a>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -563,21 +541,6 @@ const Home = () => {
 											Quisquam facilis cum velit laborum corrupti fuga rerum
 											quia
 										</p>
-										<div className='social'>
-											<a href='https://google.com'>
-												<i className='ri-twitter-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												<i className='ri-facebook-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												<i className='ri-instagram-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												{' '}
-												<i className='ri-linkedin-box-fill'></i>{' '}
-											</a>
-										</div>
 									</div>
 								</div>
 							</div>
@@ -598,21 +561,6 @@ const Home = () => {
 											Dolorum tempora officiis odit laborum officiis et et
 											accusamus
 										</p>
-										<div className='social'>
-											<a href='https://google.com'>
-												<i className='ri-twitter-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												<i className='ri-facebook-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												<i className='ri-instagram-fill'></i>
-											</a>
-											<a href='https://google.com'>
-												{' '}
-												<i className='ri-linkedin-box-fill'></i>{' '}
-											</a>
-										</div>
 									</div>
 								</div>
 							</div>

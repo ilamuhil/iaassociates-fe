@@ -42,7 +42,7 @@ const verifyLink = async ({ body: data }, res, next) => {
 	//verifying email verification link
 	if (verificationType === 'email') {
 		try {
-			let user = await prisma.users.findUnique({
+			let user = await prisma.users.findMany({
 				where: {
 					emailVerificationLink: token,
 				},
@@ -51,9 +51,9 @@ const verifyLink = async ({ body: data }, res, next) => {
 				},
 			});
 			let verify = verifyToken(token, process.env.EMAIL_VERIFICATION_SECRET);
-			if (user && verify) {
+			if (user[0].email && verify) {
 				//activating account and removing jwt from the database
-				await prisma.users.update({
+				await prisma.users.updateMany({
 					where: {
 						emailVerificationLink: token,
 					},
@@ -71,7 +71,7 @@ const verifyLink = async ({ body: data }, res, next) => {
 			} else {
 				console.log('Server Side email Verification unsuccesful');
 				//Send error message because link has expired
-				if (user && !verify) {
+				if (user[0].email && !verify) {
 					res.json({ message: 'Link has expired', status: 'error' });
 				}
 				//Send error message because link was not found the database
@@ -275,10 +275,6 @@ const logInHandler = async (req, res, next) => {
 			'email',
 			'username',
 			'role'
-		);
-		console.log(
-			'🚀 ~ file: authenticate.js ~ line 275 ~ logInHandler ~ isValidUser',
-			isValidUser
 		);
 		if (!isValidUser) {
 			let err = new Error(

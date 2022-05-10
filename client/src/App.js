@@ -122,7 +122,7 @@ function App() {
 							path='my-orders'
 							element={
 								<>
-									<ProtectedRoute allowedRoles={[105]}>
+									<ProtectedRoute allowedRoles={[105, 91]}>
 										<Suspense fallback={<div>Loading...</div>}>
 											<UserOrder />
 										</Suspense>

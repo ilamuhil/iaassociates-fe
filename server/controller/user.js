@@ -1,9 +1,12 @@
 import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
-import { sendEmailVerification } from './sendMail.js';
-import { emailvalidate, usernamevalidate } from '../functions/validate.js';
+import { emaxios, sendEmailVerification } from './sendMail.js';
+import {
+	emailvalidate,
+	usernamevalidate,
+	passwordvalidate,
+} from '../functions/validate.js';
 import { hashPassword, verifyToken } from '../functions/util.js';
-import { emaxios } from './sendMail.js';
 const prisma = new PrismaClient();
 const addUserToDb = async ({ email, username, password, role = 'user' }) => {
 	let newuser = await prisma.users.create({
@@ -165,11 +168,13 @@ const registerNewUser = async (
 	next
 ) => {
 	console.log('🚀 ~ file: user.js ~ line 171 ~ cookies', cookies);
-	if (Object.keys(cookies).length !== 0) {
-		if (
-			verifyToken(cookies.accessToken, process.env.ACCESS_TOKEN_SECRET).role ===
-			'admin'
-		)
+	let adminCreatedUser = Boolean(cookies?.accessToken)
+		? verifyToken(cookies.accessToken, process.env.ACCESS_TOKEN_SECRET).role ===
+		  'admin'
+		: false;
+
+	if (Object.keys(cookies || {}).length !== 0) {
+		if (adminCreatedUser)
 			newUser = {
 				...newUser,
 				password: (Math.random() + 1).toString(36).substring(2),
@@ -178,25 +183,63 @@ const registerNewUser = async (
 			res.status(403).send('Unauthorized Request');
 		}
 	}
-	if (!emailvalidate(newUser.email))
+	if (!emailvalidate(newUser.email)) {
 		res.status(400).send('This is not a valid email');
-	if (!usernamevalidate(newUser.username))
-		res.status(400).send('This is not a valid username');
-	if (!cookies?.accessToken && !passwordvalidate(newUser.password))
-		res.status(400).send('This is not a valid password');
-	try {
-		await addUserToDb(newUser);
-		console.log('user added to db');
-		await sendEmailVerification(newUser);
-		//add user to sendInBlue account for marketing purposes
-		await addToSib(newUser.username, newUser.email);
-		console.log('Verification email sent and id added to db');
-		res.status(200).send('Registration successful. Verify your email to login');
-	} catch (e) {
-		console.log('🚀 ~ file: user.js ~ line 169 ~ e', e);
-		let err = new Error('Registration Unsuccessful');
-		err.status = 500;
-		next(err);
+	} else if (!usernamevalidate(newUser.username)) {
+		console.log('newUser', newUser.username);
+		res
+			.status(400)
+			.send(
+				'Allowed characters for username:[A-Z,a-z,0-9,_,-,.].\n Username needs to be atleast 5 characters long'
+			);
+	} else if (!cookies?.accessToken && !passwordvalidate(newUser.password))
+		res
+			.status(400)
+			.send(
+				'The password needs to have atleast one number,\n one capital letter and atleast 8 characters long'
+			);
+	else {
+		console.log('validations completed');
+		try {
+			try {
+				await addUserToDb(newUser);
+				console.log('user added to database');
+			} catch (e) {
+				let err = new Error('Username/Email already exists');
+				console.log('email sent successfully');
+				err.status = 400;
+				next(err);
+			}
+			try {
+				//configuring email variation based on whether the user has registered himself or admin has created the user
+
+				let { password, ...rest } = newUser;
+				let payload = adminCreatedUser ? newUser : rest;
+				await sendEmailVerification(payload);
+				console.log('email sent successfully');
+			} catch (e) {
+				console.log(e);
+			}
+			try {
+				await emaxios.get(`/contacts/${encodeURIComponent(newUser.email)}`);
+				console.log('user already exists in marketing group');
+			} catch (e) {
+				if (e.response?.data.message === 'Contact does not exist') {
+					//add user to sendInBlue account for marketing purposes
+					await addToSib(newUser.username, newUser.email);
+				} else {
+					console.log(e);
+				}
+			}
+			res.status(200).send('Registration successful');
+		} catch (e) {
+			console.log('Registration error', e);
+			let err = new Error(
+				'Registration Unsuccessful an unknown error occurred'
+			);
+			err.status = 500;
+			next(err);
+		}
 	}
 };
 const updateSibList = async (

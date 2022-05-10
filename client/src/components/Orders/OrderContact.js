@@ -25,12 +25,17 @@ const OrderContact = () => {
 		'application/zip',
 		'application/x-rar-compressed',
 		'image/jpeg',
+		'image/png',
 	];
 	const submitUpdate = () => {
 		const axiosPvt = ctx.useAxiosPrivate();
 		const formdata = new FormData();
 		files.forEach((file, index) => {
-			formdata.append(`file ${index}`, file);
+			if (!allowedfileTypes.includes(file.type)) {
+				toast.error('this file type is not supported');
+				return;
+			}
+			formdata.append(`file-${index}`, file);
 		});
 		formdata.append('message', message);
 		formdata.append('orderId', location.state.id);
@@ -46,7 +51,14 @@ const OrderContact = () => {
 					);
 				},
 			})
-			.then(res => toast.success('Message sent successfully'))
+			.then(res => {
+				toast.success('Message sent successfully');
+				setTimeout(() => {
+					setLoading(0);
+				}, 1500);
+				setMessage('');
+				setFiles([]);
+			})
 			.catch(e => {
 				toast.error('Your message could not be sent');
 			});
@@ -84,7 +96,7 @@ const OrderContact = () => {
 						<Input
 							id='icon-button-file'
 							type='file'
-							multiple={true}
+							multiple
 							sx={{ display: 'none' }}
 							onChange={e => {
 								setFiles(p => [...p, ...e.target.files]);
@@ -107,9 +119,22 @@ const OrderContact = () => {
 						Upload Any requested Documents{' '}
 						<span className='text-danger'>(Upto 10MB)</span>
 					</small>
-					<progress id='file' value={loading} max={100}>
-						32
-					</progress>
+					<small>
+						Supported Types :{' '}
+						<span className='text-danger ml-1 d-inline'>
+							pdf, ms-word, jpeg, png, zip, tar, x-rar-compressed
+						</span>
+					</small>
+
+					<div class='progress'>
+						<div
+							class='progress-bar progress-bar-striped progress-bar-animated bg-success'
+							role='progressbar'
+							aria-valuenow='75'
+							aria-valuemin='0'
+							aria-valuemax='100'
+							style={{ width: `${loading}%` }}></div>
+					</div>
 					<Button
 						variant='contained'
 						size='small'

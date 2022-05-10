@@ -44,9 +44,8 @@ const orderUpdateEmailForAdmin = async (
 	file,
 	email
 ) => {
-	console.log(orderId, username, message, file, email);
-	// let base64Content = await getBase64(file);
-	let attachment = [{ name: username, content: file}];
+	let base64data = Buffer.from(file.data, 'binary').toString('base64');
+	let attachment = [{ name: file.name, content: base64data }];
 	try {
 		await emaxios.post('/smtp/email', {
 			params: {
@@ -110,6 +109,7 @@ const sendEmailVerification = async ({ username, email, password = '' }) => {
 			process.env.EMAIL_VERIFICATION_SECRET,
 			10 * 60
 		);
+
 		//send Email to with verification id to client
 		verifyEmail(username, email, verificationId, password);
 

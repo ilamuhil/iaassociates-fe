@@ -143,9 +143,6 @@
 	font-size: 2rem;
 	padding: 0.625rem;
 	color: #fff;
-	@include media-breakpoint-up('lg') {
-		display: none;
-	}
 }
 
 //OffCanvas Navbar for mobile

@@ -5,7 +5,8 @@ import BreadCrumbs from './../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from '../api/axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-export class Contact extends Component {
+import useServices from '../hooks/useServices';
+class Contact extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -202,12 +203,16 @@ export class Contact extends Component {
 										onChange={e => {
 											this.setState({ serviceName: e.target.value });
 										}}>
-										<option>Service You Wish to Enquire About</option>
-										<option value='1'>One</option>
-										<option value='2'>Two</option>
-										<option value='3'>Three</option>
+										<option disabled>Service You Wish to Enquire About</option>
+										{this.props.services &&
+											this.props.services.map(service => (
+												<option value={service.title} key={service.id}>
+													{service.title}
+												</option>
+											))}
 										<option value='other'>Other</option>
 									</select>
+									.
 								</div>
 
 								<div className='mb-3'>
@@ -255,4 +260,10 @@ export class Contact extends Component {
 	}
 }
 
-export default Contact;
+const wrapperHoc = Component => {
+	return () => {
+		const services = useServices();
+		return <Component services={services} />;
+	};
+};
+export default wrapperHoc(Contact);

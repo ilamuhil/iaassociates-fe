@@ -1,10 +1,9 @@
-const emailReg = /^\w+(?:[\.\-\+]?\w+)*@\w+(?:[\.-]?\w+)*(?:\.\w{2,10})+$/g;
-const phoneNumber = /^\+?\(?\+?(?:91|0)?\)?[ -]?(\d{5})[ -]?(\d{5})$/g;
+const emailReg = /^\w+(?:[\.\-\+]?\w+)*@\w+(?:[\.-]?\w+)*(?:\.\w{2,10})+$/;
+const phoneNumber = /^\+?\(?\+?(?:91|0)?\)?[ -]?(\d{5})[ -]?(\d{5})$/;
 
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[\w\W]{8,}$/g;
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[\w\W]{8,}$/;
 //atleast one number and one capital letter
-const usernameReg = /^(\w+(?:[\.\-\s]?\w+)*){5,}/gim;
-usernameReg.exec('Username-'); //?
+const usernameReg = /^[_\.\-\s\w+]{5,}/;
 
 const phonevalidate = number => {
 	let res = phoneNumber.exec(number);
@@ -12,10 +11,12 @@ const phonevalidate = number => {
 };
 const emailvalidate = email => {
 	let res = emailReg.exec(email);
+	console.log(res);
 	return res ? email : false;
 };
 const usernamevalidate = username => {
 	let res = usernameReg.exec(username);
+	console.log('🚀 ~ file: validate.js ~ line 21 ~ res', res);
 	return res ? username : false;
 };
 const passwordvalidate = password => {
