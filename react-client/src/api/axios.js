@@ -1,5 +1,5 @@
 const axios = require('axios');
-const BASE_URL = 'http://localhost:8000/';
+const BASE_URL = 'http://cosmolytic.in/backend';
 
 export default axios.create({
 	baseURL: BASE_URL,

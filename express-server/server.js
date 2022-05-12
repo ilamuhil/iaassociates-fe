@@ -8,7 +8,6 @@ import userAuth from './routes/authenticate.js';
 import users from './routes/users.js';
 import orders from './routes/orders.js';
 import contact from './routes/contact.js';
-import dbdata from './routes/dbdata.js';
 import errorhandler from './routes/error.js';
 import services from './routes/services.js';
 import cookieParser from 'cookie-parser';
@@ -52,15 +51,15 @@ app.use(
 app.use(cookieParser());
 const port = process.env.PORT || 8000;
 
-app.use('/dbdata', dbdata);
-app.use('/addresses', authenticateUser, addresses);
-app.use('/updates', updates);
-app.use('/user', authenticateUser, users);
-app.use('/authenticate', userAuth);
-app.use('/orders', authenticateUser, orders);
-app.use('/contact', contact);
-app.use('/payments', payments);
-app.use('/services', services);
+
+app.use('/backend/addresses', authenticateUser, addresses);
+app.use('/backend/updates', updates);
+app.use('/backend/user', authenticateUser, users);
+app.use('/backend/authenticate', userAuth);
+app.use('/backend/orders', authenticateUser, orders);
+app.use('/backend/contact', contact);
+app.use('/backend/payments', payments);
+app.use('/backend/services', services);
 
 app.get('/test', async (req, res) => {
 	res.sendFile('abc.txt', { root: path.join(__dirname) }, err => {
