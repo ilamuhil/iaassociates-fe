@@ -4,11 +4,16 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "concurrently \"cd server && nodemon server\" \"cd client && npm start\" \"cd server && npx prisma studio\""
+		"start": "concurrently \"cd express-server && nodemon server\" \"cd react-client && npm start\" \"cd express-server && npx prisma studio\"",
+		"build": "npm run build --workspace=react-client && npm start --workspace=express-server"
 	},
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
 		"concurrently": "^7.1.0"
-	}
+	},
+	"workspaces": [
+		"react-client",
+		"express-server"
+	]
 }
