@@ -1,11 +1,11 @@
 {
   "files": {
     "main.css": "/static/css/main.38f8a3fa.css",
-    "main.js": "/static/js/main.56333dbc.js",
+    "main.js": "/static/js/main.f258e511.js",
     "static/js/379.2f3250fd.chunk.js": "/static/js/379.2f3250fd.chunk.js",
     "static/js/191.ea91a20a.chunk.js": "/static/js/191.ea91a20a.chunk.js",
     "static/js/736.691c3e76.chunk.js": "/static/js/736.691c3e76.chunk.js",
-    "static/js/955.a23a357d.chunk.js": "/static/js/955.a23a357d.chunk.js",
+    "static/js/955.93bacde8.chunk.js": "/static/js/955.93bacde8.chunk.js",
     "static/js/512.d61dd6ed.chunk.js": "/static/js/512.d61dd6ed.chunk.js",
     "static/js/115.93fcabdd.chunk.js": "/static/js/115.93fcabdd.chunk.js",
     "static/js/974.726b1217.chunk.js": "/static/js/974.726b1217.chunk.js",
@@ -41,11 +41,11 @@
     "static/media/product-package-return.svg": "/static/media/product-package-return.cdc681dfabb01694a970366f86855997.svg",
     "static/media/parcel-box-package.svg": "/static/media/parcel-box-package.fec4d01760581c6f6656ae4941d54a85.svg",
     "main.38f8a3fa.css.map": "/static/css/main.38f8a3fa.css.map",
-    "main.56333dbc.js.map": "/static/js/main.56333dbc.js.map",
+    "main.f258e511.js.map": "/static/js/main.f258e511.js.map",
     "379.2f3250fd.chunk.js.map": "/static/js/379.2f3250fd.chunk.js.map",
     "191.ea91a20a.chunk.js.map": "/static/js/191.ea91a20a.chunk.js.map",
     "736.691c3e76.chunk.js.map": "/static/js/736.691c3e76.chunk.js.map",
-    "955.a23a357d.chunk.js.map": "/static/js/955.a23a357d.chunk.js.map",
+    "955.93bacde8.chunk.js.map": "/static/js/955.93bacde8.chunk.js.map",
     "512.d61dd6ed.chunk.js.map": "/static/js/512.d61dd6ed.chunk.js.map",
     "115.93fcabdd.chunk.js.map": "/static/js/115.93fcabdd.chunk.js.map",
     "974.726b1217.chunk.js.map": "/static/js/974.726b1217.chunk.js.map",
@@ -54,6 +54,6 @@
   },
   "entrypoints": [
     "static/css/main.38f8a3fa.css",
-    "static/js/main.56333dbc.js"
+    "static/js/main.f258e511.js"
   ]
 }

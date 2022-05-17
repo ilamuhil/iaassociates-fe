@@ -41,6 +41,7 @@ function UserOrder() {
 	const authctx = useContext(AuthContext);
 	const [isLoading, setLoading] = useState(true);
 	const axiosPvt = authctx.useAxiosPrivate();
+	const [refundData, setRefundData] = useState({});
 	const navigate = useNavigate();
 	useEffect(() => {
 		loadScript('https://checkout.razorpay.com/v1/checkout.js');
@@ -100,8 +101,17 @@ function UserOrder() {
 						})
 						.catch(e => {
 							console.log(e);
-							setLoading(false);
-							navigate('/dashboard/payment/failed/' + order.id);
+							axiosPvt
+								.post('/orders/set-order-failed', { id })
+								.then(() => {
+									navigate('/dashboard/payment/failed/' + order.id);
+									setLoading(false);
+								})
+								.catch(e => {
+									console.log(e);
+									navigate('/dashboard/payment/failed/' + order.id);
+									setLoading(false);
+								});
 						});
 				},
 				prefill: {
@@ -162,13 +172,28 @@ function UserOrder() {
 
 	const fetchRefundStatus = useCallback(
 		async id => {
+			const toastid = toast.loading(
+				'Connecting to gateway, do not refresh the page...'
+			);
 			try {
-				await axiosPvt.get('/payments/refundStatus');
-				//TODO Update dom to be able to view refundStatus on the card
-			} catch (error) {
-				toast.error(
-					'Could not fetch refund status from payment gateway server'
+				let data = await axiosPvt.get(
+					`/payments/get-payment-refund-status/${id}`
 				);
+
+				setRefundData(prev => ({ ...prev, ...data.data }));
+				toast.update(toastid, {
+					render: 'fetched data from gateway servers',
+					type: 'success',
+					isLoading: false,
+					autoClose: 500,
+				});
+			} catch (error) {
+				toast.update(toastid, {
+					render: 'Error: Could not connect to the gateway server',
+					type: 'error',
+					isLoading: false,
+					autoClose: 500,
+				});
 			}
 		},
 		[axiosPvt]
@@ -220,7 +245,7 @@ function UserOrder() {
 								Order :{' '}
 								<small>
 									<i>
-										(#{order.id}){' '}
+										(#{order.id} - ₹{order.value}){' '}
 										{format(new Date(order.createdAt), 'dd MMM yyyy')}
 									</i>
 								</small>
@@ -322,7 +347,34 @@ function UserOrder() {
 									order.orderStatus === 'onhold') &&
 									order.orderNotes}
 								{order.orderStatus === 'refunded' &&
+									Object.keys(refundData).length === 0 &&
 									'Check Refund Status By clicking on the button below'}
+								{order.orderStatus === 'refunded' &&
+									Object.keys(refundData).length !== 0 && (
+										<>
+											<span>Current payment gateway refund status :</span>{' '}
+											<Chip
+												label={refundData.status}
+												size='small'
+												color='warning'
+											/>
+											<br />
+											<span>Processing speed :</span>{' '}
+											<Chip
+												label={refundData.speed}
+												color='info'
+												size='small'
+											/>
+											<br />
+											<span>Refund Amount :</span>{' '}
+											<Chip
+												label={refundData.amount + ' ₹'}
+												color='success'
+												size='small'
+											/>
+											<br />
+										</>
+									)}
 							</code>
 						</div>
 					</div>

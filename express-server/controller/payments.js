@@ -31,6 +31,22 @@ const paymentReminder = async (req, res, next) => {
 	}
 };
 
+const getPaymentRefundStatus = async(req, res) => {
+	let { id } = req.params;
+	let order = await prisma.orders.findUnique({
+		where: {
+			id: parseInt(id)
+		},
+		select: {
+			refundReceiptId: true
+		}
+	});
+	let getrefundStatus = await rpaxios.get(`/refunds/${order.refundReceiptId}`);
+    console.log("🚀 ~ file: payments.js ~ line 45 ~ getPaymentRefundStatus ~ getrefundStatus", getrefundStatus)
+	let { status, speed_processed, amount } = getrefundStatus.data;
+	res.status(200).send({ status, speed: speed_processed, amount:amount/100 });
+}
+
 const sendPaymentLink = async (req, res) => {
 	let { amount, upi_link, username, email, phone } = req.body;
 	let payload = {
@@ -85,6 +101,8 @@ const retryPayment = async (req, res) => {
 	});
 	res.status(200).send({ razorpayId: updateRpOrder.id });
 };
+
+
 
 const paymentVerification = async (req, res) => {
 	try {
@@ -142,8 +160,8 @@ const paymentVerification = async (req, res) => {
 		await orderConfirmedEmail(
 			order.service.title,
 			order.orderDescription,
-			base,
-			0.18 * (base - (order.discount / 100) * base).toFixed(2),
+			base.toFixed(2),
+			(0.18 * (base - (order.discount / 100) * base)).toFixed(2),
 			((order.discount / 100) * base).toFixed(2),
 			order.value.toFixed(2),
 			order.id,
@@ -157,4 +175,4 @@ const paymentVerification = async (req, res) => {
 	}
 };
 
-export { paymentReminder, sendPaymentLink, paymentVerification, retryPayment };
+export { paymentReminder, sendPaymentLink, paymentVerification, retryPayment ,getPaymentRefundStatus};

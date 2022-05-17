@@ -13,6 +13,7 @@ import {
 	getSingleOrderSummary,
 	deleteOrder,
 	sendOrderUpdateEmail,
+	setOrderFailed,
 } from '../controller/orders.js';
 
 const route = express.Router();
@@ -25,11 +26,8 @@ route.get('/downloads/:month', getOrdersByMonth);
 route.post('/newOrder', createNewOrder);
 route.put('/refund/:orderId', refundOrder);
 route.put('/updateOrder/:id', updateOrder);
+route.put('/set-order-failed', setOrderFailed);
 route.delete('/delete-order/:id', deleteOrder);
-route.post(
-	'/order-update',
-	fileUpload(),
-	sendOrderUpdateEmail
-);
+route.post('/order-update', fileUpload(), sendOrderUpdateEmail);
 
 export default route;

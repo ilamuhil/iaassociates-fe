@@ -10,7 +10,6 @@ import BreadCrumbs from './../components/UtilitiesAndWrappers/Breadcrumbs';
 import axios from './../api/axios';
 import AuthContext from '../context/AuthProvider';
 
-
 export default class LoginForm extends Component {
 	constructor(props) {
 		super(props);
@@ -107,11 +106,7 @@ export default class LoginForm extends Component {
 		};
 		let loggingtoast = toast.loading('Loading...');
 		try {
-			let res = await axios.post(
-				`http://localhost:8000/${requestroute}`,
-				data,
-				options
-			);
+			let res = await axios.post(requestroute, data, options);
 			if (res.status === 200) {
 				toast.update(loggingtoast, {
 					render: res.data,

@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import Services from './pages/Services';
 import LoginForm from './pages/LoginForm';
 import PageNotFound from './pages/PageNotFound';
-import Checkout from './pages/Checkout';
 import Privacypolicy from './pages/Privacypolicy';
 import ErrorBoundary from './components/Authorization/ErrorBoundary';
 import PaymentStatus from './components/Orders/PaymentStatus';
@@ -77,8 +76,13 @@ function App() {
 						/>
 						<Route
 							path='contact'
-							allowedRoles={105}
-							element={<OrderContact />}
+							element={
+								<ProtectedRoute allowedRoles={[105]}>
+									<Suspense fallback={<div>Loading...</div>}>
+										<OrderContact />
+									</Suspense>
+								</ProtectedRoute>
+							}
 						/>
 						<Route path='services' element={<ServiceList />} />
 						<Route
@@ -121,13 +125,11 @@ function App() {
 						<Route
 							path='my-orders'
 							element={
-								<>
-									<ProtectedRoute allowedRoles={[105, 91]}>
-										<Suspense fallback={<div>Loading...</div>}>
-											<UserOrder />
-										</Suspense>
-									</ProtectedRoute>
-								</>
+								<ProtectedRoute allowedRoles={[105, 91]}>
+									<Suspense fallback={<div>Loading...</div>}>
+										<UserOrder />
+									</Suspense>
+								</ProtectedRoute>
 							}
 						/>
 						<Route
@@ -153,13 +155,11 @@ function App() {
 						<Route
 							path='users'
 							element={
-								<>
-									<ProtectedRoute allowedRoles={[33]}>
-										<Suspense fallback={<div>Loading...</div>}>
-											<UsersList />
-										</Suspense>
-									</ProtectedRoute>
-								</>
+								<ProtectedRoute allowedRoles={[33]}>
+									<Suspense fallback={<div>Loading...</div>}>
+										<UsersList />
+									</Suspense>
+								</ProtectedRoute>
 							}
 						/>
 						<Route path='users/newUser' element={<CreateNewUser />} />
@@ -192,7 +192,6 @@ function App() {
 						path='/reset-password-email'
 						element={<PasswordResetEmail />}
 					/>
-					<Route path='/checkout' element={<Checkout />} />
 				</Routes>
 			</Router>
 			<ToastContainer

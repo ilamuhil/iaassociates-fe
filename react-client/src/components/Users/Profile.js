@@ -12,8 +12,6 @@ import {
 	DialogContent,
 	DialogActions,
 	IconButton,
-	Backdrop,
-	CircularProgress,
 } from '@mui/material';
 import AvatarImgf1 from '../../img/avatar/avatarf1.png';
 import AvatarImgf2 from '../../img/avatar/avatarf2.png';
@@ -44,7 +42,6 @@ const MarketingSetting = lazy(() =>
 	import('../MarketingAndAnalytics/MarketingSetting')
 );
 
-
 const Profile = props => {
 	const { id: urlpath } = useParams();
 	const ctx = useContext(AuthContext);
@@ -58,7 +55,6 @@ const Profile = props => {
 	const [editMode, setEditMode] = useState(false);
 	const [open, setOpen] = useState(false);
 	const axiosPvt = ctx.useAxiosPrivate();
-	const [isLoading, setLoading] = useState(true);
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -481,7 +477,6 @@ const Profile = props => {
 					</div>
 				</div>
 			)}
-			
 		</>
 	);
 };

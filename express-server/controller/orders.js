@@ -468,6 +468,36 @@ const deleteOrder = async (req, res) => {
 		res.sendStatus(500);
 	}
 };
+const setOrderFailed = async (req, res) => {
+	let verify = await prisma.orders.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			user: {
+				id: true,
+			},
+		},
+	});
+	if (verify.user.id !== req.user.id) {
+		res.status(400).send('Unauthorized request');
+	}
+	let { id } = req.body;
+	try {
+		await prisma.orders.update({
+			where: {
+				id,
+			},
+			data: {
+				orderStatus: 'failed',
+			},
+		});
+		res.sendStatus(200);
+	} catch (e) {
+		console.log(e);
+		res.sendStatus(400);
+	}
+};
 
 const sendOrderUpdateEmail = async (req, res, next) => {
 	const {
@@ -475,14 +505,13 @@ const sendOrderUpdateEmail = async (req, res, next) => {
 		user: { username },
 		files,
 	} = req;
-	console.log(req.user.username);
 	try {
 		await orderUpdateEmailForAdmin(
 			orderId,
 			username,
 			message,
 			files['file-0'],
-			'ilamuhil@gmail.com'
+			process.env.USER_VERIFICATION_SENDER_EMAIL
 		);
 		res.status(200).send('Sent file successfully');
 	} catch (e) {
@@ -501,4 +530,5 @@ export {
 	getSingleOrderSummary,
 	deleteOrder,
 	sendOrderUpdateEmail,
+	setOrderFailed,
 };

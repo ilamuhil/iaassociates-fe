@@ -51,7 +51,6 @@ app.use(
 app.use(cookieParser());
 const port = process.env.PORT || 8000;
 
-
 app.use('/backend/addresses', authenticateUser, addresses);
 app.use('/backend/updates', updates);
 app.use('/backend/user', authenticateUser, users);
